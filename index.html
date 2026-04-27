@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08111d" />
+    <title>Signal Deck</title>
+    <style>
+      :root {
+        --bg-top: #08111d;
+        --bg-mid: #112235;
+        --bg-bottom: #1d344a;
+        --paper: rgba(247, 240, 227, 0.94);
+        --paper-strong: rgba(252, 247, 238, 0.985);
+        --ink: #132133;
+        --muted: #5f6d7a;
+        --line: rgba(15, 28, 46, 0.12);
+        --line-strong: rgba(15, 28, 46, 0.22);
+        --accent: #f3b564;
+        --accent-strong: #d67c2d;
+        --teal: #8ed8cb;
+        --correct: #2f7d67;
+        --wrong: #b44d43;
+        --skip: #687786;
+        --shadow: 0 24px 80px rgba(5, 12, 23, 0.28);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+        background:
+          radial-gradient(circle at 12% 18%, rgba(243, 181, 100, 0.24), transparent 0 22%),
+          radial-gradient(circle at 86% 10%, rgba(142, 216, 203, 0.2), transparent 0 18%),
+          linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-bottom) 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 34px 34px;
+        opacity: 0.18;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: auto 0 0;
+        height: 16rem;
+        background:
+          linear-gradient(
+            90deg,
+            transparent 0 6%,
+            rgba(243, 181, 100, 0.18) 6% 9%,
+            transparent 9% 18%,
+            rgba(142, 216, 203, 0.16) 18% 22%,
+            transparent 22% 37%,
+            rgba(243, 181, 100, 0.16) 37% 40%,
+            transparent 40% 58%,
+            rgba(142, 216, 203, 0.14) 58% 61%,
+            transparent 61% 77%,
+            rgba(243, 181, 100, 0.18) 77% 81%,
+            transparent 81% 100%
+          );
+        mask: linear-gradient(transparent 0%, black 20%, black 100%);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      code,
+      .eyebrow,
+      .section-tag,
+      .metric-label,
+      .field-label,
+      .summary-label,
+      .badge,
+      .pill,
+      .keyboard-note,
+      .topic-meta,
+      .toggle-copy,
+      .review-pill,
+      .details-summary,
+      .button {
+        font-family: "SFMono-Regular", Menlo, Consolas, Monaco, monospace;
+      }
+
+      code {
+        font-size: 0.95em;
+      }
+
+      .app-shell {
+        width: min(1180px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 2.4rem 0 4rem;
+      }
+
+      .hero {
+        position: relative;
+        margin-bottom: 1.75rem;
+        color: #f8f5ef;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: min(34vw, 17rem);
+        aspect-ratio: 1;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(243, 181, 100, 0.42) 0 34%, rgba(243, 181, 100, 0.1) 34% 62%, transparent 62% 100%);
+        filter: blur(8px);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.8rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.22em;
+        color: rgba(248, 245, 239, 0.78);
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 9ch;
+        font-size: clamp(3.2rem, 8vw, 6rem);
+        line-height: 0.94;
+        letter-spacing: -0.05em;
+      }
+
+      .dek {
+        max-width: 48rem;
+        margin: 1rem 0 0;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: rgba(248, 245, 239, 0.82);
+      }
+
+      .topic-ribbon {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1.25rem;
+      }
+
+      .topic-ribbon span {
+        padding: 0.5rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba(248, 245, 239, 0.12);
+        background: rgba(248, 245, 239, 0.08);
+        backdrop-filter: blur(10px);
+        color: rgba(248, 245, 239, 0.92);
+        font-size: 0.95rem;
+      }
+
+      .panel {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 2rem;
+        padding: 1.4rem;
+        background: linear-gradient(180deg, var(--paper-strong) 0%, var(--paper) 100%);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 0.45rem;
+        background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 52%, rgba(243, 181, 100, 0.3) 100%);
+      }
+
+      .panel + .panel {
+        margin-top: 1.4rem;
+      }
+
+      .panel-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .section-tag {
+        margin: 0 0 0.45rem;
+        font-size: 0.76rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent-strong);
+      }
+
+      .panel-heading h2,
+      .review-header h3,
+      .live-review-head h3 {
+        margin: 0;
+        font-size: clamp(1.65rem, 3vw, 2.35rem);
+        line-height: 1.05;
+      }
+
+      .panel-copy,
+      .field-note,
+      .inline-note,
+      .hint-copy,
+      .review-copy,
+      .review-meta,
+      .feedback-copy,
+      .empty-state,
+      .toggle-copy,
+      .topic-description,
+      .live-review-head p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .panel-copy {
+        max-width: 31rem;
+        margin: 0;
+        align-self: flex-end;
+      }
+
+      .setup-grid,
+      .summary-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .field-card,
+      .summary-card,
+      .metric-card,
+      .flashcard,
+      .review-row,
+      .live-review-panel,
+      .topic-card,
+      .hint-panel,
+      .feedback-panel {
+        border: 1px solid var(--line);
+        border-radius: 1.45rem;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .field-card,
+      .live-review-panel,
+      .feedback-panel {
+        padding: 1rem;
+      }
+
+      .field-card--wide {
+        grid-column: 1 / -1;
+      }
+
+      .field-label {
+        display: inline-block;
+        margin-bottom: 0.7rem;
+        font-size: 0.84rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .field-label--sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      .field-input,
+      .answer-input {
+        width: 100%;
+        border: 1px solid rgba(19, 33, 51, 0.16);
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--ink);
+        font: inherit;
+        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .field-input {
+        padding: 0.85rem 0.95rem;
+        font-size: 1.05rem;
+      }
+
+      .answer-input {
+        padding: 1rem 1.05rem;
+        font-size: clamp(1.35rem, 3vw, 1.8rem);
+        letter-spacing: -0.03em;
+      }
+
+      .field-input:focus,
+      .answer-input:focus {
+        outline: none;
+        border-color: rgba(214, 124, 45, 0.7);
+        box-shadow: 0 0 0 4px rgba(214, 124, 45, 0.16);
+        transform: translateY(-1px);
+      }
+
+      .answer-input[readonly] {
+        background: rgba(245, 240, 232, 0.92);
+      }
+
+      .setup-actions,
+      .review-header {
+        margin-top: 1.2rem;
+      }
+
+      .score-rules,
+      .pill-grid,
+      .card-actions,
+      .results-actions,
+      .topic-toolbar,
+      .toggle-stack,
+      .flashcard-meta,
+      .feedback-topline,
+      .review-topline,
+      .review-meta,
+      .live-review-head,
+      .summary-subline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+
+      .score-rules span,
+      .pill,
+      .badge,
+      .review-pill {
+        border-radius: 999px;
+        border: 1px solid var(--line);
+      }
+
+      .score-rules span,
+      .pill,
+      .review-pill {
+        padding: 0.45rem 0.72rem;
+      }
+
+      .score-rules span {
+        background: rgba(255, 255, 255, 0.66);
+      }
+
+      .pill {
+        background: rgba(19, 33, 51, 0.04);
+        font-size: 0.85rem;
+        color: var(--ink);
+      }
+
+      .inline-note {
+        margin: 0.75rem 0 0;
+        min-height: 1.25rem;
+      }
+
+      .inline-note--error {
+        color: var(--wrong);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3rem;
+        padding: 0.8rem 1.15rem;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-size: 0.96rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, opacity 180ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button--primary {
+        color: #fff9f0;
+        background: linear-gradient(135deg, #d67c2d 0%, #f3b564 100%);
+        box-shadow: 0 14px 30px rgba(214, 124, 45, 0.26);
+      }
+
+      .button--secondary,
+      .button--ghost {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.74);
+        border-color: rgba(19, 33, 51, 0.16);
+      }
+
+      .button--ghost {
+        min-height: 2.4rem;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.85rem;
+      }
+
+      .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+        transform: none;
+      }
+
+      .button:focus-visible,
+      .topic-card:focus-within,
+      .toggle-row:focus-within {
+        outline: 2px solid rgba(214, 124, 45, 0.7);
+        outline-offset: 2px;
+      }
+
+      .is-hidden {
+        display: none;
+      }
+
+      .session-bar {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .metric-card,
+      .summary-card {
+        padding: 0.95rem 1rem;
+      }
+
+      .metric-toggle {
+        width: 100%;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid var(--line);
+      }
+
+      .metric-toggle:hover {
+        transform: translateY(-1px);
+      }
+
+      .metric-label,
+      .summary-label {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .metric-card strong,
+      .summary-card strong {
+        font-size: clamp(1.15rem, 2vw, 1.55rem);
+        letter-spacing: -0.04em;
+      }
+
+      .metric-note {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .metric-toggle.is-correct {
+        border-color: rgba(47, 125, 103, 0.32);
+        background: rgba(47, 125, 103, 0.1);
+      }
+
+      .metric-toggle.is-wrong {
+        border-color: rgba(180, 77, 67, 0.32);
+        background: rgba(180, 77, 67, 0.1);
+      }
+
+      .metric-toggle.is-skipped {
+        border-color: rgba(104, 119, 134, 0.28);
+        background: rgba(104, 119, 134, 0.1);
+      }
+
+      .progress-track {
+        height: 0.7rem;
+        margin: 1rem 0 1.1rem;
+        border-radius: 999px;
+        background: rgba(19, 33, 51, 0.09);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--accent-strong) 0%, var(--teal) 100%);
+        transition: width 220ms ease;
+      }
+
+      .session-layout {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .session-layout.has-summary {
+        grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+      }
+
+      .flashcard {
+        padding: 1.2rem;
+        background:
+          radial-gradient(circle at top right, rgba(243, 181, 100, 0.14), transparent 24%),
+          rgba(255, 255, 255, 0.56);
+      }
+
+      .flashcard-meta {
+        margin-bottom: 0.9rem;
+      }
+
+      .badge {
+        padding: 0.42rem 0.72rem;
+        background: rgba(19, 33, 51, 0.08);
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+
+      .badge--ghost {
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+      }
+
+      .prompt-text {
+        margin: 0;
+        font-size: clamp(1.9rem, 5vw, 3rem);
+        line-height: 1.08;
+        letter-spacing: -0.05em;
+      }
+
+      .hint-panel {
+        margin-top: 1rem;
+        padding: 0.95rem 1rem;
+        background: rgba(243, 181, 100, 0.12);
+        border-color: rgba(214, 124, 45, 0.22);
+      }
+
+      .hint-panel strong,
+      .feedback-panel strong,
+      .review-meta strong {
+        color: var(--ink);
+      }
+
+      .hint-copy {
+        margin: 0.35rem 0 0;
+      }
+
+      .answer-wrap {
+        margin-top: 1rem;
+      }
+
+      .card-actions {
+        margin-top: 1rem;
+      }
+
+      .keyboard-note {
+        margin: 0.8rem 0 0;
+        font-size: 0.84rem;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .live-review-panel {
+        position: sticky;
+        top: 1rem;
+        background:
+          radial-gradient(circle at top right, rgba(142, 216, 203, 0.16), transparent 25%),
+          rgba(255, 255, 255, 0.56);
+      }
+
+      .live-review-head {
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      .live-review-head p {
+        margin: 0;
+        max-width: 24rem;
+      }
+
+      .live-review-list,
+      .review-list {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 1rem;
+      }
+
+      details.live-item,
+      .review-row {
+        padding: 0.95rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 1.2rem;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      details.live-item.correct,
+      .review-row.correct {
+        border-color: rgba(47, 125, 103, 0.28);
+        background: rgba(47, 125, 103, 0.08);
+      }
+
+      details.live-item.wrong,
+      .review-row.wrong {
+        border-color: rgba(180, 77, 67, 0.28);
+        background: rgba(180, 77, 67, 0.08);
+      }
+
+      details.live-item.skipped,
+      .review-row.skipped {
+        border-color: rgba(104, 119, 134, 0.24);
+        background: rgba(104, 119, 134, 0.08);
+      }
+
+      details.live-item summary {
+        cursor: pointer;
+        list-style: none;
+      }
+
+      details.live-item summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .details-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        align-items: center;
+      }
+
+      .review-pill {
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(19, 33, 51, 0.08);
+      }
+
+      .review-status {
+        color: #fffdf8;
+        border: 0;
+      }
+
+      .review-status.correct {
+        background: var(--correct);
+      }
+
+      .review-status.wrong {
+        background: var(--wrong);
+      }
+
+      .review-status.skipped {
+        background: var(--skip);
+      }
+
+      .review-question {
+        margin: 0.7rem 0 0.5rem;
+        font-size: 1.1rem;
+        line-height: 1.3;
+      }
+
+      .review-copy {
+        margin: 0.6rem 0 0;
+      }
+
+      .empty-state {
+        margin: 0;
+        padding: 1rem;
+        border: 1px dashed rgba(19, 33, 51, 0.18);
+        border-radius: 1.1rem;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .summary-subline {
+        margin-top: 0.35rem;
+      }
+
+      .topic-toolbar {
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.85rem;
+      }
+
+      .topic-grid {
+        display: grid;
+        gap: 0.8rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topic-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.8rem;
+        align-items: start;
+        padding: 1rem;
+        cursor: pointer;
+        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+      }
+
+      .topic-card:hover {
+        transform: translateY(-1px);
+        border-color: rgba(214, 124, 45, 0.28);
+      }
+
+      .topic-card input {
+        margin-top: 0.15rem;
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+
+      .topic-card.is-selected {
+        border-color: rgba(214, 124, 45, 0.34);
+        background: rgba(243, 181, 100, 0.1);
+        box-shadow: 0 10px 26px rgba(214, 124, 45, 0.08);
+      }
+
+      .topic-title {
+        margin: 0;
+        font-size: 1.08rem;
+      }
+
+      .topic-description {
+        margin: 0.25rem 0 0;
+      }
+
+      .topic-meta {
+        display: inline-block;
+        margin-top: 0.45rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent-strong);
+      }
+
+      .toggle-stack {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .toggle-row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.8rem;
+        align-items: start;
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 1.2rem;
+        background: rgba(255, 255, 255, 0.56);
+      }
+
+      .toggle-row input {
+        margin-top: 0.2rem;
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+
+      .toggle-title {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .toggle-copy {
+        margin: 0.2rem 0 0;
+      }
+
+      .setup-footnote {
+        margin-top: 0.8rem;
+      }
+
+      @media (max-width: 980px) {
+        .panel-heading,
+        .setup-grid,
+        .summary-grid,
+        .session-bar,
+        .session-layout,
+        .topic-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .panel-heading {
+          gap: 0.8rem;
+        }
+
+        .panel-copy {
+          max-width: none;
+        }
+
+        .live-review-panel {
+          position: static;
+        }
+
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .app-shell {
+          width: min(100% - 1rem, 1180px);
+          padding-top: 1rem;
+        }
+
+        .panel,
+        .flashcard,
+        .field-card,
+        .summary-card,
+        .metric-card,
+        .review-row,
+        .live-review-panel,
+        .topic-card,
+        .hint-panel,
+        .feedback-panel,
+        details.live-item,
+        .toggle-row {
+          border-radius: 1.2rem;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .card-actions,
+        .results-actions,
+        .topic-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .prompt-text {
+          font-size: 2rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <p class="eyebrow">MENTAL MATH x QUANT INTERVIEWS</p>
+        <h1>Signal Deck</h1>
+        <p class="dek">
+          A Tradermath-style quant drill deck with custom-length sessions, upfront timer control, live right-or-wrong
+          feedback, and an always-open review rail. This version is fully standalone: send the HTML alone and it
+          still works offline.
+        </p>
+        <div class="topic-ribbon" aria-hidden="true">
+          <span>ln(x)</span>
+          <span>sqrt(x)</span>
+          <span>normal tails</span>
+          <span>E[max Z<sub>i</sub>]</span>
+          <span>random walks on Z</span>
+          <span>polygon walks</span>
+          <span>eigenvalue estimates</span>
+        </div>
+      </section>
+
+      <section class="panel setup-panel" id="setup-screen">
+        <div class="panel-heading">
+          <div>
+            <p class="section-tag">Session Setup</p>
+            <h2>Build a custom run</h2>
+          </div>
+          <p class="panel-copy">
+            Choose the topics, difficulty, question count, and whether hints stay on, then run a timed or untimed
+            deck. The app will still accept approximate answers and keep a live tape of solved cards.
+          </p>
+        </div>
+
+        <div class="setup-grid">
+          <article class="field-card">
+            <label class="field-label" for="timer-minutes">Session timer (minutes)</label>
+            <input id="timer-minutes" class="field-input" type="number" min="0" step="0.5" value="5" />
+            <p class="field-note">Use <code>0</code> for untimed practice.</p>
+          </article>
+
+          <article class="field-card">
+            <label class="field-label" for="question-count">Number of questions</label>
+            <input id="question-count" class="field-input" type="number" min="5" max="100" step="1" value="20" />
+            <p class="field-note">Pick any session length from <code>5</code> to <code>100</code>.</p>
+          </article>
+
+          <article class="field-card">
+            <label class="field-label" for="difficulty-select">Difficulty</label>
+            <select id="difficulty-select" class="field-input">
+              <option value="all">All mix</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <p class="field-note">Filter the deck to a single difficulty tier or leave it mixed.</p>
+          </article>
+
+          <article class="field-card">
+            <span class="field-label">Scoring</span>
+            <div class="score-rules">
+              <span>+1 correct</span>
+              <span>-1 wrong</span>
+              <span>0 skip</span>
+            </div>
+            <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code> or percents like <code>5%</code>.</p>
+          </article>
+
+          <article class="field-card">
+            <span class="field-label">Session options</span>
+            <div class="toggle-stack">
+              <label class="toggle-row" for="show-hints">
+                <input id="show-hints" type="checkbox" />
+                <div>
+                  <p class="toggle-title">Enable hints during the session</p>
+                  <p class="toggle-copy">Off by default. If enabled, the old shortcut-style hint appears above the answer box.</p>
+                </div>
+              </label>
+            </div>
+            <p class="field-note setup-footnote">The review rail and end-of-session analysis always show the full solution notes.</p>
+          </article>
+
+          <article class="field-card">
+            <span class="field-label">Format</span>
+            <div class="pill-grid">
+              <span class="pill">custom question count</span>
+              <span class="pill">easy / medium / hard / mix</span>
+              <span class="pill">check -> review -> next</span>
+              <span class="pill">offline standalone HTML</span>
+              <span class="pill">live solved-card analysis</span>
+            </div>
+            <p class="field-note">You can study solved cards while the timer is still running.</p>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Topics to practice</span>
+              <div class="score-rules">
+                <button id="select-all-topics" class="button button--ghost" type="button">Select all</button>
+                <button id="clear-topics" class="button button--ghost" type="button">Clear</button>
+              </div>
+            </div>
+            <div id="topic-grid" class="topic-grid"></div>
+            <p id="topic-count" class="field-note"></p>
+          </article>
+        </div>
+
+        <div class="setup-actions">
+          <button id="start-session" class="button button--primary" type="button">Start session</button>
+          <p id="best-score" class="inline-note"></p>
+          <p id="setup-error" class="inline-note inline-note--error" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="panel session-panel is-hidden" id="session-screen" aria-live="polite">
+        <div class="session-bar">
+          <div class="metric-card">
+            <span class="metric-label">Question</span>
+            <strong id="progress-label">1 / 20</strong>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Timer</span>
+            <strong id="timer-label">05:00</strong>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Score</span>
+            <strong id="live-score-label">0</strong>
+          </div>
+          <button id="summary-toggle" class="metric-card metric-toggle is-neutral" type="button" aria-expanded="false" aria-controls="session-summary-panel">
+            <span class="metric-label">Last Result</span>
+            <strong id="summary-toggle-label">No answer yet</strong>
+            <span id="summary-toggle-note" class="metric-note">Click for summary</span>
+          </button>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <div id="session-layout" class="session-layout">
+          <article class="flashcard">
+            <div class="flashcard-meta">
+              <span id="category-badge" class="badge"></span>
+              <span id="format-badge" class="badge badge--ghost"></span>
+            </div>
+
+            <h2 id="prompt-text" class="prompt-text"></h2>
+
+            <div id="hint-panel" class="hint-panel is-hidden">
+              <strong>Hint</strong>
+              <p id="hint-text" class="hint-copy"></p>
+            </div>
+
+            <div class="answer-wrap">
+              <label class="field-label" for="answer-input">Your answer</label>
+              <input
+                id="answer-input"
+                class="answer-input"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+
+            <div class="card-actions">
+              <button id="primary-action" class="button button--primary" type="button">Check answer</button>
+              <button id="secondary-action" class="button button--secondary" type="button">Skip</button>
+            </div>
+
+            <p class="keyboard-note">Press <code>Enter</code> to submit and move straight to the next card, or <code>S</code> to skip.</p>
+            <p id="input-error" class="inline-note inline-note--error" aria-live="polite"></p>
+          </article>
+
+          <aside id="session-summary-panel" class="live-review-panel is-hidden">
+            <div class="live-review-head">
+              <div>
+                <p class="section-tag">Session Summary</p>
+                <h3>Solved cards</h3>
+              </div>
+              <p>The deck keeps moving after each answer. Open this panel whenever you want to inspect solved cards.</p>
+            </div>
+            <div id="live-review-list" class="live-review-list"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="panel results-panel is-hidden" id="results-screen">
+        <div class="panel-heading">
+          <div>
+            <p class="section-tag">Session Review</p>
+            <h2>Scoreboard</h2>
+          </div>
+          <p class="panel-copy">Finished cards are shown with your answer, the accepted band, and the intended shortcut.</p>
+        </div>
+
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span class="summary-label">Score</span>
+            <strong id="score-value">0</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Correct</span>
+            <strong id="correct-value">0</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Wrong</span>
+            <strong id="wrong-value">0</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Skipped</span>
+            <strong id="skip-value">0</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Timer</span>
+            <strong id="timer-mode-value">Untimed</strong>
+            <div id="summary-topics" class="summary-subline"></div>
+          </article>
+        </div>
+
+        <div class="results-actions">
+          <button id="restart-session" class="button button--primary" type="button">Run another 20</button>
+          <button id="back-to-setup" class="button button--secondary" type="button">Change setup</button>
+        </div>
+
+        <div class="review-header">
+          <h3>Answer review</h3>
+          <p class="panel-copy">Correct cards score <code>+1</code>, wrong cards score <code>-1</code>, and skips stay flat.</p>
+        </div>
+
+        <div id="review-list" class="review-list"></div>
+      </section>
+    </main>
+
+    <script>
+      const DEFAULT_QUESTION_COUNT = 20;
+      const DEFAULT_TIMER_MINUTES = 5;
+      const DEFAULT_DIFFICULTY = "all";
+      const STORAGE_KEY = "signal-deck-standalone-preferences";
+
+      const TOPICS = [
+        { id: "logs", label: "Logs", description: "Anchor logs, near-1 expansions, and fast decompositions.", meta: "ln(x)" },
+        { id: "roots", label: "Square roots", description: "Nearby-square linearizations and near-1 shortcuts.", meta: "sqrt(x)" },
+        { id: "combos", label: "Mixed combos", description: "Fast sums and differences of mental-log and root estimates.", meta: "combo drills" },
+        { id: "normal", label: "Normal tails", description: "Memorized tail anchors and reverse-quantile questions.", meta: "N(0,1)" },
+        { id: "maxNormals", label: "Expected max", description: "Use nP(Z > x) ~= 1 to estimate maxima of iid normals.", meta: "E[max Z_i]" },
+        { id: "vol", label: "Vol and Sharpe scaling", description: "Sqrt-time scaling for volatility and Sharpe ratios.", meta: "sqrt(time)" },
+        { id: "ev", label: "Expected value", description: "Short payoff-weighting questions meant to stay mental.", meta: "quick EV" },
+        { id: "randomWalks", label: "Random walks on Z", description: "Gambler's ruin, exit time, and return-probability shortcuts.", meta: "1D walks" },
+        { id: "polygons", label: "Symmetric polygons", description: "Cycle walks and regular-polygon geometry with closed-form anchors.", meta: "n-gons" },
+        { id: "eigenvalues", label: "Eigenvalue estimates", description: "Human-doable spectral estimates for cycles and related walks.", meta: "spectral" },
+      ];
+
+      const elements = {
+        setupScreen: document.getElementById("setup-screen"),
+        sessionScreen: document.getElementById("session-screen"),
+        resultsScreen: document.getElementById("results-screen"),
+        timerMinutes: document.getElementById("timer-minutes"),
+        questionCount: document.getElementById("question-count"),
+        difficultySelect: document.getElementById("difficulty-select"),
+        showHints: document.getElementById("show-hints"),
+        topicGrid: document.getElementById("topic-grid"),
+        topicCount: document.getElementById("topic-count"),
+        selectAllTopics: document.getElementById("select-all-topics"),
+        clearTopics: document.getElementById("clear-topics"),
+        startSession: document.getElementById("start-session"),
+        restartSession: document.getElementById("restart-session"),
+        backToSetup: document.getElementById("back-to-setup"),
+        bestScore: document.getElementById("best-score"),
+        setupError: document.getElementById("setup-error"),
+        progressLabel: document.getElementById("progress-label"),
+        timerLabel: document.getElementById("timer-label"),
+        liveScoreLabel: document.getElementById("live-score-label"),
+        summaryToggle: document.getElementById("summary-toggle"),
+        summaryToggleLabel: document.getElementById("summary-toggle-label"),
+        summaryToggleNote: document.getElementById("summary-toggle-note"),
+        progressFill: document.getElementById("progress-fill"),
+        sessionLayout: document.getElementById("session-layout"),
+        sessionSummaryPanel: document.getElementById("session-summary-panel"),
+        categoryBadge: document.getElementById("category-badge"),
+        formatBadge: document.getElementById("format-badge"),
+        promptText: document.getElementById("prompt-text"),
+        hintPanel: document.getElementById("hint-panel"),
+        hintText: document.getElementById("hint-text"),
+        answerInput: document.getElementById("answer-input"),
+        primaryAction: document.getElementById("primary-action"),
+        secondaryAction: document.getElementById("secondary-action"),
+        inputError: document.getElementById("input-error"),
+        liveReviewList: document.getElementById("live-review-list"),
+        scoreValue: document.getElementById("score-value"),
+        correctValue: document.getElementById("correct-value"),
+        wrongValue: document.getElementById("wrong-value"),
+        skipValue: document.getElementById("skip-value"),
+        timerModeValue: document.getElementById("timer-mode-value"),
+        summaryTopics: document.getElementById("summary-topics"),
+        reviewList: document.getElementById("review-list"),
+      };
+
+      const normalTailTable = [
+        { z: 0.84, tailMental: 0.2, quantileExact: 0.8416212336 },
+        { z: 1.28, tailMental: 0.1, quantileExact: 1.2815515655 },
+        { z: 1.64, tailMental: 0.05, quantileExact: 1.644853627 },
+        { z: 1.96, tailMental: 0.025, quantileExact: 1.9599639845 },
+        { z: 2.33, tailMental: 0.01, quantileExact: 2.326347874 },
+        { z: 2.58, tailMental: 0.005, quantileExact: 2.575829304 },
+        { z: 3.09, tailMental: 0.001, quantileExact: 3.090232306 },
+      ];
+
+      const expectedMaxCache = new Map();
+
+      const questionBank = buildQuestionBank();
+
+      const state = {
+        deck: [],
+        currentIndex: 0,
+        results: [],
+        timerSeconds: 0,
+        remainingSeconds: 0,
+        timerId: null,
+        timedOut: false,
+        showHints: false,
+        sessionLength: DEFAULT_QUESTION_COUNT,
+        difficulty: DEFAULT_DIFFICULTY,
+        selectedTopics: TOPICS.map((topic) => topic.id),
+        lastResultStatus: null,
+        summaryOpen: false,
+      };
+
+      initialize();
+
+      function initialize() {
+        renderTopicGrid();
+        loadPreferences();
+        renderBestScore();
+        updateTopicCount();
+        renderLiveReview();
+        wireEvents();
+      }
+
+      function wireEvents() {
+        elements.startSession.addEventListener("click", startSession);
+        elements.restartSession.addEventListener("click", startSession);
+        elements.backToSetup.addEventListener("click", showSetupScreen);
+        elements.primaryAction.addEventListener("click", handlePrimaryAction);
+        elements.secondaryAction.addEventListener("click", handleSecondaryAction);
+        elements.summaryToggle.addEventListener("click", toggleSessionSummary);
+        elements.selectAllTopics.addEventListener("click", () => setAllTopics(true));
+        elements.clearTopics.addEventListener("click", () => setAllTopics(false));
+        elements.questionCount.addEventListener("input", updateTopicCount);
+        elements.difficultySelect.addEventListener("change", updateTopicCount);
+
+        elements.answerInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handlePrimaryAction();
+          }
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (elements.sessionScreen.classList.contains("is-hidden")) {
+            return;
+          }
+
+          if ((event.key === "s" || event.key === "S") && !event.metaKey && !event.ctrlKey && !event.altKey) {
+            event.preventDefault();
+            skipCurrentQuestion();
+          }
+        });
+
+        elements.topicGrid.addEventListener("change", (event) => {
+          if (!(event.target instanceof HTMLInputElement)) {
+            return;
+          }
+
+          if (event.target.matches("input[type='checkbox'][data-topic-id]")) {
+            syncTopicCardState();
+            updateTopicCount();
+          }
+        });
+      }
+
+      function renderTopicGrid() {
+        elements.topicGrid.innerHTML = TOPICS.map(
+          (topic) => `
+            <label class="topic-card is-selected" data-topic-card="${escapeHtml(topic.id)}">
+              <input type="checkbox" data-topic-id="${escapeHtml(topic.id)}" checked />
+              <div>
+                <h3 class="topic-title">${escapeHtml(topic.label)}</h3>
+                <p class="topic-description">${escapeHtml(topic.description)}</p>
+                <span class="topic-meta">${escapeHtml(topic.meta)}</span>
+              </div>
+            </label>
+          `,
+        ).join("");
+      }
+
+      function loadPreferences() {
+        const stored = loadStoredData();
+        elements.timerMinutes.value = stored.timerMinutes !== undefined ? String(stored.timerMinutes) : String(DEFAULT_TIMER_MINUTES);
+        elements.questionCount.value = stored.questionCount !== undefined ? String(stored.questionCount) : String(DEFAULT_QUESTION_COUNT);
+        elements.difficultySelect.value = stored.difficulty || DEFAULT_DIFFICULTY;
+        elements.showHints.checked = stored.showHints === true;
+
+        const storedTopics = Array.isArray(stored.selectedTopics) ? stored.selectedTopics : TOPICS.map((topic) => topic.id);
+        setSelectedTopics(storedTopics.length > 0 ? storedTopics : TOPICS.map((topic) => topic.id));
+      }
+
+      function renderBestScore() {
+        const stored = loadStoredData();
+        if (stored.bestScore === undefined) {
+          elements.bestScore.textContent = "No previous score saved yet.";
+          return;
+        }
+
+        elements.bestScore.textContent = `Best saved score: ${stored.bestScore}`;
+      }
+
+      function startSession() {
+        clearInlineErrors();
+
+        const timerMinutes = Number.parseFloat(elements.timerMinutes.value);
+        if (!Number.isFinite(timerMinutes) || timerMinutes < 0 || timerMinutes > 90) {
+          elements.setupError.textContent = "Use a timer between 0 and 90 minutes.";
+          return;
+        }
+
+        const questionCount = Number.parseInt(elements.questionCount.value, 10);
+        if (!Number.isFinite(questionCount) || questionCount < 5 || questionCount > 100) {
+          elements.setupError.textContent = "Use a question count between 5 and 100.";
+          return;
+        }
+
+        const selectedTopics = getSelectedTopics();
+        if (selectedTopics.length === 0) {
+          elements.setupError.textContent = "Select at least one topic before starting.";
+          return;
+        }
+
+        state.showHints = elements.showHints.checked;
+        state.selectedTopics = selectedTopics;
+        state.sessionLength = questionCount;
+        state.difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
+        state.deck = buildSessionDeck(selectedTopics, questionCount, state.difficulty);
+        if (state.deck.length === 0) {
+          elements.setupError.textContent = "No questions match that topic and difficulty combination.";
+          return;
+        }
+        state.currentIndex = 0;
+        state.results = [];
+        state.timerSeconds = Math.round(timerMinutes * 60);
+        state.remainingSeconds = state.timerSeconds;
+        state.timedOut = false;
+        state.lastResultStatus = null;
+        state.summaryOpen = false;
+
+        if (state.timerId) {
+          window.clearInterval(state.timerId);
+          state.timerId = null;
+        }
+
+        if (state.timerSeconds > 0) {
+          state.timerId = window.setInterval(tickTimer, 1000);
+        }
+
+        savePreferences({
+          timerMinutes,
+          questionCount,
+          difficulty: state.difficulty,
+          showHints: state.showHints,
+          selectedTopics,
+        });
+
+        renderLiveReview();
+        updateSummaryToggle();
+        setSessionSummaryOpen(false);
+        showSessionScreen();
+        updateTimerLabel();
+        updateLiveScore();
+        renderCurrentCard();
+      }
+
+      function tickTimer() {
+        if (state.remainingSeconds <= 0) {
+          finishSession(true);
+          return;
+        }
+
+        state.remainingSeconds -= 1;
+        updateTimerLabel();
+
+        if (state.remainingSeconds <= 0) {
+          finishSession(true);
+        }
+      }
+
+      function handlePrimaryAction() {
+        submitCurrentAnswer();
+      }
+
+      function handleSecondaryAction() {
+        skipCurrentQuestion();
+      }
+
+      function submitCurrentAnswer() {
+        clearInputError();
+
+        const question = state.deck[state.currentIndex];
+        const rawInput = elements.answerInput.value.trim();
+        if (!rawInput) {
+          elements.inputError.textContent = "Type an estimate or skip the card.";
+          return;
+        }
+
+        const parsedAnswer = parseAnswer(rawInput, question.inputMode);
+        if (parsedAnswer === null) {
+          elements.inputError.textContent = "That answer format does not parse cleanly. Try a plain number like 1.64 or 5%.";
+          return;
+        }
+
+        const correct = isApproxCorrect(question, parsedAnswer);
+        const result = {
+          cardNumber: state.currentIndex + 1,
+          question,
+          rawInput,
+          parsedAnswer,
+          status: correct ? "correct" : "wrong",
+          score: correct ? 1 : -1,
+        };
+
+        registerResolvedCard(result);
+      }
+
+      function skipCurrentQuestion() {
+        const question = state.deck[state.currentIndex];
+        const result = {
+          cardNumber: state.currentIndex + 1,
+          question,
+          rawInput: "",
+          parsedAnswer: null,
+          status: "skipped",
+          score: 0,
+        };
+
+        registerResolvedCard(result);
+      }
+
+      function registerResolvedCard(result) {
+        state.results.push(result);
+        state.lastResultStatus = result.status;
+        updateSummaryToggle();
+        updateLiveScore();
+        renderLiveReview();
+        state.currentIndex += 1;
+
+        if (state.currentIndex >= state.sessionLength) {
+          finishSession(false);
+          return;
+        }
+
+        renderCurrentCard();
+      }
+
+      function finishSession(timedOut) {
+        if (state.timerId) {
+          window.clearInterval(state.timerId);
+          state.timerId = null;
+        }
+
+        state.timedOut = timedOut;
+
+        while (state.results.length < state.sessionLength) {
+          const question = state.deck[state.results.length];
+          state.results.push({
+            cardNumber: state.results.length + 1,
+            question,
+            rawInput: "",
+            parsedAnswer: null,
+            status: "skipped",
+            score: 0,
+          });
+        }
+
+        renderResults();
+        showResultsScreen();
+      }
+
+      function renderCurrentCard() {
+        const question = state.deck[state.currentIndex];
+
+        elements.progressLabel.textContent = `${state.currentIndex + 1} / ${state.sessionLength}`;
+        elements.categoryBadge.textContent = question.category;
+        elements.formatBadge.textContent = `${question.formatHint} | ${formatDifficultyLabel(question.difficulty)}`;
+        elements.promptText.textContent = question.prompt;
+        elements.progressFill.style.width = `${(state.currentIndex / state.sessionLength) * 100}%`;
+
+        if (state.showHints) {
+          elements.hintPanel.classList.remove("is-hidden");
+          elements.hintText.textContent = question.hint;
+        } else {
+          elements.hintPanel.classList.add("is-hidden");
+          elements.hintText.textContent = "";
+        }
+
+        elements.answerInput.value = "";
+        elements.primaryAction.textContent = "Check answer";
+        elements.secondaryAction.textContent = "Skip";
+        clearInputError();
+        updateLiveScore();
+        window.requestAnimationFrame(() => elements.answerInput.focus());
+      }
+
+      function renderLiveReview() {
+        if (state.results.length === 0) {
+          elements.liveReviewList.innerHTML = '<p class="empty-state">No solved cards yet. Once you check or skip a question, it will show up here with the solution note.</p>';
+          return;
+        }
+
+        const newestCardNumber = state.results[state.results.length - 1].cardNumber;
+
+        elements.liveReviewList.innerHTML = [...state.results]
+          .reverse()
+          .map((entry) => createLiveReviewMarkup(entry, entry.cardNumber === newestCardNumber))
+          .join("");
+      }
+
+      function renderResults() {
+        const correct = state.results.filter((entry) => entry.status === "correct").length;
+        const wrong = state.results.filter((entry) => entry.status === "wrong").length;
+        const skipped = state.results.filter((entry) => entry.status === "skipped").length;
+        const score = state.results.reduce((sum, entry) => sum + entry.score, 0);
+
+        elements.scoreValue.textContent = String(score);
+        elements.correctValue.textContent = String(correct);
+        elements.wrongValue.textContent = String(wrong);
+        elements.skipValue.textContent = String(skipped);
+        elements.timerModeValue.textContent = state.timerSeconds > 0 ? formatTimer(state.timerSeconds) : "Untimed";
+        elements.summaryTopics.innerHTML = state.selectedTopics
+          .map((topicId) => `<span class="review-pill">${escapeHtml(getTopicLabel(topicId))}</span>`)
+          .join("");
+        elements.summaryTopics.innerHTML =
+          `<span class="review-pill">${state.sessionLength} questions</span>` +
+          `<span class="review-pill">${escapeHtml(formatDifficultyLabel(state.difficulty))}</span>` +
+          elements.summaryTopics.innerHTML;
+
+        elements.reviewList.innerHTML = state.results.map((entry) => createFinalReviewMarkup(entry)).join("");
+
+        const existing = loadStoredData();
+        if (existing.bestScore === undefined || score > existing.bestScore) {
+          savePreferences({
+            bestScore: score,
+            timerMinutes: Number.parseFloat(elements.timerMinutes.value) || 0,
+            questionCount: Number.parseInt(elements.questionCount.value, 10) || DEFAULT_QUESTION_COUNT,
+            difficulty: elements.difficultySelect.value || DEFAULT_DIFFICULTY,
+            showHints: elements.showHints.checked,
+            selectedTopics: getSelectedTopics(),
+          });
+        }
+
+        renderBestScore();
+      }
+
+      function updateSummaryToggle() {
+        const status = state.lastResultStatus;
+        elements.summaryToggle.classList.remove("is-correct", "is-wrong", "is-skipped", "is-neutral");
+
+        if (!status) {
+          elements.summaryToggle.classList.add("is-neutral");
+          elements.summaryToggleLabel.textContent = "No answer yet";
+          elements.summaryToggleNote.textContent = state.summaryOpen ? "Hide summary" : "Click for summary";
+          elements.summaryToggle.setAttribute("aria-expanded", String(state.summaryOpen));
+          return;
+        }
+
+        elements.summaryToggle.classList.add(`is-${status}`);
+        elements.summaryToggleLabel.textContent = formatStateLabel(status);
+        elements.summaryToggleNote.textContent = `${state.results.length} solved • ${state.summaryOpen ? "hide summary" : "click for summary"}`;
+        elements.summaryToggle.setAttribute("aria-expanded", String(state.summaryOpen));
+      }
+
+      function toggleSessionSummary() {
+        setSessionSummaryOpen(!state.summaryOpen);
+      }
+
+      function setSessionSummaryOpen(isOpen) {
+        state.summaryOpen = isOpen;
+        elements.sessionLayout.classList.toggle("has-summary", isOpen);
+        elements.sessionSummaryPanel.classList.toggle("is-hidden", !isOpen);
+        updateSummaryToggle();
+
+        if (isOpen) {
+          window.requestAnimationFrame(() => {
+            elements.sessionSummaryPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+      }
+
+      function createLiveReviewMarkup(entry, isOpen) {
+        const openAttribute = isOpen ? " open" : "";
+        return `
+          <details class="live-item ${escapeHtml(entry.status)}"${openAttribute}>
+            <summary>
+              <div class="details-summary">
+                <span class="review-pill">Card ${entry.cardNumber}</span>
+                <span class="review-pill review-status ${escapeHtml(entry.status)}">${escapeHtml(entry.status)}</span>
+                <span class="review-pill">${escapeHtml(entry.question.category)}</span>
+              </div>
+              <p class="review-question">${escapeHtml(entry.question.prompt)}</p>
+            </summary>
+            <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
+            <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
+            ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
+            <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
+            <p class="review-copy">${escapeHtml(entry.question.explanation)}</p>
+          </details>
+        `;
+      }
+
+      function createFinalReviewMarkup(entry) {
+        return `
+          <article class="review-row ${escapeHtml(entry.status)}">
+            <div class="review-topline">
+              <span class="review-pill">Card ${entry.cardNumber}</span>
+              <span class="review-pill review-status ${escapeHtml(entry.status)}">${escapeHtml(entry.status)}</span>
+              <span class="review-pill">${escapeHtml(entry.question.category)}</span>
+            </div>
+            <h4 class="review-question">${escapeHtml(entry.question.prompt)}</h4>
+            <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
+            <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
+            ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
+            <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
+            <p class="review-copy">${escapeHtml(entry.question.explanation)}</p>
+          </article>
+        `;
+      }
+
+      function showSetupScreen() {
+        if (state.timerId) {
+          window.clearInterval(state.timerId);
+          state.timerId = null;
+        }
+
+        setSessionSummaryOpen(false);
+        elements.setupScreen.classList.remove("is-hidden");
+        elements.sessionScreen.classList.add("is-hidden");
+        elements.resultsScreen.classList.add("is-hidden");
+        clearInlineErrors();
+      }
+
+      function showSessionScreen() {
+        elements.setupScreen.classList.add("is-hidden");
+        elements.sessionScreen.classList.remove("is-hidden");
+        elements.resultsScreen.classList.add("is-hidden");
+        setSessionSummaryOpen(state.summaryOpen);
+      }
+
+      function showResultsScreen() {
+        elements.setupScreen.classList.add("is-hidden");
+        elements.sessionScreen.classList.add("is-hidden");
+        elements.resultsScreen.classList.remove("is-hidden");
+        elements.progressFill.style.width = "100%";
+      }
+
+      function updateTimerLabel() {
+        elements.timerLabel.textContent = state.timerSeconds > 0 ? formatTimer(state.remainingSeconds) : "Untimed";
+      }
+
+      function updateLiveScore() {
+        const score = state.results.reduce((sum, entry) => sum + entry.score, 0);
+        elements.liveScoreLabel.textContent = String(score);
+      }
+
+      function clearInlineErrors() {
+        elements.setupError.textContent = "";
+        clearInputError();
+      }
+
+      function clearInputError() {
+        elements.inputError.textContent = "";
+      }
+
+      function setAllTopics(checked) {
+        elements.topicGrid.querySelectorAll("input[type='checkbox'][data-topic-id]").forEach((input) => {
+          input.checked = checked;
+        });
+        syncTopicCardState();
+        updateTopicCount();
+      }
+
+      function setSelectedTopics(selectedTopics) {
+        const selected = new Set(selectedTopics);
+        elements.topicGrid.querySelectorAll("input[type='checkbox'][data-topic-id]").forEach((input) => {
+          input.checked = selected.has(input.dataset.topicId);
+        });
+        syncTopicCardState();
+        updateTopicCount();
+      }
+
+      function syncTopicCardState() {
+        elements.topicGrid.querySelectorAll("[data-topic-card]").forEach((card) => {
+          const checkbox = card.querySelector("input[type='checkbox']");
+          card.classList.toggle("is-selected", checkbox.checked);
+        });
+      }
+
+      function getSelectedTopics() {
+        return [...elements.topicGrid.querySelectorAll("input[type='checkbox'][data-topic-id]")]
+          .filter((input) => input.checked)
+          .map((input) => input.dataset.topicId);
+      }
+
+      function updateTopicCount() {
+        const selected = getSelectedTopics();
+        const requestedCount = Number.parseInt(elements.questionCount.value, 10);
+        const safeCount = Number.isFinite(requestedCount) && requestedCount >= 5 ? requestedCount : DEFAULT_QUESTION_COUNT;
+        const difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
+        const difficultyCopy = difficulty === "all" ? "a mixed difficulty" : `${formatDifficultyLabel(difficulty).toLowerCase()} difficulty`;
+        elements.topicCount.textContent = `${selected.length} topic${selected.length === 1 ? "" : "s"} selected. The session will draw ${safeCount} card${safeCount === 1 ? "" : "s"} at ${difficultyCopy} and rebalance across the topics you keep checked.`;
+      }
+
+      function buildSessionDeck(selectedTopicIds, sessionLength, difficulty) {
+        const eligiblePools = {};
+        for (const topicId of selectedTopicIds) {
+          const basePool = questionBank[topicId] || [];
+          const filteredPool = difficulty === "all" ? basePool : basePool.filter((question) => question.difficulty === difficulty);
+          if (filteredPool.length > 0) {
+            eligiblePools[topicId] = filteredPool;
+          }
+        }
+
+        const availableTopicIds = Object.keys(eligiblePools);
+        if (availableTopicIds.length === 0) {
+          return [];
+        }
+
+        const deck = [];
+
+        while (deck.length < sessionLength) {
+          const topicCycle = shuffle([...availableTopicIds]);
+
+          for (const topicId of topicCycle) {
+            const pool = eligiblePools[topicId];
+            if (!pool || pool.length === 0) {
+              continue;
+            }
+
+            const question = { ...pool[Math.floor(Math.random() * pool.length)] };
+            deck.push(question);
+
+            if (deck.length >= sessionLength) {
+              break;
+            }
+          }
+        }
+
+        return shuffle(deck);
+      }
+
+      function buildQuestionBank() {
+        return {
+          logs: [...buildNearOneLogs(), ...buildAnchorLogs()],
+          roots: [...buildNearSquareRoots(), ...buildNearOneRoots()],
+          combos: buildComboQuestions(),
+          normal: buildNormalQuestions(),
+          maxNormals: buildMaxNormalQuestions(),
+          vol: buildVolQuestions(),
+          ev: buildEvQuestions(),
+          randomWalks: buildRandomWalkQuestions(),
+          polygons: buildPolygonQuestions(),
+          eigenvalues: buildEigenvalueQuestions(),
+        };
+      }
+
+      function buildNearOneLogs() {
+        return [0.92, 0.95, 0.96, 0.97, 0.98, 1.02, 1.03, 1.04, 1.05, 1.08, 1.1, 1.12].map((x) => {
+          const u = x - 1;
+          return createQuestion({
+            topicId: "logs",
+            category: "Log estimate",
+            prompt: `Estimate ln(${x}).`,
+            hint: "For x near 1, use ln(1 + u) ~= u - u^2 / 2.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: Math.log(x),
+            mentalAnswer: u - (u * u) / 2,
+            absTolerance: 0.025,
+            explanation: `Take u = ${formatSigned(u, 2)} and use u - u^2 / 2 as the fast mental anchor.`,
+          });
+        });
+      }
+
+      function buildAnchorLogs() {
+        const anchors = [
+          { x: 0.5, trick: "Use -ln(2)." },
+          { x: 2, trick: "Use ln(2) ~= 0.693." },
+          { x: 3, trick: "Use ln(3) ~= 1.099." },
+          { x: 4, trick: "Use 2 ln(2)." },
+          { x: 5, trick: "Use ln(10) - ln(2)." },
+          { x: 6, trick: "Use ln(2) + ln(3)." },
+          { x: 8, trick: "Use 3 ln(2)." },
+          { x: 9, trick: "Use 2 ln(3)." },
+          { x: 10, trick: "Use ln(10) ~= 2.303." },
+          { x: 12, trick: "Use ln(3) + 2 ln(2)." },
+          { x: 15, trick: "Use ln(3) + ln(5)." },
+          { x: 20, trick: "Use ln(2) + ln(10)." },
+          { x: 30, trick: "Use ln(3) + ln(10)." },
+          { x: 50, trick: "Use ln(5) + ln(10)." },
+        ];
+
+        return anchors.map(({ x, trick }) =>
+          createQuestion({
+            topicId: "logs",
+            category: "Log estimate",
+            prompt: `Estimate ln(${x}).`,
+            hint: "Lean on ln(2), ln(3), ln(5), and ln(10), then add or subtract.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: Math.log(x),
+            mentalAnswer: approxLnMental(x),
+            absTolerance: 0.06,
+            explanation: trick,
+          }),
+        );
+      }
+
+      function buildNearSquareRoots() {
+        const specs = [
+          { x: 2, anchor: 1 },
+          { x: 3, anchor: 4 },
+          { x: 5, anchor: 4 },
+          { x: 7, anchor: 9 },
+          { x: 11, anchor: 9 },
+          { x: 12, anchor: 9 },
+          { x: 15, anchor: 16 },
+          { x: 18, anchor: 16 },
+          { x: 24, anchor: 25 },
+          { x: 27, anchor: 25 },
+          { x: 28, anchor: 25 },
+          { x: 35, anchor: 36 },
+          { x: 37, anchor: 36 },
+          { x: 48, anchor: 49 },
+          { x: 50, anchor: 49 },
+          { x: 63, anchor: 64 },
+          { x: 65, anchor: 64 },
+          { x: 80, anchor: 81 },
+          { x: 82, anchor: 81 },
+          { x: 99, anchor: 100 },
+          { x: 101, anchor: 100 },
+          { x: 120, anchor: 121 },
+          { x: 124, anchor: 121 },
+        ];
+
+        return specs.map(({ x, anchor }) => {
+          const rootAnchor = Math.sqrt(anchor);
+          const offset = x - anchor;
+          return createQuestion({
+            topicId: "roots",
+            category: "Root estimate",
+            prompt: `Estimate sqrt(${x}).`,
+            hint: "Anchor at a nearby perfect square and use sqrt(a + h) ~= sqrt(a) + h / (2sqrt(a)).",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: Math.sqrt(x),
+            mentalAnswer: approxSqrtAroundAnchor(x, anchor),
+            absTolerance: 0.08,
+            explanation: `Anchor at ${anchor} = ${formatNumber(rootAnchor, 3)}^2 with h = ${offset}.`,
+          });
+        });
+      }
+
+      function buildNearOneRoots() {
+        return [0.96, 0.98, 1.02, 1.04, 1.08, 1.12, 1.21, 1.44, 1.69, 2.25].map((x) => {
+          const u = x - 1;
+          return createQuestion({
+            topicId: "roots",
+            category: "Root estimate",
+            prompt: `Estimate sqrt(${x}).`,
+            hint: "Near 1, use sqrt(1 + u) ~= 1 + u / 2.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: Math.sqrt(x),
+            mentalAnswer: 1 + u / 2,
+            absTolerance: 0.05,
+            explanation: `Use sqrt(1 + u) ~= 1 + u / 2 with u = ${formatSigned(u, 2)}.`,
+          });
+        });
+      }
+
+      function buildComboQuestions() {
+        const specs = [
+          ["Estimate sqrt(50) + ln(3).", Math.sqrt(50) + Math.log(3), approxSqrtMental(50) + approxLnMental(3), "Use sqrt(50) ~= 7.07 and ln(3) ~= 1.10, then add."],
+          ["Estimate sqrt(80) - ln(2).", Math.sqrt(80) - Math.log(2), approxSqrtMental(80) - approxLnMental(2), "Use sqrt(80) ~= 8.94 and subtract ln(2) ~= 0.69."],
+          ["Estimate sqrt(99) + ln(5).", Math.sqrt(99) + Math.log(5), approxSqrtMental(99) + approxLnMental(5), "Use sqrt(99) just under 10 and ln(5) ~= 1.61."],
+          ["Estimate sqrt(27) - ln(2).", Math.sqrt(27) - Math.log(2), approxSqrtMental(27) - approxLnMental(2), "Use sqrt(27) just above 5.2, then subtract 0.69."],
+          ["Estimate sqrt(63) + ln(10).", Math.sqrt(63) + Math.log(10), approxSqrtMental(63) + approxLnMental(10), "Use sqrt(63) just under 8 and ln(10) ~= 2.30."],
+          ["Estimate sqrt(101) - ln(3).", Math.sqrt(101) - Math.log(3), approxSqrtMental(101) - approxLnMental(3), "Use sqrt(101) just above 10 and subtract ln(3) ~= 1.10."],
+          ["Estimate sqrt(24) + ln(4).", Math.sqrt(24) + Math.log(4), approxSqrtMental(24) + approxLnMental(4), "Use sqrt(24) just below 5 and ln(4) = 2ln(2)."],
+          ["Estimate sqrt(65) + ln(0.5).", Math.sqrt(65) + Math.log(0.5), approxSqrtMental(65) + approxLnMental(0.5), "Use sqrt(65) just above 8 and ln(0.5) = -ln(2)."],
+          ["Estimate sqrt(82) - ln(5).", Math.sqrt(82) - Math.log(5), approxSqrtMental(82) - approxLnMental(5), "Use sqrt(82) just above 9 and subtract ln(5) ~= 1.61."],
+          ["Estimate sqrt(15) + 2ln(2).", Math.sqrt(15) + 2 * Math.log(2), approxSqrtMental(15) + 2 * approxLnMental(2), "Use sqrt(15) just under 4 and 2ln(2) = ln(4)."],
+          ["Estimate sqrt(48) + ln(12).", Math.sqrt(48) + Math.log(12), approxSqrtMental(48) + approxLnMental(12), "Use sqrt(48) just under 7 and ln(12) = ln(3) + 2ln(2)."],
+          ["Estimate sqrt(35) + ln(20).", Math.sqrt(35) + Math.log(20), approxSqrtMental(35) + approxLnMental(20), "Use sqrt(35) just under 6 and ln(20) = ln(2) + ln(10)."],
+          ["Estimate sqrt(37) - ln(0.5).", Math.sqrt(37) - Math.log(0.5), approxSqrtMental(37) - approxLnMental(0.5), "Subtracting ln(0.5) means adding ln(2)."],
+          ["Estimate sqrt(120) - ln(8).", Math.sqrt(120) - Math.log(8), approxSqrtMental(120) - approxLnMental(8), "Use sqrt(120) just under 11 and ln(8) = 3ln(2)."],
+          ["Estimate sqrt(1.21) + ln(30).", Math.sqrt(1.21) + Math.log(30), approxSqrtMental(1.21) + approxLnMental(30), "sqrt(1.21) is about 1.1, and ln(30) = ln(3) + ln(10)."],
+          ["Estimate sqrt(1.44) + ln(0.5).", Math.sqrt(1.44) + Math.log(0.5), approxSqrtMental(1.44) + approxLnMental(0.5), "sqrt(1.44) is about 1.2, and ln(0.5) is about -0.69."],
+          ["Estimate sqrt(124) - ln(50).", Math.sqrt(124) - Math.log(50), approxSqrtMental(124) - approxLnMental(50), "Use sqrt(124) just above 11 and ln(50) = ln(5) + ln(10)."],
+          ["Estimate sqrt(28) + ln(15).", Math.sqrt(28) + Math.log(15), approxSqrtMental(28) + approxLnMental(15), "Use sqrt(28) just above 5.25 and ln(15) = ln(3) + ln(5)."],
+          ["Estimate sqrt(18) + ln(6).", Math.sqrt(18) + Math.log(6), approxSqrtMental(18) + approxLnMental(6), "Use sqrt(18) just above 4.2 and ln(6) = ln(2) + ln(3)."],
+          ["Estimate sqrt(11) + ln(9).", Math.sqrt(11) + Math.log(9), approxSqrtMental(11) + approxLnMental(9), "Use sqrt(11) just above 3.3 and ln(9) = 2ln(3)."],
+        ];
+
+        return specs.map(([prompt, answer, mentalAnswer, explanation]) =>
+          createQuestion({
+            topicId: "combos",
+            category: "Combo estimate",
+            prompt,
+            hint: "Split the expression into two anchors, estimate each part, then combine.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer,
+            mentalAnswer,
+            absTolerance: 0.12,
+            explanation,
+          }),
+        );
+      }
+
+      function buildNormalQuestions() {
+        const tailPrompts = normalTailTable.map(({ z, tailMental }) =>
+          createQuestion({
+            topicId: "normal",
+            category: "Normal tail",
+            prompt: `For Z ~ N(0, 1), estimate P(Z > ${z}).`,
+            hint: "Use the memorized upper-tail anchors from the normal table.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: standardNormalUpperTail(z),
+            mentalAnswer: tailMental,
+            absTolerance: Math.max(0.002, tailMental * 0.18),
+            explanation: `The exact upper tail at z = ${z} is about ${formatPercent(standardNormalUpperTail(z))}, while the mental-table anchor is ${formatPercent(tailMental)}.`,
+          }),
+        );
+
+        const quantilePrompts = normalTailTable.map(({ z, tailMental, quantileExact }) =>
+          createQuestion({
+            topicId: "normal",
+            category: "Normal quantile",
+            prompt: `Find z so that P(Z > z) ~= ${formatPercent(tailMental)} for Z ~ N(0, 1).`,
+            hint: "Reverse the same standard tail table.",
+            inputMode: "number",
+            formatHint: "z-score",
+            answer: quantileExact,
+            mentalAnswer: z,
+            absTolerance: 0.08,
+            explanation: `The exact quantile for tail ${formatPercent(tailMental)} is about ${formatNumber(quantileExact, 4)}, while the common mental anchor is ${z}.`,
+          }),
+        );
+
+        return [...tailPrompts, ...quantilePrompts];
+      }
+
+      function buildMaxNormalQuestions() {
+        return normalTailTable.map(({ z, tailMental }) => {
+          const n = Math.round(1 / tailMental);
+          const exactExpectedMax = expectedMaxOfStdNormals(n);
+          return createQuestion({
+            topicId: "maxNormals",
+            category: "E[max Z_i]",
+            prompt: `Estimate E[max of ${n} iid N(0, 1) draws].`,
+            hint: "Solve n * P(Z > x) ~= 1, then invert the tail with the normal-table anchor.",
+            inputMode: "number",
+            formatHint: "z-score",
+            answer: exactExpectedMax,
+            mentalAnswer: z,
+            absTolerance: 0.12,
+            explanation: `The 1-exceedance shortcut sets ${n} * P(Z > x) ~= 1, which gives about ${z}. The true expected max is about ${formatNumber(exactExpectedMax, 4)}.`,
+          });
+        });
+      }
+
+      function buildVolQuestions() {
+        const questions = [
+          ["Vol scaling", "Daily vol is 2%. Approx weekly vol over 5 trading days?", 2 * Math.sqrt(5), "Multiply 2% by sqrt(5) ~= 2.24.", "percent"],
+          ["Vol scaling", "Daily vol is 1.8%. Approx monthly vol over 21 trading days?", 1.8 * Math.sqrt(21), "Multiply 1.8% by sqrt(21) ~= 4.58.", "percent"],
+          ["Vol scaling", "Annual vol is 24%. Approx monthly vol?", 24 / Math.sqrt(12), "Divide 24% by sqrt(12) ~= 3.46.", "percent"],
+          ["Vol scaling", "Annual vol is 32%. Approx monthly vol?", 32 / Math.sqrt(12), "Divide 32% by sqrt(12) ~= 3.46.", "percent"],
+          ["Vol scaling", "Monthly vol is 8%. Approx annual vol?", 8 * Math.sqrt(12), "Multiply 8% by sqrt(12) ~= 3.46.", "percent"],
+          ["Vol scaling", "Weekly vol is 4%. Approx annual vol using 52 weeks?", 4 * Math.sqrt(52), "Multiply 4% by sqrt(52) ~= 7.21.", "percent"],
+          ["Sharpe scaling", "Daily Sharpe is 0.10. Approx annual Sharpe using 252 trading days?", 0.1 * Math.sqrt(252), "Multiply 0.10 by sqrt(252) ~= 15.9.", "number"],
+          ["Sharpe scaling", "Daily Sharpe is 0.12. Approx annual Sharpe using 252 trading days?", 0.12 * Math.sqrt(252), "Multiply 0.12 by sqrt(252) ~= 15.9.", "number"],
+          ["Sharpe scaling", "Weekly Sharpe is 0.30. Approx annual Sharpe using 52 weeks?", 0.3 * Math.sqrt(52), "Multiply 0.30 by sqrt(52) ~= 7.21.", "number"],
+          ["Sharpe scaling", "Monthly Sharpe is 0.45. Approx annual Sharpe?", 0.45 * Math.sqrt(12), "Multiply 0.45 by sqrt(12) ~= 3.46.", "number"],
+        ];
+
+        return questions.map(([category, prompt, answer, explanation, inputMode]) =>
+          createQuestion({
+            topicId: "vol",
+            category,
+            prompt,
+            hint: "Scale by the square root of time.",
+            inputMode,
+            formatHint: inputMode === "percent" ? "percent" : "ratio",
+            answer,
+            absTolerance: inputMode === "percent" ? 0.35 : 0.15,
+            explanation,
+          }),
+        );
+      }
+
+      function buildEvQuestions() {
+        const questions = [
+          ["A fair die pays its face value in dollars. What is the expected value?", 3.5, "Average 1 through 6 or use (1 + 6) / 2."],
+          ["A fair coin pays +3 on heads and -1 on tails. What is the expected value?", 1, "Take the average of the two equally likely outcomes."],
+          ["A game pays +7 with probability 40% and -3 otherwise. What is the expected value?", 0.4 * 7 + 0.6 * -3, "Compute 0.4 * 7 - 0.6 * 3."],
+          ["A bet pays +12 with probability 25% and -2 otherwise. What is the expected value?", 0.25 * 12 + 0.75 * -2, "Compute 3 - 1.5."],
+          ["A game pays +8 with probability 60% and -5 otherwise. What is the expected value?", 0.6 * 8 + 0.4 * -5, "Compute 4.8 - 2.0."],
+          ["A bet pays +15 with probability 30% and -4 otherwise. What is the expected value?", 0.3 * 15 + 0.7 * -4, "Compute 4.5 - 2.8."],
+          ["You earn +2 with probability 55% and lose -1 otherwise. What is the expected value?", 0.55 * 2 + 0.45 * -1, "Compute 1.1 - 0.45."],
+          ["A bet pays +20 with probability 10% and -1 otherwise. What is the expected value?", 0.1 * 20 + 0.9 * -1, "Compute 2.0 - 0.9."],
+          ["A bet pays +5 with probability 70% and -4 otherwise. What is the expected value?", 0.7 * 5 + 0.3 * -4, "Compute 3.5 - 1.2."],
+          ["A game pays +9 with probability 1/6 and -1 otherwise. What is the expected value?", (1 / 6) * 9 + (5 / 6) * -1, "Compute 1.5 - 0.833..., or think in sixths."],
+        ];
+
+        return questions.map(([prompt, answer, explanation]) =>
+          createQuestion({
+            topicId: "ev",
+            category: "Expected value",
+            prompt,
+            hint: "Weight each payoff by its probability and add.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer,
+            absTolerance: 0.05,
+            explanation,
+          }),
+        );
+      }
+
+      function buildRandomWalkQuestions() {
+        const questions = [
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Walk hitting probability",
+            prompt: "A simple symmetric random walk on Z starts at 3 and stops at 0 or 10. Estimate P(hit 10 before 0).",
+            hint: "For gambler's ruin on {0, ..., N}, the harmonic answer is x / N.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 3 / 10,
+            absTolerance: 0.03,
+            explanation: "Use x / N, so the answer is 3 / 10 = 0.3.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Walk hitting probability",
+            prompt: "A simple symmetric random walk on Z starts at 4 and stops at 0 or 9. Estimate P(hit 9 before 0).",
+            hint: "For gambler's ruin on {0, ..., N}, use x / N.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 4 / 9,
+            absTolerance: 0.03,
+            explanation: "Use x / N, so the answer is 4 / 9.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Walk hitting probability",
+            prompt: "A simple symmetric random walk on Z starts at 7 and stops at 0 or 12. Estimate P(hit 12 before 0).",
+            hint: "For gambler's ruin on {0, ..., N}, use x / N.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 7 / 12,
+            absTolerance: 0.03,
+            explanation: "Use x / N, so the answer is 7 / 12.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Walk hitting probability",
+            prompt: "A simple symmetric random walk on Z starts at 1 and stops at 0 or 6. Estimate P(hit 6 before 0).",
+            hint: "For gambler's ruin on {0, ..., N}, use x / N.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 6,
+            absTolerance: 0.025,
+            explanation: "Use x / N, so the answer is 1 / 6.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Exit time",
+            prompt: "A simple symmetric random walk on Z starts at 3 and stops at 0 or 8. Estimate the expected exit time.",
+            hint: "For gambler's ruin on {0, ..., N}, E[tau] = x(N - x).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 3 * 5,
+            absTolerance: 0.5,
+            explanation: "Use x(N - x), so 3 * 5 = 15.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Exit time",
+            prompt: "A simple symmetric random walk on Z starts at 4 and stops at 0 or 10. Estimate the expected exit time.",
+            hint: "For gambler's ruin on {0, ..., N}, E[tau] = x(N - x).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 4 * 6,
+            absTolerance: 0.5,
+            explanation: "Use x(N - x), so 4 * 6 = 24.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Exit time",
+            prompt: "A simple symmetric random walk on Z starts at 5 and stops at 0 or 10. Estimate the expected exit time.",
+            hint: "For gambler's ruin on {0, ..., N}, E[tau] = x(N - x).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 5 * 5,
+            absTolerance: 0.5,
+            explanation: "Use x(N - x), so 5 * 5 = 25.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Exit time",
+            prompt: "A simple symmetric random walk on Z starts at 2 and stops at 0 or 7. Estimate the expected exit time.",
+            hint: "For gambler's ruin on {0, ..., N}, E[tau] = x(N - x).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 2 * 5,
+            absTolerance: 0.5,
+            explanation: "Use x(N - x), so 2 * 5 = 10.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Return probability",
+            prompt: "A simple symmetric random walk on Z starts at 0. Estimate P(S_4 = 0).",
+            hint: "After 2m steps, use C(2m, m) / 2^(2m).",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 6 / 16,
+            absTolerance: 0.02,
+            explanation: "Use C(4, 2) / 16 = 6 / 16 = 0.375.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Return probability",
+            prompt: "A simple symmetric random walk on Z starts at 0. Estimate P(S_6 = 0).",
+            hint: "After 2m steps, use C(2m, m) / 2^(2m).",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 20 / 64,
+            absTolerance: 0.02,
+            explanation: "Use C(6, 3) / 64 = 20 / 64 = 0.3125.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Return probability",
+            prompt: "A simple symmetric random walk on Z starts at 0. Estimate P(S_8 = 0).",
+            hint: "After 2m steps, use C(2m, m) / 2^(2m).",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 70 / 256,
+            absTolerance: 0.02,
+            explanation: "Use C(8, 4) / 256 = 70 / 256, about 0.273.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Variance",
+            prompt: "A simple symmetric random walk on Z runs for 49 steps. Estimate Var(S_49).",
+            hint: "Independent +/-1 steps contribute variance 1 each.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: 49,
+            absTolerance: 0.5,
+            explanation: "Variance adds across steps, so Var(S_n) = n.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Standard deviation",
+            prompt: "A simple symmetric random walk on Z runs for 49 steps. Estimate the standard deviation of S_49.",
+            hint: "Use sd = sqrt(Var) and Var(S_n) = n.",
+            inputMode: "number",
+            formatHint: "std dev",
+            answer: 7,
+            absTolerance: 0.2,
+            explanation: "Var(S_49) = 49, so the standard deviation is 7.",
+          }),
+        ];
+
+        return questions;
+      }
+
+      function buildPolygonQuestions() {
+        const questions = [
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A simple random walk moves on the vertices of a regular hexagon. Starting at one vertex, estimate the expected steps to hit the opposite vertex.",
+            hint: "For a walk on an n-vertex ring, the expected hitting time from graph distance d is d(n - d).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 3 * 3,
+            absTolerance: 0.5,
+            explanation: "A regular hexagon gives a ring with 6 vertices, and the opposite vertex is 3 edges away, so use 3(6 - 3) = 9.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A simple random walk moves on the vertices of a regular octagon. Starting at one vertex, estimate the expected steps to hit the opposite vertex.",
+            hint: "For a walk on an n-vertex ring, the expected hitting time from graph distance d is d(n - d).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 4 * 4,
+            absTolerance: 0.5,
+            explanation: "A regular octagon gives a ring with 8 vertices, and the opposite vertex is 4 edges away, so use 4(8 - 4) = 16.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A simple random walk moves on the vertices of a regular decagon. Starting at one vertex, estimate the expected steps to hit the opposite vertex.",
+            hint: "For a walk on an n-vertex ring, the expected hitting time from graph distance d is d(n - d).",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: 5 * 5,
+            absTolerance: 0.5,
+            explanation: "A regular decagon gives a ring with 10 vertices, and the opposite vertex is 5 edges away, so use 5(10 - 5) = 25.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A random walk on a regular hexagon starts at a vertex adjacent to A. Estimate the probability it hits the opposite vertex before A.",
+            hint: "Collapse the problem to gambler's ruin along a path from 0 to the opposite point.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 3,
+            absTolerance: 0.025,
+            explanation: "Opposite is 3 edges away on the reduced path, so the ruin probability is 1 / 3.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A random walk on a regular octagon starts at a vertex adjacent to A. Estimate the probability it hits the opposite vertex before A.",
+            hint: "Collapse the problem to gambler's ruin along a path from 0 to the opposite point.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 4,
+            absTolerance: 0.025,
+            explanation: "Opposite is 4 edges away on the reduced path, so the ruin probability is 1 / 4.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon walk",
+            prompt: "A random walk on a regular decagon starts at a vertex adjacent to A. Estimate the probability it hits the opposite vertex before A.",
+            hint: "Collapse the problem to gambler's ruin along a path from 0 to the opposite point.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 5,
+            absTolerance: 0.02,
+            explanation: "Opposite is 5 edges away on the reduced path, so the ruin probability is 1 / 5.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "A regular hexagon has side length 1. Estimate the distance between opposite vertices.",
+            hint: "In a regular hexagon, the circumradius equals the side length.",
+            inputMode: "number",
+            formatHint: "distance",
+            answer: 2,
+            absTolerance: 0.05,
+            explanation: "Opposite vertices lie across a diameter of length 2R, and for a regular hexagon R = side = 1.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "A regular hexagon has side length 1. Estimate the distance between vertices that are two edges apart.",
+            hint: "Think of a 120-degree chord in a circle of radius 1.",
+            inputMode: "number",
+            formatHint: "distance",
+            answer: Math.sqrt(3),
+            absTolerance: 0.08,
+            explanation: "That chord is 2 sin(60 degrees) = sqrt(3).",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "A square has side length 1. Estimate the diagonal.",
+            hint: "Use the 45-45-90 triangle.",
+            inputMode: "number",
+            formatHint: "distance",
+            answer: Math.sqrt(2),
+            absTolerance: 0.05,
+            explanation: "The diagonal is sqrt(1^2 + 1^2) = sqrt(2).",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "A regular pentagon has side length 1. Estimate the diagonal-to-side ratio.",
+            hint: "This is the golden ratio.",
+            inputMode: "number",
+            formatHint: "ratio",
+            answer: (1 + Math.sqrt(5)) / 2,
+            absTolerance: 0.08,
+            explanation: "The diagonal-to-side ratio in a regular pentagon is phi, about 1.618.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "A regular hexagon is inscribed in a circle of radius 1. Estimate its side length.",
+            hint: "Each side subtends 60 degrees.",
+            inputMode: "number",
+            formatHint: "distance",
+            answer: 1,
+            absTolerance: 0.04,
+            explanation: "The side is a 60-degree chord, so it equals the radius.",
+          }),
+        ];
+
+        return questions;
+      }
+
+      function buildEigenvalueQuestions() {
+        return [
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Cycle eigenvalue",
+            prompt: "Estimate the second-largest eigenvalue of the simple random walk transition matrix on a ring of 6 vertices.",
+            hint: "For an n-vertex ring graph, the walk eigenvalues are cos(2pi k / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: Math.cos((2 * Math.PI) / 6),
+            absTolerance: 0.05,
+            explanation: "For a ring with 6 vertices, the second-largest eigenvalue is cos(2pi / 6) = cos(pi / 3) = 0.5.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Cycle eigenvalue",
+            prompt: "Estimate the second-largest eigenvalue of the simple random walk transition matrix on a ring of 8 vertices.",
+            hint: "For an n-vertex ring graph, the walk eigenvalues are cos(2pi k / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: Math.cos((2 * Math.PI) / 8),
+            absTolerance: 0.05,
+            explanation: "For a ring with 8 vertices, the second-largest eigenvalue is cos(pi / 4) = sqrt(2)/2, about 0.707.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Cycle eigenvalue",
+            prompt: "Estimate the second-largest eigenvalue of the simple random walk transition matrix on a ring of 12 vertices.",
+            hint: "For an n-vertex ring graph, the walk eigenvalues are cos(2pi k / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: Math.cos((2 * Math.PI) / 12),
+            absTolerance: 0.05,
+            explanation: "For a ring with 12 vertices, the second-largest eigenvalue is cos(pi / 6) = sqrt(3)/2, about 0.866.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Cycle eigenvalue",
+            prompt: "Estimate the second-largest eigenvalue of the simple random walk transition matrix on a ring of 4 vertices.",
+            hint: "For an n-vertex ring graph, the walk eigenvalues are cos(2pi k / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: Math.cos((2 * Math.PI) / 4),
+            absTolerance: 0.04,
+            explanation: "For a ring with 4 vertices, the second-largest eigenvalue is cos(pi / 2) = 0.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Spectral gap",
+            prompt: "Estimate the spectral gap 1 minus the second-largest eigenvalue for the simple random walk on a ring of 6 vertices.",
+            hint: "First get the second-largest eigenvalue from cos(2pi / n).",
+            inputMode: "number",
+            formatHint: "gap",
+            answer: 1 - Math.cos((2 * Math.PI) / 6),
+            absTolerance: 0.05,
+            explanation: "The second-largest eigenvalue is 0.5, so the spectral gap is 1 - 0.5 = 0.5.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Spectral gap",
+            prompt: "Estimate the spectral gap 1 minus the second-largest eigenvalue for the simple random walk on a ring of 8 vertices.",
+            hint: "First get the second-largest eigenvalue from cos(2pi / n).",
+            inputMode: "number",
+            formatHint: "gap",
+            answer: 1 - Math.cos((2 * Math.PI) / 8),
+            absTolerance: 0.05,
+            explanation: "The second-largest eigenvalue is sqrt(2)/2, so the gap is 1 - sqrt(2)/2, about 0.293.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Spectral gap",
+            prompt: "Estimate the spectral gap 1 minus the second-largest eigenvalue for the simple random walk on a ring of 12 vertices.",
+            hint: "First get the second-largest eigenvalue from cos(2pi / n).",
+            inputMode: "number",
+            formatHint: "gap",
+            answer: 1 - Math.cos((2 * Math.PI) / 12),
+            absTolerance: 0.04,
+            explanation: "The second-largest eigenvalue is sqrt(3)/2, so the gap is 1 - sqrt(3)/2, about 0.134.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Adjacency eigenvalue",
+            prompt: "Estimate the largest nontrivial adjacency eigenvalue for a ring graph with 8 vertices.",
+            hint: "Use 2cos(2pi / n), not just cos(2pi / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: 2 * Math.cos((2 * Math.PI) / 8),
+            absTolerance: 0.07,
+            explanation: "For an 8-vertex ring graph, the largest nontrivial adjacency eigenvalue is 2cos(pi / 4) = sqrt(2), about 1.414.",
+          }),
+          createQuestion({
+            topicId: "eigenvalues",
+            category: "Adjacency eigenvalue",
+            prompt: "Estimate the largest nontrivial adjacency eigenvalue for a ring graph with 12 vertices.",
+            hint: "Use 2cos(2pi / n), not just cos(2pi / n).",
+            inputMode: "number",
+            formatHint: "eigenvalue",
+            answer: 2 * Math.cos((2 * Math.PI) / 12),
+            absTolerance: 0.07,
+            explanation: "For a 12-vertex ring graph, the largest nontrivial adjacency eigenvalue is 2cos(pi / 6) = sqrt(3), about 1.732.",
+          }),
+        ];
+      }
+
+      function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty }) {
+        return {
+          topicId,
+          category,
+          prompt,
+          hint,
+          inputMode,
+          formatHint,
+          answer,
+          mentalAnswer: mentalAnswer === undefined ? answer : mentalAnswer,
+          absTolerance,
+          relTolerance: relTolerance || 0,
+          explanation,
+          difficulty: difficulty || inferDifficulty(topicId, category, prompt),
+        };
+      }
+
+      function parseAnswer(rawInput, inputMode) {
+        const trimmed = rawInput.trim().replace(/,/g, "");
+        if (!trimmed) {
+          return null;
+        }
+
+        const hasPercent = trimmed.endsWith("%");
+        const numericText = hasPercent ? trimmed.slice(0, -1).trim() : trimmed;
+        const value = Number.parseFloat(numericText);
+
+        if (!Number.isFinite(value)) {
+          return null;
+        }
+
+        if (inputMode === "probability") {
+          return hasPercent || Math.abs(value) >= 1 ? value / 100 : value;
+        }
+
+        if (inputMode === "percent") {
+          return hasPercent ? value : Math.abs(value) < 1 ? value * 100 : value;
+        }
+
+        return value;
+      }
+
+      function isApproxCorrect(question, parsedAnswer) {
+        const { lower, upper } = getAcceptedBounds(question);
+        return parsedAnswer >= lower && parsedAnswer <= upper;
+      }
+
+      function computeTolerance(question) {
+        return Math.max(question.absTolerance || 0, Math.abs(question.answer) * (question.relTolerance || 0));
+      }
+
+      function getReferenceAnswers(question) {
+        const answers = [question.answer, question.mentalAnswer].filter((value) => Number.isFinite(value));
+        return answers.filter((value, index) => answers.findIndex((other) => Math.abs(other - value) < 1e-9) === index);
+      }
+
+      function getAcceptedBounds(question) {
+        const tolerance = computeTolerance(question);
+        const answers = getReferenceAnswers(question);
+        const lowerRaw = Math.min(...answers) - tolerance;
+        const upperRaw = Math.max(...answers) + tolerance;
+
+        if (question.inputMode === "probability") {
+          return {
+            lower: Math.max(0, lowerRaw),
+            upper: Math.min(1, upperRaw),
+          };
+        }
+
+        return {
+          lower: lowerRaw,
+          upper: upperRaw,
+        };
+      }
+
+      function getAcceptedRange(question) {
+        const { lower, upper } = getAcceptedBounds(question);
+
+        if (question.inputMode === "probability") {
+          return `${formatNumber(lower, 4)} to ${formatNumber(upper, 4)} (${formatPercent(lower)} to ${formatPercent(upper)})`;
+        }
+
+        if (question.inputMode === "percent") {
+          return `${formatNumber(lower, 3)}% to ${formatNumber(upper, 3)}%`;
+        }
+
+        return `${formatNumber(lower, 4)} to ${formatNumber(upper, 4)}`;
+      }
+
+      function formatAnswer(question) {
+        return formatSingleAnswer(question, question.answer);
+      }
+
+      function formatMentalAnswer(question) {
+        return formatSingleAnswer(question, question.mentalAnswer);
+      }
+
+      function formatSingleAnswer(question, value) {
+        if (question.inputMode === "probability") {
+          return `${formatNumber(value, 4)} (${formatPercent(value)})`;
+        }
+
+        if (question.inputMode === "percent") {
+          return `${formatNumber(value, 3)}%`;
+        }
+
+        return formatNumber(value, 4);
+      }
+
+      function formatUserAnswer(entry) {
+        if (entry.parsedAnswer === null) {
+          return "Skipped";
+        }
+
+        if (entry.question.inputMode === "probability") {
+          return `${entry.rawInput} -> ${formatNumber(entry.parsedAnswer, 4)}`;
+        }
+
+        if (entry.question.inputMode === "percent") {
+          return `${entry.rawInput} -> ${formatNumber(entry.parsedAnswer, 3)}%`;
+        }
+
+        return `${entry.rawInput} -> ${formatNumber(entry.parsedAnswer, 4)}`;
+      }
+
+      function formatTimer(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function formatNumber(value, maxDecimals) {
+        const fixed = value.toFixed(maxDecimals);
+        return fixed.replace(/(\.\d*?[1-9])0+$/u, "$1").replace(/\.0+$/u, "");
+      }
+
+      function formatPercent(value) {
+        return `${formatNumber(value * 100, Math.abs(value) < 0.01 ? 2 : 1)}%`;
+      }
+
+      function formatSigned(value, decimals) {
+        const sign = value >= 0 ? "+" : "-";
+        return `${sign}${formatNumber(Math.abs(value), decimals)}`;
+      }
+
+      function formatStateLabel(status) {
+        if (status === "correct") {
+          return "Correct";
+        }
+
+        if (status === "wrong") {
+          return "Wrong";
+        }
+
+        return "Skipped";
+      }
+
+      function getTopicLabel(topicId) {
+        const topic = TOPICS.find((entry) => entry.id === topicId);
+        return topic ? topic.label : topicId;
+      }
+
+      function formatDifficultyLabel(difficulty) {
+        if (difficulty === "all") {
+          return "All mix";
+        }
+
+        return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+      }
+
+      function inferDifficulty(topicId, category, prompt) {
+        if (topicId === "ev") {
+          return "easy";
+        }
+
+        if (topicId === "vol") {
+          return category === "Sharpe scaling" ? "medium" : "easy";
+        }
+
+        if (topicId === "logs") {
+          return prompt.includes("0.") || prompt.includes("1.0") || prompt.includes("1.1") ? "easy" : "medium";
+        }
+
+        if (topicId === "roots") {
+          return prompt.includes("0.") || prompt.includes("1.") || prompt.includes("15") || prompt.includes("24") || prompt.includes("35") ? "easy" : "medium";
+        }
+
+        if (topicId === "combos") {
+          if (prompt.includes("120") || prompt.includes("124") || prompt.includes("50)") || prompt.includes("0.5")) {
+            return "hard";
+          }
+          return "medium";
+        }
+
+        if (topicId === "normal") {
+          if (prompt.includes("20%") || prompt.includes("10%") || prompt.includes("0.84") || prompt.includes("1.28")) {
+            return "easy";
+          }
+          if (prompt.includes("0.1%") || prompt.includes("3.09")) {
+            return "hard";
+          }
+          return "medium";
+        }
+
+        if (topicId === "maxNormals") {
+          const match = prompt.match(/max of (\d+)/);
+          const n = match ? Number.parseInt(match[1], 10) : 0;
+          if (n <= 20) {
+            return "easy";
+          }
+          if (n >= 200) {
+            return "hard";
+          }
+          return "medium";
+        }
+
+        if (topicId === "randomWalks") {
+          if (category === "Variance" || category === "Standard deviation" || category === "Walk hitting probability") {
+            return "easy";
+          }
+          if (category === "Return probability") {
+            return "medium";
+          }
+          return "medium";
+        }
+
+        if (topicId === "polygons") {
+          if (category === "Polygon geometry") {
+            return prompt.includes("pentagon") ? "medium" : "easy";
+          }
+          return "medium";
+        }
+
+        if (topicId === "eigenvalues") {
+          if (category === "Adjacency eigenvalue") {
+            return "hard";
+          }
+          return category === "Spectral gap" ? "hard" : "medium";
+        }
+
+        return "medium";
+      }
+
+      function questionHasDistinctMentalAnswer(question) {
+        return Math.abs(question.answer - question.mentalAnswer) > 1e-8;
+      }
+
+      function approxLnMental(x) {
+        const anchorApproximations = {
+          "0.5": -0.693,
+          "2": 0.693,
+          "3": 1.099,
+          "4": 1.386,
+          "5": 1.61,
+          "6": 1.792,
+          "8": 2.079,
+          "9": 2.198,
+          "10": 2.303,
+          "12": 2.485,
+          "15": 2.709,
+          "20": 2.996,
+          "30": 3.402,
+          "50": 3.912,
+        };
+
+        const key = String(x);
+        if (Object.prototype.hasOwnProperty.call(anchorApproximations, key)) {
+          return anchorApproximations[key];
+        }
+
+        const u = x - 1;
+        return u - (u * u) / 2;
+      }
+
+      function approxSqrtAroundAnchor(x, anchor) {
+        const rootAnchor = Math.sqrt(anchor);
+        return rootAnchor + (x - anchor) / (2 * rootAnchor);
+      }
+
+      function approxSqrtMental(x) {
+        if (Math.abs(x - 1) <= 0.5) {
+          return 1 + (x - 1) / 2;
+        }
+
+        const root = Math.sqrt(x);
+        const lower = Math.floor(root);
+        const upper = Math.ceil(root);
+        const lowerAnchor = Math.max(1, lower * lower);
+        const upperAnchor = Math.max(1, upper * upper);
+        const anchor = Math.abs(x - lowerAnchor) <= Math.abs(x - upperAnchor) ? lowerAnchor : upperAnchor;
+        return approxSqrtAroundAnchor(x, anchor);
+      }
+
+      function erfApprox(x) {
+        const sign = x < 0 ? -1 : 1;
+        const ax = Math.abs(x);
+        const t = 1 / (1 + 0.3275911 * ax);
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+        const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax));
+        return sign * y;
+      }
+
+      function standardNormalCDF(x) {
+        return 0.5 * (1 + erfApprox(x / Math.SQRT2));
+      }
+
+      function standardNormalPDF(x) {
+        return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+      }
+
+      function standardNormalUpperTail(x) {
+        return 1 - standardNormalCDF(x);
+      }
+
+      function expectedMaxOfStdNormals(n) {
+        if (expectedMaxCache.has(n)) {
+          return expectedMaxCache.get(n);
+        }
+
+        const lower = -8;
+        const upper = 8;
+        const steps = 2400;
+        const h = (upper - lower) / steps;
+
+        function integrand(x) {
+          const cdf = standardNormalCDF(x);
+          return x * n * standardNormalPDF(x) * Math.pow(cdf, n - 1);
+        }
+
+        let sum = integrand(lower) + integrand(upper);
+        for (let index = 1; index < steps; index += 1) {
+          const x = lower + index * h;
+          sum += integrand(x) * (index % 2 === 0 ? 2 : 4);
+        }
+
+        const value = (h / 3) * sum;
+        expectedMaxCache.set(n, value);
+        return value;
+      }
+
+      function shuffle(items) {
+        const copy = [...items];
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+        }
+        return copy;
+      }
+
+      function savePreferences(nextValues) {
+        const previous = loadStoredData();
+        const merged = { ...previous, ...nextValues };
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      }
+
+      function loadStoredData() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (_error) {
+          return {};
+        }
+      }
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+    </script>
+  </body>
+</html>
