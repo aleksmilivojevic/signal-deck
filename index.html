@@ -158,6 +158,13 @@
         margin-top: 1.25rem;
       }
 
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+      }
+
       .topic-ribbon span {
         padding: 0.5rem 0.8rem;
         border-radius: 999px;
@@ -323,6 +330,14 @@
       .setup-actions,
       .review-header {
         margin-top: 1.2rem;
+      }
+
+      .setup-actions--top {
+        margin: 0 0 1.1rem;
+      }
+
+      .setup-actions--compact {
+        align-items: center;
       }
 
       .score-rules,
@@ -606,6 +621,40 @@
         margin-top: 1rem;
       }
 
+      .learning-grid {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .guide-card {
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 1.35rem;
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .guide-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .guide-card p {
+        margin: 0.6rem 0 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .guide-example {
+        margin-top: 0.8rem;
+        padding: 0.8rem 0.9rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(19, 33, 51, 0.1);
+        background: rgba(19, 33, 51, 0.04);
+        color: var(--ink);
+      }
+
       details.live-item,
       .review-row {
         padding: 0.95rem 1rem;
@@ -800,6 +849,10 @@
           grid-template-columns: 1fr;
         }
 
+        .learning-grid {
+          grid-template-columns: 1fr;
+        }
+
         .panel-heading {
           gap: 0.8rem;
         }
@@ -844,7 +897,9 @@
 
         .card-actions,
         .results-actions,
-        .topic-toolbar {
+        .topic-toolbar,
+        .hero-actions,
+        .setup-actions--compact {
           flex-direction: column;
           align-items: stretch;
         }
@@ -878,9 +933,9 @@
         <p class="eyebrow">MENTAL MATH x QUANT INTERVIEWS</p>
         <h1>Signal Deck</h1>
         <p class="dek">
-          A Tradermath-style quant drill deck with custom-length sessions, upfront timer control, live right-or-wrong
-          feedback, and an always-open review rail. This version is fully standalone: send the HTML alone and it
-          still works offline.
+          A mental-math and quant-interview drill deck with custom-length sessions, upfront timer control, live
+          right-or-wrong feedback, and an on-demand solved-card summary. This version is fully standalone: send the
+          HTML alone and it still works offline.
         </p>
         <div class="topic-ribbon" aria-hidden="true">
           <span>ln(x)</span>
@@ -890,6 +945,11 @@
           <span>random walks on Z</span>
           <span>polygon walks</span>
           <span>eigenvalue estimates</span>
+          <span>green book classics</span>
+        </div>
+        <div class="hero-actions">
+          <a class="button button--primary" href="#setup-screen">Build quiz</a>
+          <a class="button button--secondary" href="#learning-guide">Learning guide</a>
         </div>
       </section>
 
@@ -903,6 +963,13 @@
             Choose the topics, difficulty, question count, and whether hints stay on, then run a timed or untimed
             deck. The app will still accept approximate answers and keep a live tape of solved cards.
           </p>
+        </div>
+
+        <div class="setup-actions setup-actions--top setup-actions--compact">
+          <button id="start-session" class="button button--primary" type="button">Start session</button>
+          <a class="button button--secondary" href="#learning-guide">Open learning guide</a>
+          <p id="best-score" class="inline-note"></p>
+          <p id="setup-error" class="inline-note inline-note--error" aria-live="polite"></p>
         </div>
 
         <div class="setup-grid">
@@ -953,18 +1020,6 @@
             <p class="field-note setup-footnote">The review rail and end-of-session analysis always show the full solution notes.</p>
           </article>
 
-          <article class="field-card">
-            <span class="field-label">Format</span>
-            <div class="pill-grid">
-              <span class="pill">custom question count</span>
-              <span class="pill">easy / medium / hard / mix</span>
-              <span class="pill">check -> review -> next</span>
-              <span class="pill">offline standalone HTML</span>
-              <span class="pill">live solved-card analysis</span>
-            </div>
-            <p class="field-note">You can study solved cards while the timer is still running.</p>
-          </article>
-
           <article class="field-card field-card--wide">
             <div class="topic-toolbar">
               <span class="field-label">Topics to practice</span>
@@ -977,11 +1032,100 @@
             <p id="topic-count" class="field-note"></p>
           </article>
         </div>
+      </section>
 
-        <div class="setup-actions">
-          <button id="start-session" class="button button--primary" type="button">Start session</button>
-          <p id="best-score" class="inline-note"></p>
-          <p id="setup-error" class="inline-note inline-note--error" aria-live="polite"></p>
+      <section class="panel learning-panel" id="learning-guide">
+        <div class="panel-heading">
+          <div>
+            <p class="section-tag">Learning Guide</p>
+            <h2>Common techniques</h2>
+          </div>
+          <p class="panel-copy">
+            This section is meant to be read like a compact playbook: each technique has a fast rule, a worked
+            example, and a note on what the quiz is trying to train.
+          </p>
+        </div>
+
+        <div class="learning-grid">
+          <article class="guide-card">
+            <h3>Logs Near 1</h3>
+            <p>For numbers close to 1, write <code>x = 1 + u</code> and use <code>ln(1 + u) ≈ u - u²/2</code>. This is usually accurate enough for interview-speed estimates.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> <code>ln(1.08) ≈ 0.08 - 0.08²/2 = 0.0768</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Square Roots</h3>
+            <p>Anchor at a nearby perfect square. If <code>x = a + h</code> and <code>a</code> is a square, use <code>sqrt(a + h) ≈ sqrt(a) + h / (2sqrt(a))</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> <code>sqrt(50)</code> is near <code>49</code>, so <code>7 + 1/14 ≈ 7.07</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Normal Tails</h3>
+            <p>Memorize a few anchors and reuse them everywhere: <code>10%</code> maps to about <code>1.28</code>, <code>5%</code> to <code>1.64</code>, <code>1%</code> to <code>2.33</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> if someone asks for <code>P(Z &gt; 1.64)</code>, your fast answer is about <code>5%</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Expected Max of Normals</h3>
+            <p>For <code>M_n = max(Z₁, ..., Z_n)</code>, start from <code>P(M_n ≤ x) = Φ(x)^n</code>. If the tail <code>p = P(Z &gt; x)</code> is small, then <code>Φ(x)^n = (1 - p)^n ≈ e^{-np}</code>. Setting <code>np ≈ 1</code> makes <code>P(M_n ≤ x) ≈ e^{-1}</code>, so this gives a central location for the max, not the exact mean. The true expectation is usually a bit above that anchor because the right tail still contributes.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> if <code>n = 20</code>, then <code>1 / n = 5%</code>, so the shortcut anchor is <code>x ≈ 1.64</code>. That means the max is above <code>1.64</code> with probability about <code>1 - e^{-1} ≈ 63%</code>, and the actual mean ends up a bit higher.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Random Walks on the Integers</h3>
+            <p>For gambler’s ruin on <code>{0, 1, ..., N}</code>, the hit probability is <code>x / N</code> and the expected exit time is <code>x(N - x)</code>. Those two formulas cover a lot of classic questions.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> start at <code>x = 3</code> with barriers at <code>0</code> and <code>8</code>. The expected exit time is <code>3 × 5 = 15</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Rings and Regular Polygons</h3>
+            <p>A walk on a regular polygon is a walk on a ring graph. Opposite-vertex hitting times reduce to distance times remaining distance, and geometry questions often reduce to familiar chord lengths.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> on a regular octagon, the opposite vertex is 4 edges away, so the expected hit time is <code>4(8 - 4) = 16</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Green Book: Noodles</h3>
+            <p>If you have <code>n</code> noodles and randomly pair all loose ends, the expected number of loops is <code>1 + 1/3 + 1/5 + ... + 1/(2n - 1)</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> for <code>4</code> noodles, the expectation is <code>1 + 1/3 + 1/5 + 1/7 ≈ 1.676</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Green Book: Runs</h3>
+            <p>For <code>n</code> fair coin flips, the expected total number of runs is <code>(n + 1) / 2</code>. A good mental rule for the longest run of heads is that it sits around <code>log₂ n</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> in <code>20</code> flips, the expected number of runs is <code>10.5</code>. In <code>64</code> flips, the longest head run is mentally around <code>6</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Green Book: Waiting for a Streak</h3>
+            <p>For a fair coin, the expected waiting time until you see <code>k</code> heads in a row is <code>2^(k + 1) - 2</code>. This is a high-value formula to memorize because it turns a full state recursion into one mental line.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> for <code>HHH</code>, use <code>2^4 - 2 = 14</code>. For <code>HHHH</code>, use <code>2^5 - 2 = 30</code>.
+            </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Green Book: Permutations and Coupons</h3>
+            <p>Several classics live here. The expected number of cycles in a random permutation of <code>n</code> items is <code>H_n</code>, the expected number of fixed points is <code>1</code>, the derangement probability is close to <code>1/e</code>, and the expected time to collect <code>n</code> equally likely coupon types is <code>n H_n</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> for <code>4</code> coupon types, the expected collection time is <code>4(1 + 1/2 + 1/3 + 1/4) ≈ 8.33</code>.
+            </div>
+          </article>
         </div>
       </section>
 
@@ -1014,7 +1158,6 @@
           <article class="flashcard">
             <div class="flashcard-meta">
               <span id="category-badge" class="badge"></span>
-              <span id="format-badge" class="badge badge--ghost"></span>
             </div>
 
             <h2 id="prompt-text" class="prompt-text"></h2>
@@ -1092,7 +1235,7 @@
         </div>
 
         <div class="results-actions">
-          <button id="restart-session" class="button button--primary" type="button">Run another 20</button>
+          <button id="restart-session" class="button button--primary" type="button">Repeat quiz</button>
           <button id="back-to-setup" class="button button--secondary" type="button">Change setup</button>
         </div>
 
@@ -1122,6 +1265,7 @@
         { id: "randomWalks", label: "Random walks on Z", description: "Gambler's ruin, exit time, and return-probability shortcuts.", meta: "1D walks" },
         { id: "polygons", label: "Symmetric polygons", description: "Cycle walks and regular-polygon geometry with closed-form anchors.", meta: "n-gons" },
         { id: "eigenvalues", label: "Eigenvalue estimates", description: "Human-doable spectral estimates for cycles and related walks.", meta: "spectral" },
+        { id: "greenBook", label: "Green Book classics", description: "Noodles, runs, streaks, permutations, derangements, and coupon-collector staples.", meta: "classic puzzles" },
       ];
 
       const elements = {
@@ -1151,7 +1295,6 @@
         sessionLayout: document.getElementById("session-layout"),
         sessionSummaryPanel: document.getElementById("session-summary-panel"),
         categoryBadge: document.getElementById("category-badge"),
-        formatBadge: document.getElementById("format-badge"),
         promptText: document.getElementById("prompt-text"),
         hintPanel: document.getElementById("hint-panel"),
         hintText: document.getElementById("hint-text"),
@@ -1462,7 +1605,6 @@
 
         elements.progressLabel.textContent = `${state.currentIndex + 1} / ${state.sessionLength}`;
         elements.categoryBadge.textContent = question.category;
-        elements.formatBadge.textContent = `${question.formatHint} | ${formatDifficultyLabel(question.difficulty)}`;
         elements.promptText.textContent = question.prompt;
         elements.progressFill.style.width = `${(state.currentIndex / state.sessionLength) * 100}%`;
 
@@ -1740,6 +1882,7 @@
           randomWalks: buildRandomWalkQuestions(),
           polygons: buildPolygonQuestions(),
           eigenvalues: buildEigenvalueQuestions(),
+          greenBook: buildGreenBookQuestions(),
         };
       }
 
@@ -1940,13 +2083,13 @@
             topicId: "maxNormals",
             category: "E[max Z_i]",
             prompt: `Estimate E[max of ${n} iid N(0, 1) draws].`,
-            hint: "Solve n * P(Z > x) ~= 1, then invert the tail with the normal-table anchor.",
+            hint: "Use P(M <= x) = Phi(x)^n and the small-tail approximation (1 - p)^n ~= e^(-np); the 1-exceedance rule gives a fast anchor, not the exact mean.",
             inputMode: "number",
             formatHint: "z-score",
             answer: exactExpectedMax,
             mentalAnswer: z,
             absTolerance: 0.12,
-            explanation: `The 1-exceedance shortcut sets ${n} * P(Z > x) ~= 1, which gives about ${z}. The true expected max is about ${formatNumber(exactExpectedMax, 4)}.`,
+            explanation: `Let M be the max. Then P(M <= x) = Phi(x)^${n}. If p = P(Z > x) is small, this is about (1 - p)^${n} ~= e^(-${n}p). Setting ${n}p ~= 1 gives p ~= ${formatPercent(1 / n)}, so x is the ${tailMental === 0.001 ? "0.1%" : formatPercent(tailMental)} upper-tail normal anchor, about ${z}. That point is where the max is already above x with probability about 1 - e^(-1) ~= 63%, so it is a central location estimate rather than the exact mean. The true E[max] is about ${formatNumber(exactExpectedMax, 4)}, a bit above the shortcut anchor.`,
           });
         });
       }
@@ -2391,6 +2534,224 @@
         ];
       }
 
+      function buildGreenBookQuestions() {
+        const longestRun16 = expectedLongestHeadsRunFair(16);
+        const longestRun32 = expectedLongestHeadsRunFair(32);
+        const longestRun64 = expectedLongestHeadsRunFair(64);
+        const derangementProbability8 = subfactorial(8) / factorial(8);
+
+        return [
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: noodle loops",
+            prompt: "You have 3 noodles and randomly tie together all 6 loose ends in pairs. Estimate the expected number of loops formed.",
+            hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedNoodleLoops(3),
+            absTolerance: 0.06,
+            explanation: "Use the classic odd-harmonic formula: 1 + 1/3 + 1/5.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: noodle loops",
+            prompt: "You have 4 noodles and randomly tie together all 8 loose ends in pairs. Estimate the expected number of loops formed.",
+            hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedNoodleLoops(4),
+            absTolerance: 0.06,
+            explanation: "Use the classic odd-harmonic formula: 1 + 1/3 + 1/5 + 1/7.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: noodle loops",
+            prompt: "You have 6 noodles and randomly tie together all 12 loose ends in pairs. Estimate the expected number of loops formed.",
+            hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedNoodleLoops(6),
+            absTolerance: 0.07,
+            explanation: "Use the same odd-harmonic formula up through 1/11.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: runs",
+            prompt: "You flip a fair coin 10 times. Estimate the expected total number of runs.",
+            hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedRunsFair(10),
+            absTolerance: 0.05,
+            explanation: "Use (n + 1) / 2, so (10 + 1) / 2 = 5.5.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: runs",
+            prompt: "You flip a fair coin 21 times. Estimate the expected total number of runs.",
+            hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedRunsFair(21),
+            absTolerance: 0.05,
+            explanation: "Use (n + 1) / 2, so (21 + 1) / 2 = 11.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: runs",
+            prompt: "You flip a fair coin 20 times. Estimate the expected number of runs of heads.",
+            hint: "For n fair flips, the expected number of head-runs is (n + 1) / 4.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedHeadsRunsFair(20),
+            absTolerance: 0.05,
+            explanation: "Use (n + 1) / 4, so (20 + 1) / 4 = 5.25.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: longest run",
+            prompt: "You flip a fair coin 16 times. Estimate the expected length of the longest run of heads.",
+            hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: longestRun16,
+            mentalAnswer: Math.log2(16),
+            absTolerance: 0.4,
+            explanation: `A solid shortcut is log2(16) = 4, while the exact expectation is about ${formatNumber(longestRun16, 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: longest run",
+            prompt: "You flip a fair coin 32 times. Estimate the expected length of the longest run of heads.",
+            hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: longestRun32,
+            mentalAnswer: Math.log2(32),
+            absTolerance: 0.45,
+            explanation: `A solid shortcut is log2(32) = 5, while the exact expectation is about ${formatNumber(longestRun32, 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: longest run",
+            prompt: "You flip a fair coin 64 times. Estimate the expected length of the longest run of heads.",
+            hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: longestRun64,
+            mentalAnswer: Math.log2(64),
+            absTolerance: 0.5,
+            explanation: `A solid shortcut is log2(64) = 6, while the exact expectation is about ${formatNumber(longestRun64, 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHH.",
+            hint: "For k consecutive heads, the expected waiting time is 2^(k + 1) - 2.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedTimeToHeadsStreak(3),
+            absTolerance: 0.1,
+            explanation: "Use 2^(k + 1) - 2 with k = 3, giving 2^4 - 2 = 14.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHHH.",
+            hint: "For k consecutive heads, the expected waiting time is 2^(k + 1) - 2.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedTimeToHeadsStreak(4),
+            absTolerance: 0.1,
+            explanation: "Use 2^(k + 1) - 2 with k = 4, giving 2^5 - 2 = 30.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: permutations",
+            prompt: "A uniformly random permutation of 6 items is drawn. Estimate the expected number of cycles.",
+            hint: "The expected number of cycles in a random permutation of n items is H_n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: harmonicNumber(6),
+            absTolerance: 0.06,
+            explanation: "Use H_6 = 1 + 1/2 + ... + 1/6.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: records",
+            prompt: "A random ordering of 8 distinct numbers is revealed left to right. Estimate the expected number of record highs you will see.",
+            hint: "Each position is a record with probability 1 / k, so the expectation is H_n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: harmonicNumber(8),
+            absTolerance: 0.06,
+            explanation: "By linearity, the expected number of records is H_8 = 1 + 1/2 + ... + 1/8.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: fixed points",
+            prompt: "A uniformly random permutation of 10 items is drawn. Estimate the expected number of fixed points.",
+            hint: "Each item stays fixed with probability 1 / n, so the expectation adds to 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: 1,
+            absTolerance: 0.03,
+            explanation: "Sum the 10 indicator variables; each has expectation 1/10, so the total expectation is 1.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: derangements",
+            prompt: "A uniformly random permutation of 8 items is drawn. Estimate the probability that no item stays fixed.",
+            hint: "The no-fixed-point probability is close to 1 / e; for n = 8 the exact value is already very close.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: derangementProbability8,
+            mentalAnswer: 1 / Math.E,
+            absTolerance: 0.025,
+            explanation: `The classic mental anchor is 1/e ≈ ${formatNumber(1 / Math.E, 4)}; for n = 8 the exact probability is about ${formatNumber(derangementProbability8, 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: coupons",
+            prompt: "Each draw lands uniformly on one of 4 coupon types. Estimate the expected number of draws needed to collect all 4 types.",
+            hint: "Coupon collector gives nH_n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: couponCollectorExpected(4),
+            absTolerance: 0.08,
+            explanation: "Use nH_n, so 4(1 + 1/2 + 1/3 + 1/4).",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: coupons",
+            prompt: "Each draw lands uniformly on one of 5 coupon types. Estimate the expected number of draws needed to collect all 5 types.",
+            hint: "Coupon collector gives nH_n.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: couponCollectorExpected(5),
+            absTolerance: 0.08,
+            explanation: "Use nH_n, so 5(1 + 1/2 + 1/3 + 1/4 + 1/5).",
+            difficulty: "hard",
+          }),
+        ];
+      }
+
       function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty }) {
         return {
           topicId,
@@ -2631,6 +2992,22 @@
           return category === "Spectral gap" ? "hard" : "medium";
         }
 
+        if (topicId === "greenBook") {
+          if (category === "Green Book: runs" || category === "Green Book: fixed points") {
+            return "easy";
+          }
+          if (
+            category === "Green Book: longest run" ||
+            category === "Green Book: streak waiting time" ||
+            category === "Green Book: derangements" ||
+            prompt.includes("6 noodles") ||
+            prompt.includes("5 coupon types")
+          ) {
+            return "hard";
+          }
+          return "medium";
+        }
+
         return "medium";
       }
 
@@ -2733,6 +3110,103 @@
         const value = (h / 3) * sum;
         expectedMaxCache.set(n, value);
         return value;
+      }
+
+      function harmonicNumber(n) {
+        let total = 0;
+        for (let k = 1; k <= n; k += 1) {
+          total += 1 / k;
+        }
+        return total;
+      }
+
+      function expectedNoodleLoops(n) {
+        let total = 0;
+        for (let k = 1; k <= n; k += 1) {
+          total += 1 / (2 * k - 1);
+        }
+        return total;
+      }
+
+      function expectedRunsFair(n) {
+        return (n + 1) / 2;
+      }
+
+      function expectedHeadsRunsFair(n) {
+        return (n + 1) / 4;
+      }
+
+      function couponCollectorExpected(n) {
+        return n * harmonicNumber(n);
+      }
+
+      function expectedTimeToHeadsStreak(k) {
+        return 2 ** (k + 1) - 2;
+      }
+
+      function probabilityNoHeadsRunAtLeast(n, threshold) {
+        if (threshold <= 0) {
+          return 0;
+        }
+
+        let dp = new Array(threshold).fill(0);
+        dp[0] = 1;
+
+        for (let step = 0; step < n; step += 1) {
+          const next = new Array(threshold).fill(0);
+          let totalMass = 0;
+
+          for (let run = 0; run < threshold; run += 1) {
+            totalMass += dp[run];
+          }
+
+          next[0] += totalMass / 2;
+
+          for (let run = 0; run < threshold - 1; run += 1) {
+            next[run + 1] += dp[run] / 2;
+          }
+
+          dp = next;
+        }
+
+        return dp.reduce((sum, value) => sum + value, 0);
+      }
+
+      function expectedLongestHeadsRunFair(n) {
+        let expectation = 0;
+        for (let threshold = 1; threshold <= n; threshold += 1) {
+          expectation += 1 - probabilityNoHeadsRunAtLeast(n, threshold);
+        }
+        return expectation;
+      }
+
+      function factorial(n) {
+        let product = 1;
+        for (let k = 2; k <= n; k += 1) {
+          product *= k;
+        }
+        return product;
+      }
+
+      function subfactorial(n) {
+        if (n === 0) {
+          return 1;
+        }
+
+        if (n === 1) {
+          return 0;
+        }
+
+        let prevPrev = 1;
+        let prev = 0;
+
+        for (let k = 2; k <= n; k += 1) {
+          const current = (k - 1) * (prev + prevPrev);
+          prevPrev = prev;
+          prev = current;
+        }
+
+        return prev;
       }
 
       function shuffle(items) {
