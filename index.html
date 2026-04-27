@@ -609,9 +609,25 @@
         justify-content: space-between;
       }
 
-      .live-review-head p {
+      .live-review-copy {
         margin: 0;
         max-width: 24rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .summary-close {
+        display: none;
+        flex: 0 0 auto;
+        width: auto;
+      }
+
+      .summary-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        background: rgba(8, 17, 29, 0.48);
+        backdrop-filter: blur(4px);
       }
 
       .live-review-list,
@@ -653,6 +669,36 @@
         border: 1px solid rgba(19, 33, 51, 0.1);
         background: rgba(19, 33, 51, 0.04);
         color: var(--ink);
+      }
+
+      .guide-details,
+      .explanation-details {
+        margin-top: 0.8rem;
+        padding-top: 0.75rem;
+        border-top: 1px dashed rgba(19, 33, 51, 0.16);
+      }
+
+      .guide-details summary,
+      .explanation-details summary {
+        cursor: pointer;
+        list-style: none;
+        color: var(--accent-strong);
+        font-family: "SFMono-Regular", Menlo, Consolas, Monaco, monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .guide-details summary::-webkit-details-marker,
+      .explanation-details summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .guide-details p,
+      .explanation-body p {
+        margin: 0.65rem 0 0;
+        color: var(--muted);
+        line-height: 1.65;
       }
 
       details.live-item,
@@ -839,6 +885,10 @@
       }
 
       @media (max-width: 980px) {
+        body.summary-sheet-open {
+          overflow: hidden;
+        }
+
         .panel-heading,
         .setup-grid,
         .summary-grid,
@@ -863,6 +913,23 @@
 
         .live-review-panel {
           position: static;
+        }
+
+        .summary-close {
+          display: inline-flex;
+        }
+
+        #session-summary-panel {
+          position: fixed;
+          left: 0.75rem;
+          right: 0.75rem;
+          bottom: 0.75rem;
+          top: auto;
+          z-index: 21;
+          max-height: min(78vh, 44rem);
+          overflow: auto;
+          padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+          box-shadow: 0 28px 70px rgba(5, 12, 23, 0.34);
         }
 
         .summary-grid {
@@ -942,6 +1009,7 @@
           <span>sqrt(x)</span>
           <span>normal tails</span>
           <span>E[max Z<sub>i</sub>]</span>
+          <span>geom / Pois extremes</span>
           <span>random walks on Z</span>
           <span>polygon walks</span>
           <span>eigenvalue estimates</span>
@@ -1077,6 +1145,24 @@
             <div class="guide-example">
               <strong>Example:</strong> if <code>n = 20</code>, then <code>1 / n = 5%</code>, so the shortcut anchor is <code>x ≈ 1.64</code>. That means the max is above <code>1.64</code> with probability about <code>1 - e^{-1} ≈ 63%</code>, and the actual mean ends up a bit higher.
             </div>
+            <details class="guide-details">
+              <summary>Why this works</summary>
+              <p>The max is controlled by its upper tail. Since <code>P(M_n &gt; x) = 1 - Φ(x)^n</code>, the place where <code>Φ(x)^n</code> stops being close to 1 is where the max starts to live. Writing <code>Φ(x) = 1 - p</code> with small <code>p</code> turns this into <code>(1 - p)^n ≈ e^{-np}</code>.</p>
+              <p>So <code>np ≈ 1</code> identifies the scale where you expect about one exceedance among the <code>n</code> draws. That gives a location estimate, not the exact expectation, because the mean still averages over the whole right tail beyond that point.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Discrete Extremes and Full Sets</h3>
+            <p>The same tail-threshold idea works for discrete variables. For maxima, solve <code>n P(X ≥ k) ≈ 1</code>. For minima, solve <code>n P(X ≤ k) ≈ 1</code> or, when you have many category counts, center each count at its mean and use a left-tail normal anchor. Geometric tails are exact and Poisson counts are often well-approximated by normals with mean and variance <code>λ</code>.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> for <code>max</code> of 16 geometric(1/2) variables, use <code>2^{-(k-1)} ≈ 1/16</code>, so <code>k ≈ 5</code>. For 160 fair 20-sided dice, each face count has mean <code>8</code> and standard deviation about <code>2.76</code>, so the expected number of removable full sets is roughly <code>8 - 1.64 × 2.76 ≈ 3.5</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Why this works</summary>
+              <p>For maxima and minima, the first useful question is: where does the extreme stop being rare? That is exactly what the threshold rules <code>n P(X ≥ k) ≈ 1</code> and <code>n P(X ≤ k) ≈ 1</code> are measuring.</p>
+              <p>For the dice-set questions, the number of full sets is the minimum of the face counts. Those counts are dependent because they sum to the total number of dice, but after centering at the mean and scaling by the standard deviation, a normal extreme-value estimate still gives a good mental approximation for where the minimum usually lands.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1085,6 +1171,11 @@
             <div class="guide-example">
               <strong>Example:</strong> start at <code>x = 3</code> with barriers at <code>0</code> and <code>8</code>. The expected exit time is <code>3 × 5 = 15</code>.
             </div>
+            <details class="guide-details">
+              <summary>Why this works</summary>
+              <p>If <code>h(i)</code> is the probability of hitting <code>N</code> before <code>0</code> from state <code>i</code>, conditioning on the first step gives <code>h(i) = (h(i-1) + h(i+1)) / 2</code> with boundary values <code>h(0) = 0</code> and <code>h(N) = 1</code>. The only discrete-harmonic solution with those boundaries is linear, so <code>h(i) = i / N</code>.</p>
+              <p>For the expected exit time <code>t(i)</code>, the same first-step conditioning gives <code>t(i) = 1 + (t(i-1) + t(i+1)) / 2</code> with <code>t(0) = t(N) = 0</code>. That forces the second difference to be constant, so <code>t(i)</code> must be quadratic. Solving the boundary-value problem gives <code>t(i) = i(N - i)</code>.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1093,6 +1184,12 @@
             <div class="guide-example">
               <strong>Example:</strong> on a regular octagon, the opposite vertex is 4 edges away, so the expected hit time is <code>4(8 - 4) = 16</code>.
             </div>
+            <details class="guide-details">
+              <summary>Why d(n - d)?</summary>
+              <p>A regular <code>n</code>-gon gives the cycle graph with <code>n</code> edges. For two vertices at graph distance <code>d</code>, the effective resistance on the cycle is <code>d(n - d) / n</code>, because the two arcs of lengths <code>d</code> and <code>n - d</code> act like two parallel resistors.</p>
+              <p>The commute-time identity says <code>H(u,v) + H(v,u) = 2m R_eff(u,v)</code>, where <code>m</code> is the number of edges. On the cycle, <code>m = n</code>, so the commute time is <code>2d(n - d)</code>. By symmetry <code>H(u,v) = H(v,u)</code>, so each one-way hitting time is <code>d(n - d)</code>.</p>
+              <p>When the question asks for the probability of reaching the opposite vertex before coming back to a marked start vertex, symmetry folds the cycle into a gambler’s-ruin path. Starting one step away from the start on a path of length <code>d</code> gives probability <code>1 / d</code>.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1113,10 +1210,15 @@
 
           <article class="guide-card">
             <h3>Green Book: Waiting for a Streak</h3>
-            <p>For a fair coin, the expected waiting time until you see <code>k</code> heads in a row is <code>2^(k + 1) - 2</code>. This is a high-value formula to memorize because it turns a full state recursion into one mental line.</p>
+            <p>For any fair-coin pattern <code>w</code>, the expected waiting time until you first see it is <code>sum 2^k</code> over all lengths <code>k</code> for which the first <code>k</code> symbols of <code>w</code> equal the last <code>k</code> symbols of <code>w</code>. This is the standard martingale / betting-system result. Runs of heads are just the special case where every prefix is also a suffix, so <code>HHH</code> gives <code>2 + 4 + 8 = 14</code>.</p>
             <div class="guide-example">
-              <strong>Example:</strong> for <code>HHH</code>, use <code>2^4 - 2 = 14</code>. For <code>HHHH</code>, use <code>2^5 - 2 = 30</code>.
+              <strong>Examples:</strong> for <code>HTH</code>, the matching prefix/suffix lengths are <code>1</code> and <code>3</code>, so the mean wait is <code>2 + 8 = 10</code>. For <code>HTHT</code>, the matching lengths are <code>2</code> and <code>4</code>, so the mean wait is <code>4 + 16 = 20</code>.
             </div>
+            <details class="guide-details">
+              <summary>Why overlap lengths appear</summary>
+              <p>The clean proof starts a new bettor on every flip. Each bettor bets sequentially on the letters of the target pattern and doubles their stake whenever they survive one more step. With fair-coin payouts, the total wealth process is a martingale.</p>
+              <p>At the stopping time when the pattern first appears, exactly the bettors whose starting positions align with a prefix-suffix overlap are still alive. Their payouts are <code>2^k</code> for the overlap lengths <code>k</code>, so optional stopping turns the expected waiting time into the sum of those powers of 2.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1188,14 +1290,24 @@
             <p id="input-error" class="inline-note inline-note--error" aria-live="polite"></p>
           </article>
 
-          <aside id="session-summary-panel" class="live-review-panel is-hidden">
+          <div id="summary-backdrop" class="summary-backdrop is-hidden" aria-hidden="true"></div>
+
+          <aside
+            id="session-summary-panel"
+            class="live-review-panel is-hidden"
+            role="dialog"
+            aria-modal="false"
+            aria-labelledby="session-summary-title"
+            tabindex="-1"
+          >
             <div class="live-review-head">
               <div>
                 <p class="section-tag">Session Summary</p>
-                <h3>Solved cards</h3>
+                <h3 id="session-summary-title">Solved cards</h3>
               </div>
-              <p>The deck keeps moving after each answer. Open this panel whenever you want to inspect solved cards.</p>
+              <button id="summary-close" class="button button--ghost summary-close" type="button">Close</button>
             </div>
+            <p class="live-review-copy">The deck keeps moving after each answer. Open this panel whenever you want to inspect solved cards.</p>
             <div id="live-review-list" class="live-review-list"></div>
           </aside>
         </div>
@@ -1260,6 +1372,7 @@
         { id: "combos", label: "Mixed combos", description: "Fast sums and differences of mental-log and root estimates.", meta: "combo drills" },
         { id: "normal", label: "Normal tails", description: "Memorized tail anchors and reverse-quantile questions.", meta: "N(0,1)" },
         { id: "maxNormals", label: "Expected max", description: "Use nP(Z > x) ~= 1 to estimate maxima of iid normals.", meta: "E[max Z_i]" },
+        { id: "discreteExtremes", label: "Discrete extremes", description: "Geometric and Poisson max/min questions plus full-set occupancy approximations.", meta: "geom / Pois / dice" },
         { id: "vol", label: "Vol and Sharpe scaling", description: "Sqrt-time scaling for volatility and Sharpe ratios.", meta: "sqrt(time)" },
         { id: "ev", label: "Expected value", description: "Short payoff-weighting questions meant to stay mental.", meta: "quick EV" },
         { id: "randomWalks", label: "Random walks on Z", description: "Gambler's ruin, exit time, and return-probability shortcuts.", meta: "1D walks" },
@@ -1293,7 +1406,9 @@
         summaryToggleNote: document.getElementById("summary-toggle-note"),
         progressFill: document.getElementById("progress-fill"),
         sessionLayout: document.getElementById("session-layout"),
+        summaryBackdrop: document.getElementById("summary-backdrop"),
         sessionSummaryPanel: document.getElementById("session-summary-panel"),
+        summaryClose: document.getElementById("summary-close"),
         categoryBadge: document.getElementById("category-badge"),
         promptText: document.getElementById("prompt-text"),
         hintPanel: document.getElementById("hint-panel"),
@@ -1323,6 +1438,8 @@
       ];
 
       const expectedMaxCache = new Map();
+      const poissonPMFCache = new Map();
+      const occupancyMinCache = new Map();
 
       const questionBank = buildQuestionBank();
 
@@ -1360,10 +1477,13 @@
         elements.primaryAction.addEventListener("click", handlePrimaryAction);
         elements.secondaryAction.addEventListener("click", handleSecondaryAction);
         elements.summaryToggle.addEventListener("click", toggleSessionSummary);
+        elements.summaryClose.addEventListener("click", () => setSessionSummaryOpen(false));
+        elements.summaryBackdrop.addEventListener("click", () => setSessionSummaryOpen(false));
         elements.selectAllTopics.addEventListener("click", () => setAllTopics(true));
         elements.clearTopics.addEventListener("click", () => setAllTopics(false));
         elements.questionCount.addEventListener("input", updateTopicCount);
         elements.difficultySelect.addEventListener("change", updateTopicCount);
+        window.addEventListener("resize", syncSummaryPresentation);
 
         elements.answerInput.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
@@ -1380,6 +1500,11 @@
           if ((event.key === "s" || event.key === "S") && !event.metaKey && !event.ctrlKey && !event.altKey) {
             event.preventDefault();
             skipCurrentQuestion();
+          }
+
+          if (event.key === "Escape" && state.summaryOpen) {
+            event.preventDefault();
+            setSessionSummaryOpen(false);
           }
         });
 
@@ -1676,19 +1801,20 @@
 
       function updateSummaryToggle() {
         const status = state.lastResultStatus;
+        const actionWord = isCompactSummaryMode() ? "Tap" : "Click";
         elements.summaryToggle.classList.remove("is-correct", "is-wrong", "is-skipped", "is-neutral");
 
         if (!status) {
           elements.summaryToggle.classList.add("is-neutral");
           elements.summaryToggleLabel.textContent = "No answer yet";
-          elements.summaryToggleNote.textContent = state.summaryOpen ? "Hide summary" : "Click for summary";
+          elements.summaryToggleNote.textContent = state.summaryOpen ? "Hide summary" : `${actionWord} for summary`;
           elements.summaryToggle.setAttribute("aria-expanded", String(state.summaryOpen));
           return;
         }
 
         elements.summaryToggle.classList.add(`is-${status}`);
         elements.summaryToggleLabel.textContent = formatStateLabel(status);
-        elements.summaryToggleNote.textContent = `${state.results.length} solved • ${state.summaryOpen ? "hide summary" : "click for summary"}`;
+        elements.summaryToggleNote.textContent = `${state.results.length} solved • ${state.summaryOpen ? "hide summary" : `${actionWord.toLowerCase()} for summary`}`;
         elements.summaryToggle.setAttribute("aria-expanded", String(state.summaryOpen));
       }
 
@@ -1697,16 +1823,39 @@
       }
 
       function setSessionSummaryOpen(isOpen) {
+        const compactMode = isCompactSummaryMode();
         state.summaryOpen = isOpen;
-        elements.sessionLayout.classList.toggle("has-summary", isOpen);
+        elements.sessionLayout.classList.toggle("has-summary", isOpen && !compactMode);
         elements.sessionSummaryPanel.classList.toggle("is-hidden", !isOpen);
+        elements.summaryBackdrop.classList.toggle("is-hidden", !isOpen || !compactMode);
+        document.body.classList.toggle("summary-sheet-open", isOpen && compactMode);
+        elements.sessionSummaryPanel.setAttribute("aria-modal", String(isOpen && compactMode));
         updateSummaryToggle();
 
         if (isOpen) {
           window.requestAnimationFrame(() => {
+            if (compactMode) {
+              elements.sessionSummaryPanel.scrollTop = 0;
+              elements.sessionSummaryPanel.focus({ preventScroll: true });
+              return;
+            }
+
             elements.sessionSummaryPanel.scrollIntoView({ behavior: "smooth", block: "start" });
           });
         }
+      }
+
+      function isCompactSummaryMode() {
+        return window.matchMedia("(max-width: 980px)").matches;
+      }
+
+      function syncSummaryPresentation() {
+        if (!state.summaryOpen) {
+          updateSummaryToggle();
+          return;
+        }
+
+        setSessionSummaryOpen(true);
       }
 
       function createLiveReviewMarkup(entry, isOpen) {
@@ -1726,6 +1875,7 @@
             ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
             <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
             <p class="review-copy">${escapeHtml(entry.question.explanation)}</p>
+            ${renderExpandedExplanation(entry.question)}
           </details>
         `;
       }
@@ -1744,8 +1894,152 @@
             ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
             <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
             <p class="review-copy">${escapeHtml(entry.question.explanation)}</p>
+            ${renderExpandedExplanation(entry.question)}
           </article>
         `;
+      }
+
+      function renderExpandedExplanation(question) {
+        const explanation = getExpandedExplanation(question);
+        if (!explanation) {
+          return "";
+        }
+
+        const paragraphs = explanation
+          .split("\n\n")
+          .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+          .join("");
+
+        return `
+          <details class="explanation-details">
+            <summary>Why This Works</summary>
+            <div class="explanation-body">${paragraphs}</div>
+          </details>
+        `;
+      }
+
+      function getExpandedExplanation(question) {
+        if (question.topicId === "logs") {
+          if (question.prompt.includes("1.") || question.prompt.includes("0.")) {
+            return "Write x = 1 + u. The Taylor expansion ln(1 + u) = u - u^2/2 + u^3/3 - ... is very accurate when |u| is small, so keeping one or two terms gives a mental estimate.\n\nThe shortcut answer is the truncated series, while the exact answer keeps the higher-order terms. That is why the review shows both the exact value and the mental anchor.";
+          }
+
+          return "Anchor logs come from the identities ln(ab) = ln a + ln b and ln(a/b) = ln a - ln b. So once you remember a few values like ln(2), ln(3), ln(5), and ln(10), many other logs become short additions or subtractions.\n\nThe point of these cards is not memorizing every log individually; it is reducing the target number to a product or quotient of familiar anchors.";
+        }
+
+        if (question.topicId === "roots") {
+          return "The square-root estimate is a first-order Taylor expansion. Around a nearby anchor a, sqrt(a + h) is approximately sqrt(a) + h / (2 sqrt(a)).\n\nSo the whole trick is choosing an anchor square that is close enough for the linear correction to do most of the work mentally.";
+        }
+
+        if (question.topicId === "combos") {
+          return "These are built to train decomposition. Each expression is chosen so that every piece has a separate fast anchor, and the total answer comes from combining those anchors.\n\nThe mental error usually comes from each sub-estimate separately, so the accepted range is widened enough to include both the exact total and the shortcut total.";
+        }
+
+        if (question.topicId === "normal") {
+          return "These cards lean on a small lookup table of memorable one-sided normal tails and their reverse quantiles. In practice, traders and interview prep drill a few anchors like 10%, 5%, 1%, and then interpolate mentally around them.\n\nThe point is not reconstructing the Gaussian integral from scratch; it is building a fast map between tail sizes and z-scores.";
+        }
+
+        if (question.topicId === "maxNormals") {
+          return "Let M_n be the maximum. Then P(M_n <= x) = Phi(x)^n. If the upper tail p = P(Z > x) is small, this is approximately (1 - p)^n, which is about e^(-np).\n\nSo the level where np is about 1 is the level where the maximum stops being rare. That gives a location estimate for the maximum. The true expectation is usually a bit higher because expectation averages over the whole tail beyond that location, not just the cutoff point.";
+        }
+
+        if (question.topicId === "discreteExtremes") {
+          if (question.category === "Geometric max") {
+            return "For a geometric variable with success probability p, P(G >= k) = (1 - p)^(k - 1). For the maximum of n iid copies, the same one-exceedance logic says to look where n P(G >= k) is around 1.\n\nThat gives the scale where the maximum starts to appear. Since expectation still averages over values above that cutoff, the exact mean is usually a bit above the shortcut anchor.";
+          }
+
+          if (question.category === "Geometric min") {
+            return "For the minimum of iid geometrics, the tail is even cleaner: P(min G_i >= k) = P(G >= k)^n. So the minimum is itself geometric, with effective success probability 1 - (1 - p)^n.\n\nThat gives an exact mean immediately: 1 / (1 - (1 - p)^n). When p is small, replacing 1 - (1 - p)^n by np gives the fast shortcut.";
+          }
+
+          if (question.category === "Poisson max" || question.category === "Poisson min") {
+            return "For moderate or large lambda, Poisson(lambda) is well approximated by N(lambda, lambda), so the mean is lambda and the standard deviation is sqrt(lambda). Once you do that, the problem turns into the same tail-threshold game as the normal cards.\n\nFor a maximum you use a right-tail z with n times that tail around 1; for a minimum you use the corresponding left-tail z. This gives a location estimate, while the exact answer still reflects discreteness and the full tail shape.";
+          }
+
+          if (question.category === "Dice full sets") {
+            return "If C_j is the count of face j, then the number of removable full sets is min(C_1, ..., C_s). Each C_j has mean n/s and variance n(1/s)(1 - 1/s), so each count is centered near n/s with fluctuations of order sqrt(n).\n\nTo estimate the minimum, treat those counts as approximately normal and ask how far into the left tail you need to go before one of the s categories typically gets there. That is why the heuristic uses a z-level with s times the left-tail probability around 1. The counts are not independent, so this is an approximation, not an exact theorem.";
+          }
+        }
+
+        if (question.topicId === "vol") {
+          return "Volatility scales with the square root of time because independent variances add. If daily variance is sigma^2, then T days gives variance T sigma^2 and standard deviation sqrt(T) sigma.\n\nSharpe ratios inherit the same sqrt-time scaling under the usual model where expected return grows linearly in time while volatility grows like sqrt(time).";
+        }
+
+        if (question.topicId === "ev") {
+          return "Expected value is just weighted averaging. Multiply each payoff by its probability and add.\n\nThe fast way to do these mentally is usually to separate the positive and negative pieces, simplify each one, and only then combine them.";
+        }
+
+        if (question.topicId === "randomWalks") {
+          if (question.category === "Walk hitting probability") {
+            return "Let h(i) be the probability of hitting the upper barrier N before the lower barrier 0 from state i. Conditioning on the first step gives h(i) = (h(i - 1) + h(i + 1)) / 2, with boundary conditions h(0) = 0 and h(N) = 1.\n\nThat is the discrete harmonic equation, whose solutions on a line are linear. So h(i) = ai + b, and the boundary conditions force h(i) = i / N.";
+          }
+
+          if (question.category === "Exit time") {
+            return "Let t(i) be the expected time to hit either boundary 0 or N. One first step happens immediately, so conditioning gives t(i) = 1 + (t(i - 1) + t(i + 1)) / 2, with t(0) = t(N) = 0.\n\nRearranging shows the second difference of t is constant, so t must be quadratic in i. Solving the boundary-value problem gives t(i) = i(N - i).";
+          }
+
+          if (question.category === "Return probability") {
+            return "To be back at 0 after 2m steps, the walk must take exactly m up-steps and m down-steps. Every length-2m step sequence is equally likely, so the return probability is just a counting problem.\n\nThere are C(2m, m) balanced sequences out of 2^(2m) total sequences, which gives P(S_(2m) = 0) = C(2m, m) / 2^(2m).";
+          }
+
+          return "A simple symmetric walk is built from independent +/-1 increments. That is why the variance grows linearly with the number of steps and the standard deviation grows like the square root of the number of steps.";
+        }
+
+        if (question.topicId === "polygons") {
+          if (question.category === "Polygon walk") {
+            if (question.inputMode === "probability") {
+              return "A walk on a regular polygon is a walk on a cycle graph. When the question asks whether you hit the opposite vertex before returning to a marked start vertex, symmetry folds the cycle into a gambler's-ruin path.\n\nAfter that folding, you are just starting one step from 0 on a path whose far endpoint is the opposite vertex. So the probability is the same linear hitting probability as on the integer line: starting position divided by path length.";
+            }
+
+            return "A regular n-gon is the cycle graph with n edges. For two vertices at graph distance d, the effective resistance on the cycle is d(n - d) / n because the two arcs behave like parallel resistors.\n\nThe commute-time identity says H(u,v) + H(v,u) = 2m R_eff(u,v), where m is the number of edges. Here m = n, so the commute time is 2d(n - d). By symmetry on the cycle, the two one-way hitting times are equal, so each one is d(n - d).";
+          }
+
+          return "The geometry cards reduce polygon facts to circle or triangle facts. Chords become 2R sin(theta / 2), square diagonals come from the Pythagorean theorem, and the pentagon diagonal ratio is the golden ratio.\n\nThe key mental move is to replace the polygon picture by a more familiar triangle or circle calculation.";
+        }
+
+        if (question.topicId === "eigenvalues") {
+          return "Cycle graphs are diagonalized by Fourier modes. On an n-vertex ring, the simple-random-walk transition matrix has eigenvalues cos(2 pi k / n), while the adjacency matrix has eigenvalues 2 cos(2 pi k / n).\n\nSo the second-largest walk eigenvalue comes from k = 1, and the spectral gap is 1 minus that value. These questions are really about recognizing the Fourier pattern rather than doing long linear algebra.";
+        }
+
+        if (question.topicId === "greenBook") {
+          if (question.category === "Green Book: noodle loops") {
+            return "Expose the pairings step by step. When there are r noodles still not fully closed, the probability that the next pairing closes a loop is 1 / (2r - 1).\n\nDefine an indicator for whether a loop closes at each stage and add expectations. Linearity of expectation then gives 1 + 1/3 + 1/5 + ... + 1/(2n - 1).";
+          }
+
+          if (question.category === "Green Book: runs") {
+            return "A new run starts at the first flip and whenever a flip differs from the one immediately before it. So the total number of runs is 1 plus a sum of change-indicators.\n\nEach adjacent pair differs with probability 1/2 for a fair coin, which makes the expected total number of runs 1 + (n - 1)/2 = (n + 1)/2. The same indicator logic gives the head-run formula.";
+          }
+
+          if (question.category === "Green Book: longest run") {
+            return "The heuristic comes from asking how many runs of length k you expect to see at all. Roughly speaking, a specific block of k heads costs a factor 2^(-k), so the number of candidate locations times 2^(-k) becomes about 1 when k is near log2(n).\n\nThat is why the longest head run usually sits near log2(n), even though the exact expectation is not exactly equal to that value.";
+          }
+
+          if (question.category === "Green Book: streak waiting time") {
+            return "For a fair-coin target pattern w, the exact expected waiting time is the sum of 2^k over all overlap lengths k whose prefix and suffix match. This comes from the standard martingale or betting-system proof.\n\nIntuitively, overlaps matter because when the pattern finally appears, earlier partial matches may already have been in progress. Those surviving aligned bettors are exactly what create the extra 2^k terms.";
+          }
+
+          if (question.category === "Green Book: permutations") {
+            return "The expected number of cycles in a random permutation is H_n. One way to see it is to let I_k indicate that the element k is the smallest label in its cycle; that event has probability 1/k.\n\nAdding the expectations of those indicators gives 1 + 1/2 + ... + 1/n.";
+          }
+
+          if (question.category === "Green Book: records") {
+            return "At position k in a random ordering, every one of the first k entries is equally likely to be the largest so far. So the probability that position k is a new record is 1/k.\n\nSumming those record indicators gives the harmonic-number expectation.";
+          }
+
+          if (question.category === "Green Book: fixed points") {
+            return "Let I_i be the indicator that item i stays fixed. In a uniform random permutation, P(I_i = 1) = 1/n for every i.\n\nLinearity of expectation then gives E[number of fixed points] = n * (1/n) = 1.";
+          }
+
+          if (question.category === "Green Book: derangements") {
+            return "The no-fixed-point probability comes from inclusion-exclusion. As n grows, the alternating inclusion-exclusion sum approaches 1/e.\n\nEven for moderate n like 8, the approximation is already close enough to be a strong interview-speed mental anchor.";
+          }
+
+          if (question.category === "Green Book: coupons") {
+            return "Break coupon collection into stages. After you have seen j distinct coupon types, the chance the next draw gives a new one is (n - j) / n.\n\nSo the expected time to move from j seen types to j + 1 seen types is n / (n - j). Adding those stage expectations gives n H_n.";
+          }
+        }
+
+        return "";
       }
 
       function showSetupScreen() {
@@ -1769,6 +2063,7 @@
       }
 
       function showResultsScreen() {
+        setSessionSummaryOpen(false);
         elements.setupScreen.classList.add("is-hidden");
         elements.sessionScreen.classList.add("is-hidden");
         elements.resultsScreen.classList.remove("is-hidden");
@@ -1877,6 +2172,7 @@
           combos: buildComboQuestions(),
           normal: buildNormalQuestions(),
           maxNormals: buildMaxNormalQuestions(),
+          discreteExtremes: buildDiscreteExtremeQuestions(),
           vol: buildVolQuestions(),
           ev: buildEvQuestions(),
           randomWalks: buildRandomWalkQuestions(),
@@ -2092,6 +2388,140 @@
             explanation: `Let M be the max. Then P(M <= x) = Phi(x)^${n}. If p = P(Z > x) is small, this is about (1 - p)^${n} ~= e^(-${n}p). Setting ${n}p ~= 1 gives p ~= ${formatPercent(1 / n)}, so x is the ${tailMental === 0.001 ? "0.1%" : formatPercent(tailMental)} upper-tail normal anchor, about ${z}. That point is where the max is already above x with probability about 1 - e^(-1) ~= 63%, so it is a central location estimate rather than the exact mean. The true E[max] is about ${formatNumber(exactExpectedMax, 4)}, a bit above the shortcut anchor.`,
           });
         });
+      }
+
+      function buildDiscreteExtremeQuestions() {
+        const geometricMax8 = expectedMaxOfGeometric(8, 0.5);
+        const geometricMax16 = expectedMaxOfGeometric(16, 0.5);
+        const geometricMin = expectedMinOfGeometric(5, 0.1);
+        const poissonMax1016 = expectedMaxOfPoissons(10, 16);
+        const poissonMin1016 = expectedMinOfPoissons(10, 16);
+        const poissonMax209 = expectedMaxOfPoissons(20, 9);
+        const poissonMin209 = expectedMinOfPoissons(20, 9);
+        const sixSidedSets = expectedCompleteSetsFromFairDice(60, 6);
+        const twentySidedSets = expectedCompleteSetsFromFairDice(160, 20);
+        const sixSidedApprox = 10 - 0.97 * Math.sqrt(60 * (1 / 6) * (5 / 6));
+        const twentySidedApprox = 8 - 1.64 * Math.sqrt(160 * (1 / 20) * (19 / 20));
+
+        return [
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Geometric max",
+            prompt: "Let G1, ..., G8 be iid geometric(1/2), counting trials until first success. Estimate E[max G_i].",
+            hint: "Use P(G >= k) = 2^(-(k - 1)) and solve nP(G >= k) ~= 1; the exact mean sits a bit above that cutoff.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: geometricMax8,
+            mentalAnswer: 1 + Math.log2(8),
+            absTolerance: 0.32,
+            explanation: `For geometric(1/2), P(G >= k) = 2^(-(k - 1)). Setting 8 * 2^(-(k - 1)) ~= 1 gives k ~= 4, which is the central location of the max. The exact E[max] is about ${formatNumber(geometricMax8, 4)}, a bit above that anchor.`,
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Geometric max",
+            prompt: "Let G1, ..., G16 be iid geometric(1/2), counting trials until first success. Estimate E[max G_i].",
+            hint: "Use P(G >= k) = 2^(-(k - 1)) and solve nP(G >= k) ~= 1; the exact mean sits a bit above that cutoff.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: geometricMax16,
+            mentalAnswer: 1 + Math.log2(16),
+            absTolerance: 0.35,
+            explanation: `Here P(G >= k) = 2^(-(k - 1)), so 16 * 2^(-(k - 1)) ~= 1 gives k ~= 5. That is the one-exceedance anchor; the exact E[max] is about ${formatNumber(geometricMax16, 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Geometric min",
+            prompt: "Let G1, ..., G5 be iid geometric(10%), counting trials until first success. Estimate E[min G_i].",
+            hint: "The minimum of iid geometrics is geometric with success chance 1 - (1 - p)^n. For small p, a quick shortcut is to replace that by np.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: geometricMin,
+            mentalAnswer: 1 / (5 * 0.1),
+            absTolerance: 0.22,
+            explanation: `The exact minimum is geometric with success chance 1 - 0.9^5 = ${formatNumber(1 - 0.9 ** 5, 4)}, so its mean is about ${formatNumber(geometricMin, 4)}. A fast mental shortcut uses np = 0.5, giving a rough mean near 2.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Poisson max",
+            prompt: "Estimate E[max of 10 iid Poisson(16) variables].",
+            hint: "Approximate Poisson(16) by N(16, 16), then use a 10% upper-tail anchor because 10 * tail ~= 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: poissonMax1016,
+            mentalAnswer: 16 + 1.28 * Math.sqrt(16),
+            absTolerance: 0.7,
+            explanation: `Approximate each variable by N(16, 16), so the standard deviation is 4. The one-exceedance anchor uses a 10% upper tail, giving 16 + 1.28 * 4 = ${formatNumber(16 + 1.28 * Math.sqrt(16), 4)}. As with other maxima, the exact mean sits a bit above that location, at about ${formatNumber(poissonMax1016, 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Poisson min",
+            prompt: "Estimate E[min of 10 iid Poisson(16) variables].",
+            hint: "Approximate Poisson(16) by N(16, 16), then use a 10% lower-tail anchor because 10 * tail ~= 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: poissonMin1016,
+            mentalAnswer: 16 - 1.28 * Math.sqrt(16),
+            absTolerance: 0.45,
+            explanation: `With the normal approximation N(16, 16), the standard deviation is 4. A 10% lower-tail anchor gives 16 - 1.28 * 4 = ${formatNumber(16 - 1.28 * Math.sqrt(16), 4)}. The exact E[min] is about ${formatNumber(poissonMin1016, 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Poisson max",
+            prompt: "Estimate E[max of 20 iid Poisson(9) variables].",
+            hint: "Approximate Poisson(9) by N(9, 9), then use a 5% upper-tail anchor because 20 * tail ~= 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: poissonMax209,
+            mentalAnswer: 9 + 1.64 * Math.sqrt(9),
+            absTolerance: 0.8,
+            explanation: `Here N(9, 9) gives mean 9 and standard deviation 3. The one-exceedance location uses a 5% upper tail, so the shortcut is 9 + 1.64 * 3 = ${formatNumber(9 + 1.64 * Math.sqrt(9), 4)}. The true E[max] is higher, about ${formatNumber(poissonMax209, 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Poisson min",
+            prompt: "Estimate E[min of 20 iid Poisson(9) variables].",
+            hint: "Approximate Poisson(9) by N(9, 9), then use a 5% lower-tail anchor because 20 * tail ~= 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: poissonMin209,
+            mentalAnswer: 9 - 1.64 * Math.sqrt(9),
+            absTolerance: 0.55,
+            explanation: `Using N(9, 9), the standard deviation is 3. A 5% lower-tail anchor gives 9 - 1.64 * 3 = ${formatNumber(9 - 1.64 * Math.sqrt(9), 4)}. The exact E[min] is about ${formatNumber(poissonMin209, 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Dice full sets",
+            prompt: "You throw 60 fair six-sided dice. Estimate the expected number of complete {1,2,3,4,5,6} sets you can remove.",
+            hint: "The number of removable full sets is the minimum face count. Each face count is roughly Bin(60, 1/6), with mean 10 and standard deviation about 2.89.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: sixSidedSets,
+            mentalAnswer: sixSidedApprox,
+            absTolerance: 0.28,
+            explanation: `Write the answer as min(C1, ..., C6), where each face count has mean 10 and standard deviation about ${formatNumber(Math.sqrt(60 * (1 / 6) * (5 / 6)), 4)}. A quick min-of-normals shortcut uses a left-tail anchor around z ~= 0.97 because 6 * tail ~= 1, giving about ${formatNumber(sixSidedApprox, 4)}. The exact expected number of full sets is lower, about ${formatNumber(sixSidedSets, 4)}, because the discrete multinomial structure and dependence matter.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "discreteExtremes",
+            category: "Dice full sets",
+            prompt: "You throw 160 fair 20-sided dice. Estimate the expected number of complete 1-through-20 sets you can remove.",
+            hint: "Again the answer is the minimum face count. Each count is roughly Bin(160, 1/20), so center at 8 and use a 5% left-tail anchor because 20 * tail ~= 1.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: twentySidedSets,
+            mentalAnswer: twentySidedApprox,
+            absTolerance: 0.28,
+            explanation: `Each face count has mean 8 and standard deviation about ${formatNumber(Math.sqrt(160 * (1 / 20) * (19 / 20)), 4)}. Since 20 * tail ~= 1 suggests a 5% normal anchor, the fast estimate is 8 - 1.64 * sd ~= ${formatNumber(twentySidedApprox, 4)}. The exact expected number of full 1-through-20 sets is about ${formatNumber(twentySidedSets, 4)}.`,
+            difficulty: "hard",
+          }),
+        ];
       }
 
       function buildVolQuestions() {
@@ -2656,24 +3086,72 @@
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
             prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHH.",
-            hint: "For k consecutive heads, the expected waiting time is 2^(k + 1) - 2.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
             inputMode: "number",
             formatHint: "steps",
-            answer: expectedTimeToHeadsStreak(3),
+            answer: expectedWaitingTimeForPattern("HHH"),
             absTolerance: 0.1,
-            explanation: "Use 2^(k + 1) - 2 with k = 3, giving 2^4 - 2 = 14.",
+            explanation: "The overlap lengths are 1, 2, and 3, so the martingale overlap formula gives 2 + 4 + 8 = 14. This is the same as 2^(3 + 1) - 2.",
             difficulty: "medium",
           }),
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
             prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHHH.",
-            hint: "For k consecutive heads, the expected waiting time is 2^(k + 1) - 2.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
             inputMode: "number",
             formatHint: "steps",
-            answer: expectedTimeToHeadsStreak(4),
+            answer: expectedWaitingTimeForPattern("HHHH"),
             absTolerance: 0.1,
-            explanation: "Use 2^(k + 1) - 2 with k = 4, giving 2^5 - 2 = 30.",
+            explanation: "The overlap lengths are 1, 2, 3, and 4, so the martingale overlap formula gives 2 + 4 + 8 + 16 = 30. This is the same as 2^(4 + 1) - 2.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HTH.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedWaitingTimeForPattern("HTH"),
+            absTolerance: 0.1,
+            explanation: "The matching prefix/suffix lengths are 1 and 3, since H matches H and HTH matches itself. So the expected wait is 2 + 8 = 10.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHTT.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedWaitingTimeForPattern("HHTT"),
+            absTolerance: 0.1,
+            explanation: "There is no nontrivial overlap: only the full pattern matches itself. So the only contributing length is 4, giving 2^4 = 16.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHTH.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedWaitingTimeForPattern("HHTH"),
+            absTolerance: 0.1,
+            explanation: "The matching prefix/suffix lengths are 1 and 4, because H matches H and the full pattern matches itself. So the expected wait is 2 + 16 = 18.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: streak waiting time",
+            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HTHT.",
+            hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
+            inputMode: "number",
+            formatHint: "steps",
+            answer: expectedWaitingTimeForPattern("HTHT"),
+            absTolerance: 0.1,
+            explanation: "The matching prefix/suffix lengths are 2 and 4, because HT matches HT and the full pattern matches itself. So the expected wait is 4 + 16 = 20.",
             difficulty: "hard",
           }),
           createQuestion({
@@ -2968,6 +3446,13 @@
           return "medium";
         }
 
+        if (topicId === "discreteExtremes") {
+          if (category === "Geometric max" || category === "Poisson min") {
+            return "medium";
+          }
+          return category === "Dice full sets" ? "hard" : "medium";
+        }
+
         if (topicId === "randomWalks") {
           if (category === "Variance" || category === "Standard deviation" || category === "Walk hitting probability") {
             return "easy";
@@ -3112,6 +3597,134 @@
         return value;
       }
 
+      function expectedMaxOfGeometric(n, successProbability) {
+        const failureProbability = 1 - successProbability;
+        let total = 0;
+
+        for (let k = 1; k <= 10000; k += 1) {
+          const singleTail = Math.pow(failureProbability, k - 1);
+          const term = 1 - Math.pow(1 - singleTail, n);
+          total += term;
+
+          if (term < 1e-12 && singleTail < 1e-12) {
+            break;
+          }
+        }
+
+        return total;
+      }
+
+      function expectedMinOfGeometric(n, successProbability) {
+        return 1 / (1 - Math.pow(1 - successProbability, n));
+      }
+
+      function getPoissonPMFTable(lambda) {
+        const key = String(lambda);
+        if (poissonPMFCache.has(key)) {
+          return poissonPMFCache.get(key);
+        }
+
+        const pmf = [Math.exp(-lambda)];
+        let cumulative = pmf[0];
+        let k = 0;
+
+        while (cumulative < 1 - 1e-14 && k < 500) {
+          k += 1;
+          pmf.push((pmf[k - 1] * lambda) / k);
+          cumulative += pmf[k];
+        }
+
+        poissonPMFCache.set(key, pmf);
+        return pmf;
+      }
+
+      function expectedMaxOfPoissons(n, lambda) {
+        const pmf = getPoissonPMFTable(lambda);
+        let cdf = 0;
+        let previousCdf = 0;
+        let total = 0;
+
+        for (let k = 0; k < pmf.length; k += 1) {
+          cdf += pmf[k];
+          if (k >= 1) {
+            total += 1 - Math.pow(previousCdf, n);
+          }
+          previousCdf = cdf;
+        }
+
+        return total;
+      }
+
+      function expectedMinOfPoissons(n, lambda) {
+        const pmf = getPoissonPMFTable(lambda);
+        let cdfBefore = 0;
+        let total = 0;
+
+        for (let k = 1; k < pmf.length; k += 1) {
+          total += Math.pow(1 - cdfBefore, n);
+          cdfBefore += pmf[k - 1];
+        }
+
+        return total;
+      }
+
+      function getInverseFactorials(n) {
+        const key = String(n);
+        if (occupancyMinCache.has(`inv:${key}`)) {
+          return occupancyMinCache.get(`inv:${key}`);
+        }
+
+        const inverseFactorials = [1];
+        for (let k = 1; k <= n; k += 1) {
+          inverseFactorials.push(inverseFactorials[k - 1] / k);
+        }
+
+        occupancyMinCache.set(`inv:${key}`, inverseFactorials);
+        return inverseFactorials;
+      }
+
+      function probabilityAllFaceCountsAtLeast(numRolls, sides, requiredPerFace) {
+        const inverseFactorials = getInverseFactorials(numRolls);
+        let dp = new Array(numRolls + 1).fill(0);
+        dp[0] = 1;
+
+        for (let face = 0; face < sides; face += 1) {
+          const next = new Array(numRolls + 1).fill(0);
+
+          for (let used = 0; used <= numRolls; used += 1) {
+            const current = dp[used];
+            if (!current) {
+              continue;
+            }
+
+            for (let count = requiredPerFace; used + count <= numRolls; count += 1) {
+              next[used + count] += current * inverseFactorials[count];
+            }
+          }
+
+          dp = next;
+        }
+
+        return (factorial(numRolls) * dp[numRolls]) / Math.pow(sides, numRolls);
+      }
+
+      function expectedCompleteSetsFromFairDice(numRolls, sides) {
+        const key = `${numRolls}:${sides}`;
+        if (occupancyMinCache.has(key)) {
+          return occupancyMinCache.get(key);
+        }
+
+        let total = 0;
+        const maxSets = Math.floor(numRolls / sides);
+
+        for (let requiredPerFace = 1; requiredPerFace <= maxSets; requiredPerFace += 1) {
+          total += probabilityAllFaceCountsAtLeast(numRolls, sides, requiredPerFace);
+        }
+
+        occupancyMinCache.set(key, total);
+        return total;
+      }
+
       function harmonicNumber(n) {
         let total = 0;
         for (let k = 1; k <= n; k += 1) {
@@ -3140,8 +3753,22 @@
         return n * harmonicNumber(n);
       }
 
+      function getPatternOverlapLengths(pattern) {
+        const overlaps = [];
+        for (let length = 1; length <= pattern.length; length += 1) {
+          if (pattern.slice(0, length) === pattern.slice(pattern.length - length)) {
+            overlaps.push(length);
+          }
+        }
+        return overlaps;
+      }
+
+      function expectedWaitingTimeForPattern(pattern) {
+        return getPatternOverlapLengths(pattern).reduce((total, length) => total + 2 ** length, 0);
+      }
+
       function expectedTimeToHeadsStreak(k) {
-        return 2 ** (k + 1) - 2;
+        return expectedWaitingTimeForPattern("H".repeat(k));
       }
 
       function probabilityNoHeadsRunAtLeast(n, threshold) {
