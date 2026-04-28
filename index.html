@@ -3,26 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#08111d" />
+    <meta name="theme-color" content="#030603" />
     <title>Signal Deck</title>
     <style>
       :root {
-        --bg-top: #08111d;
-        --bg-mid: #112235;
-        --bg-bottom: #1d344a;
-        --paper: rgba(247, 240, 227, 0.94);
-        --paper-strong: rgba(252, 247, 238, 0.985);
-        --ink: #132133;
-        --muted: #5f6d7a;
-        --line: rgba(15, 28, 46, 0.12);
-        --line-strong: rgba(15, 28, 46, 0.22);
-        --accent: #f3b564;
-        --accent-strong: #d67c2d;
-        --teal: #8ed8cb;
-        --correct: #2f7d67;
-        --wrong: #b44d43;
-        --skip: #687786;
-        --shadow: 0 24px 80px rgba(5, 12, 23, 0.28);
+        --bg-top: #008080;
+        --bg-mid: #008080;
+        --bg-bottom: #006d6d;
+        --paper: #c0c0c0;
+        --paper-strong: #d4d0c8;
+        --ink: #000000;
+        --muted: #303030;
+        --line: #808080;
+        --line-strong: #404040;
+        --accent: #000080;
+        --accent-strong: #1084d0;
+        --teal: #1084d0;
+        --correct: #0a6b14;
+        --wrong: #7a0b0b;
+        --skip: #444444;
+        --win-lite: #ffffff;
+        --win-mid: #dfdfdf;
+        --win-shadow: #808080;
+        --win-dark: #404040;
+        --win-black: #000000;
+        --shadow: none;
       }
 
       * {
@@ -37,11 +42,12 @@
         margin: 0;
         min-height: 100vh;
         color: var(--ink);
-        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-        background:
-          radial-gradient(circle at 12% 18%, rgba(243, 181, 100, 0.24), transparent 0 22%),
-          radial-gradient(circle at 86% 10%, rgba(142, 216, 203, 0.2), transparent 0 18%),
-          linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-bottom) 100%);
+        font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        -webkit-font-smoothing: none;
+        -moz-osx-font-smoothing: auto;
+        background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 72%, var(--bg-bottom) 100%);
       }
 
       body::before {
@@ -49,11 +55,14 @@
         position: fixed;
         inset: 0;
         background:
-          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-        background-size: 34px 34px;
-        opacity: 0.18;
+          radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px);
+        background-size: 10px 10px;
+        opacity: 0.08;
         pointer-events: none;
+      }
+
+      body::after {
+        display: none;
       }
 
       code,
@@ -70,60 +79,114 @@
       .review-pill,
       .details-summary,
       .button {
-        font-family: "SFMono-Regular", Menlo, Consolas, Monaco, monospace;
+        font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
       }
 
       code {
         font-size: 0.95em;
+        font-family: "Courier New", "Lucida Console", Monaco, monospace;
       }
 
       .app-shell {
         width: min(1180px, calc(100% - 2rem));
         margin: 0 auto;
-        padding: 2.4rem 0 4rem;
+        padding: 2.8rem 0 4rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand-mark {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.9rem;
+        width: min(18vw, 8.5rem);
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.96;
+        filter: none;
+      }
+
+      .brand-mark svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .brand-mark .globe-ring {
+        fill: #f6f6f6;
+        stroke: #000080;
+        stroke-width: 1.6;
+      }
+
+      .brand-mark .globe-grid {
+        fill: none;
+        stroke: #1084d0;
+        stroke-width: 1.1;
+      }
+
+      .brand-mark .globe-axis {
+        fill: none;
+        stroke: #808080;
+        stroke-width: 0.8;
       }
 
       .hero {
         position: relative;
-        margin-bottom: 1.75rem;
-        color: #f8f5ef;
+        margin-bottom: 2rem;
+        padding: 0.35rem 12rem 1.65rem 0;
+        color: var(--ink);
+        background: var(--paper);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
       }
 
       .hero::after {
         content: "";
         position: absolute;
-        top: 0;
-        right: 0;
-        width: min(34vw, 17rem);
-        aspect-ratio: 1;
-        border-radius: 999px;
-        background: radial-gradient(circle, rgba(243, 181, 100, 0.42) 0 34%, rgba(243, 181, 100, 0.1) 34% 62%, transparent 62% 100%);
-        filter: blur(8px);
-        opacity: 0.8;
-        pointer-events: none;
+        left: 0.35rem;
+        right: 0.35rem;
+        top: 0.35rem;
+        height: 1.35rem;
+        background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      }
+
+      .hero::before {
+        display: none;
       }
 
       .eyebrow {
         margin: 0 0 0.8rem;
-        font-size: 0.8rem;
-        letter-spacing: 0.22em;
-        color: rgba(248, 245, 239, 0.78);
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        color: rgba(239, 201, 106, 0.92);
+        text-transform: none;
+        font-weight: 700;
       }
 
       h1 {
-        margin: 0;
-        max-width: 9ch;
-        font-size: clamp(3.2rem, 8vw, 6rem);
-        line-height: 0.94;
-        letter-spacing: -0.05em;
+        margin: 1.8rem 0 0;
+        max-width: none;
+        font-size: clamp(2.2rem, 5vw, 3.45rem);
+        line-height: 1;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #000080;
+        text-shadow: none;
+        font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+        font-weight: 700;
       }
 
       .dek {
-        max-width: 48rem;
+        max-width: 52rem;
         margin: 1rem 0 0;
-        font-size: 1.1rem;
-        line-height: 1.7;
-        color: rgba(248, 245, 239, 0.82);
+        font-size: 0.96rem;
+        line-height: 1.55;
+        color: #1f1f1f;
+        padding-left: 1rem;
+        border-left: 2px solid #808080;
       }
 
       .hero-actions {
@@ -135,21 +198,25 @@
 
       .panel {
         position: relative;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 2rem;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 0;
         padding: 1.4rem;
-        background: linear-gradient(180deg, var(--paper-strong) 0%, var(--paper) 100%);
-        box-shadow: var(--shadow);
+        background: var(--paper);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
         overflow: hidden;
       }
 
       .panel::before {
         content: "";
         position: absolute;
-        inset: 0 auto auto 0;
-        width: 100%;
-        height: 0.45rem;
-        background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 52%, rgba(243, 181, 100, 0.3) 100%);
+        left: 0.35rem;
+        right: 0.35rem;
+        top: 0.35rem;
+        height: 1.35rem;
+        background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
       }
 
       .panel + .panel {
@@ -164,19 +231,25 @@
       }
 
       .section-tag {
-        margin: 0 0 0.45rem;
-        font-size: 0.76rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--accent-strong);
+        margin: -1.05rem -0.6rem 0.95rem;
+        padding: 0.18rem 0.55rem 0.12rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #ffffff;
+        position: relative;
+        z-index: 1;
       }
 
       .panel-heading h2,
       .review-header h3,
       .live-review-head h3 {
         margin: 0;
-        font-size: clamp(1.65rem, 3vw, 2.35rem);
-        line-height: 1.05;
+        font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+        line-height: 1.08;
+        font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+        font-weight: 700;
       }
 
       .panel-copy,
@@ -216,9 +289,13 @@
       .topic-card,
       .hint-panel,
       .feedback-panel {
-        border: 1px solid var(--line);
-        border-radius: 1.45rem;
-        background: rgba(255, 255, 255, 0.5);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 0;
+        background: var(--paper-strong);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-shadow);
       }
 
       .field-card,
@@ -235,9 +312,10 @@
         display: inline-block;
         margin-bottom: 0.7rem;
         font-size: 0.84rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
+        letter-spacing: 0;
+        text-transform: none;
+        color: #1f1f1f;
+        font-weight: 700;
       }
 
       .field-label--sr {
@@ -254,35 +332,38 @@
       .field-input,
       .answer-input {
         width: 100%;
-        border: 1px solid rgba(19, 33, 51, 0.16);
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--ink);
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        border-radius: 0;
+        background: #ffffff;
+        color: #000000;
         font: inherit;
+        box-shadow: inset 1px 1px 0 var(--win-black);
         transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
       }
 
       .field-input {
         padding: 0.85rem 0.95rem;
-        font-size: 1.05rem;
+        font-size: 0.98rem;
       }
 
       .answer-input {
         padding: 1rem 1.05rem;
-        font-size: clamp(1.35rem, 3vw, 1.8rem);
-        letter-spacing: -0.03em;
+        font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+        letter-spacing: 0;
       }
 
       .field-input:focus,
       .answer-input:focus {
         outline: none;
-        border-color: rgba(214, 124, 45, 0.7);
-        box-shadow: 0 0 0 4px rgba(214, 124, 45, 0.16);
-        transform: translateY(-1px);
+        box-shadow: inset 1px 1px 0 var(--win-black), 0 0 0 1px #000080;
+        transform: none;
       }
 
       .answer-input[readonly] {
-        background: rgba(245, 240, 232, 0.92);
+        background: #efefef;
       }
 
       .setup-actions,
@@ -319,8 +400,11 @@
       .pill,
       .badge,
       .review-pill {
-        border-radius: 999px;
-        border: 1px solid var(--line);
+        border-radius: 0;
+        border-top: 1px solid var(--win-lite);
+        border-left: 1px solid var(--win-lite);
+        border-right: 1px solid var(--win-dark);
+        border-bottom: 1px solid var(--win-dark);
       }
 
       .score-rules span,
@@ -330,13 +414,13 @@
       }
 
       .score-rules span {
-        background: rgba(255, 255, 255, 0.66);
+        background: var(--paper);
       }
 
       .pill {
-        background: rgba(19, 33, 51, 0.04);
+        background: var(--paper);
         font-size: 0.85rem;
-        color: var(--ink);
+        color: #000000;
       }
 
       .inline-note {
@@ -355,34 +439,54 @@
         min-height: 3rem;
         padding: 0.8rem 1.15rem;
         border: 1px solid transparent;
-        border-radius: 999px;
-        font-size: 0.96rem;
-        font-weight: 600;
+        border-radius: 0;
+        font-size: 0.9rem;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
         cursor: pointer;
         transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, opacity 180ms ease;
       }
 
       .button:hover {
-        transform: translateY(-1px);
+        transform: none;
       }
 
       .button--primary {
-        color: #fff9f0;
-        background: linear-gradient(135deg, #d67c2d 0%, #f3b564 100%);
-        box-shadow: 0 14px 30px rgba(214, 124, 45, 0.26);
+        color: #000000;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        background: var(--paper);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
+        font-weight: 700;
       }
 
       .button--secondary,
       .button--ghost {
-        color: var(--ink);
-        background: rgba(255, 255, 255, 0.74);
-        border-color: rgba(19, 33, 51, 0.16);
+        color: #000000;
+        background: var(--paper);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
       }
 
       .button--ghost {
         min-height: 2.4rem;
         padding: 0.55rem 0.85rem;
         font-size: 0.85rem;
+      }
+
+      .button:active {
+        transform: translate(1px, 1px);
+        box-shadow: inset 1px 1px 0 var(--win-dark), inset -1px -1px 0 var(--win-lite);
+        border-top-color: var(--win-dark);
+        border-left-color: var(--win-dark);
+        border-right-color: var(--win-lite);
+        border-bottom-color: var(--win-lite);
       }
 
       .button:disabled {
@@ -429,15 +533,16 @@
         display: block;
         margin-bottom: 0.35rem;
         font-size: 0.74rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--muted);
+        letter-spacing: 0;
+        text-transform: none;
+        color: #1f1f1f;
+        font-weight: 700;
       }
 
       .metric-card strong,
       .summary-card strong {
-        font-size: clamp(1.15rem, 2vw, 1.55rem);
-        letter-spacing: -0.04em;
+        font-size: clamp(1.02rem, 1.7vw, 1.3rem);
+        letter-spacing: 0;
       }
 
       .metric-note {
@@ -448,33 +553,34 @@
       }
 
       .metric-toggle.is-correct {
-        border-color: rgba(47, 125, 103, 0.32);
-        background: rgba(47, 125, 103, 0.1);
+        background: #d9f1db;
       }
 
       .metric-toggle.is-wrong {
-        border-color: rgba(180, 77, 67, 0.32);
-        background: rgba(180, 77, 67, 0.1);
+        background: #f5d9d3;
       }
 
       .metric-toggle.is-skipped {
-        border-color: rgba(104, 119, 134, 0.28);
-        background: rgba(104, 119, 134, 0.1);
+        background: #e5e5e5;
       }
 
       .progress-track {
         height: 0.7rem;
         margin: 1rem 0 1.1rem;
-        border-radius: 999px;
-        background: rgba(19, 33, 51, 0.09);
+        border-radius: 0;
+        background: #808080;
         overflow: hidden;
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
       }
 
       .progress-fill {
         height: 100%;
         width: 0;
         border-radius: inherit;
-        background: linear-gradient(90deg, var(--accent-strong) 0%, var(--teal) 100%);
+        background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
         transition: width 220ms ease;
       }
 
@@ -491,9 +597,7 @@
 
       .flashcard {
         padding: 1.2rem;
-        background:
-          radial-gradient(circle at top right, rgba(243, 181, 100, 0.14), transparent 24%),
-          rgba(255, 255, 255, 0.56);
+        background: var(--paper-strong);
       }
 
       .flashcard-meta {
@@ -502,30 +606,33 @@
 
       .badge {
         padding: 0.42rem 0.72rem;
-        background: rgba(19, 33, 51, 0.08);
+        background: var(--paper);
         font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--ink);
+        letter-spacing: 0;
+        text-transform: none;
+        color: #000080;
       }
 
       .badge--ghost {
-        background: rgba(255, 255, 255, 0.72);
-        color: var(--muted);
+        background: #e8e8e8;
+        color: #333333;
       }
 
       .prompt-text {
         margin: 0;
-        font-size: clamp(1.9rem, 5vw, 3rem);
-        line-height: 1.08;
-        letter-spacing: -0.05em;
+        font-size: clamp(1.45rem, 4vw, 2.1rem);
+        line-height: 1.15;
+        letter-spacing: 0;
+        color: #000080;
+        font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+        font-weight: 700;
       }
 
       .hint-panel {
         margin-top: 1rem;
         padding: 0.95rem 1rem;
-        background: rgba(243, 181, 100, 0.12);
-        border-color: rgba(214, 124, 45, 0.22);
+        background: #efe7c8;
+        border-color: #a28b4a;
       }
 
       .hint-panel strong,
@@ -549,17 +656,15 @@
       .keyboard-note {
         margin: 0.8rem 0 0;
         font-size: 0.84rem;
-        letter-spacing: 0.06em;
+        letter-spacing: 0;
         color: var(--muted);
-        text-transform: uppercase;
+        text-transform: none;
       }
 
       .live-review-panel {
         position: sticky;
         top: 1rem;
-        background:
-          radial-gradient(circle at top right, rgba(142, 216, 203, 0.16), transparent 25%),
-          rgba(255, 255, 255, 0.56);
+        background: var(--paper);
       }
 
       .live-review-head {
@@ -604,9 +709,12 @@
 
       .guide-card {
         padding: 1rem;
-        border: 1px solid var(--line);
-        border-radius: 1.35rem;
-        background: rgba(255, 255, 255, 0.58);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 0;
+        background: var(--paper-strong);
       }
 
       .guide-card h3 {
@@ -623,19 +731,25 @@
       .guide-example {
         margin-top: 0.8rem;
         padding: 0.8rem 0.9rem;
-        border-radius: 1rem;
-        border: 1px solid rgba(19, 33, 51, 0.1);
-        background: rgba(19, 33, 51, 0.04);
-        color: var(--ink);
+        border-radius: 0;
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        background: #ffffff;
+        color: #000000;
       }
 
       .guide-details,
       .explanation-details {
         margin-top: 0.8rem;
         padding: 0.8rem 0.9rem;
-        border: 1px solid rgba(19, 33, 51, 0.12);
-        border-radius: 1rem;
-        background: rgba(255, 255, 255, 0.68);
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        border-radius: 0;
+        background: #ffffff;
       }
 
       .guide-details summary,
@@ -688,9 +802,12 @@
       details.live-item,
       .review-row {
         padding: 0.95rem 1rem;
-        border: 1px solid var(--line);
-        border-radius: 1.2rem;
-        background: rgba(255, 255, 255, 0.62);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 0;
+        background: var(--paper-strong);
       }
 
       details.live-item.correct,
@@ -769,7 +886,7 @@
       }
 
       .summary-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
 
       .summary-subline {
@@ -810,9 +927,8 @@
       }
 
       .topic-card.is-selected {
-        border-color: rgba(214, 124, 45, 0.34);
-        background: rgba(243, 181, 100, 0.1);
-        box-shadow: 0 10px 26px rgba(214, 124, 45, 0.08);
+        background: #dce8ff;
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-shadow);
       }
 
       .topic-title {
@@ -844,9 +960,12 @@
         gap: 0.8rem;
         align-items: start;
         padding: 0.9rem 1rem;
-        border: 1px solid var(--line);
-        border-radius: 1.2rem;
-        background: rgba(255, 255, 255, 0.56);
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 0;
+        background: var(--paper-strong);
       }
 
       .toggle-row input {
@@ -939,7 +1058,7 @@
         .feedback-panel,
         details.live-item,
         .toggle-row {
-          border-radius: 1.2rem;
+          border-radius: 0;
         }
 
         .button {
@@ -962,6 +1081,12 @@
         .prompt-text {
           font-size: 2rem;
         }
+
+        .brand-mark {
+          width: min(28vw, 6.2rem);
+          top: 0.75rem;
+          right: 0.65rem;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -981,6 +1106,20 @@
   <body>
     <main class="app-shell">
       <section class="hero">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 180 180" role="presentation">
+            <circle class="globe-ring" cx="90" cy="82" r="66"></circle>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="66" ry="22"></ellipse>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="66" ry="42"></ellipse>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="66" ry="56"></ellipse>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="22" ry="66"></ellipse>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="42" ry="66"></ellipse>
+            <ellipse class="globe-grid" cx="90" cy="82" rx="56" ry="66"></ellipse>
+            <path class="globe-axis" d="M24 82h132"></path>
+            <path class="globe-axis" d="M90 16v132"></path>
+            <path class="globe-axis" d="M42 146h96"></path>
+          </svg>
+        </div>
         <p class="eyebrow">K-man's</p>
         <h1>Signal Deck</h1>
         <p class="dek">
@@ -1200,14 +1339,15 @@
           </article>
 
           <article class="guide-card">
-            <h3>Moments and MGF</h3>
-            <p>Second moments, variances, and mgfs are tightly connected. Use <code>E[X²] = Var(X) + (E[X])²</code> for quick second moments, add variances across independent pieces, and remember the hypergeometric correction for sampling without replacement. For mgf problems, either recognize the family or plug in a clever value of <code>t</code>.</p>
+            <h3>Moments, Covariance, and MGF</h3>
+            <p>Second moments, variances, covariances, correlations, and mgfs are tightly connected. Use <code>E[X²] = Var(X) + (E[X])²</code> for quick second moments, add variances across independent pieces, and treat covariance as “what overlap is left after centering.” For mgf problems, either recognize the family or plug in a clever value of <code>t</code>.</p>
             <div class="guide-example">
-              <strong>Examples:</strong> if <code>H ~ Binomial(10, 1/2)</code>, then <code>E[H²] = 2.5 + 25 = 27.5</code>. If <code>X ~ Poisson(3)</code>, then <code>M_X(ln 2) = exp(3(2 - 1)) = e³</code>.
+              <strong>Examples:</strong> if <code>H ~ Binomial(10, 1/2)</code>, then <code>E[H²] = 2.5 + 25 = 27.5</code>. If <code>N₁</code> and <code>N₂</code> count 1s and 2s in <code>n</code> fair six-sided dice, then <code>Cov(N₁, N₂) = -n/36</code> and <code>Corr(N₁, N₂) = -1/5</code>. If <code>X ~ Poisson(3)</code>, then <code>M_X(ln 2) = exp(3(2 - 1)) = e³</code>.
             </div>
             <details class="guide-details">
               <summary>What to look for</summary>
               <p>Variance questions usually ask whether you are in the independent-sum world or the without-replacement world. The finite-population correction is the main mental difference between binomial variance and hypergeometric variance.</p>
+              <p>For covariance and correlation, first ask whether the variables share randomness, split a fixed total, or come from disjoint independent pieces. In multinomial count questions, different category counts have covariance <code>-n p_i p_j</code>. In overlap questions, covariance is often just the variance of the shared part. In Poisson splitting, the category counts become independent.</p>
               <p>For mgfs, first ask whether the form matches a standard template. A normal mgf <code>exp(μt + σ²t²/2)</code> lets you read off mean and variance directly, while a finite weighted sum of <code>e^{tx}</code> often lets you read off the underlying point masses.</p>
             </details>
           </article>
@@ -1372,11 +1512,6 @@
             <span class="summary-label">Skipped</span>
             <strong id="skip-value">0</strong>
           </article>
-          <article class="summary-card">
-            <span class="summary-label">Timer</span>
-            <strong id="timer-mode-value">Untimed</strong>
-            <div id="summary-topics" class="summary-subline"></div>
-          </article>
         </div>
 
         <div class="results-actions">
@@ -1407,7 +1542,7 @@
         { id: "maxNormals", label: "Expected max", description: "Use nP(Z > x) ~= 1 to estimate maxima of iid normals.", meta: "E[max Z_i]" },
         { id: "discreteExtremes", label: "Discrete extremes", description: "Geometric and Poisson max/min questions plus full-set occupancy approximations.", meta: "geom / Pois / dice" },
         { id: "cardsSampling", label: "Cards and sampling", description: "Deck, urn, and without-replacement questions built on indicators and symmetry.", meta: "cards / urns" },
-        { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variances, and mgf plug-in or recognition drills.", meta: "Var / MGF" },
+        { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variance, covariance, correlation, and mgf drills.", meta: "Var / Cov / Corr / MGF" },
         { id: "stopping", label: "Stopping and martingales", description: "Threshold rerolls, continuation values, and bounded optional-stopping classics.", meta: "stopping" },
         { id: "vol", label: "Vol and Sharpe scaling", description: "Sqrt-time scaling for volatility and Sharpe ratios.", meta: "sqrt(time)" },
         { id: "ev", label: "Expected value", description: "Quick payoff-weighting, conditioning, and indicator-count questions.", meta: "quick EV" },
@@ -1462,8 +1597,6 @@
         correctValue: document.getElementById("correct-value"),
         wrongValue: document.getElementById("wrong-value"),
         skipValue: document.getElementById("skip-value"),
-        timerModeValue: document.getElementById("timer-mode-value"),
-        summaryTopics: document.getElementById("summary-topics"),
         reviewList: document.getElementById("review-list"),
       };
 
@@ -1816,14 +1949,6 @@
         elements.correctValue.textContent = String(correct);
         elements.wrongValue.textContent = String(wrong);
         elements.skipValue.textContent = String(skipped);
-        elements.timerModeValue.textContent = state.timerSeconds > 0 ? formatTimer(state.timerSeconds) : "Untimed";
-        elements.summaryTopics.innerHTML = state.selectedTopics
-          .map((topicId) => `<span class="review-pill">${escapeHtml(getTopicLabel(topicId))}</span>`)
-          .join("");
-        elements.summaryTopics.innerHTML =
-          `<span class="review-pill">${state.sessionLength} questions</span>` +
-          `<span class="review-pill">${escapeHtml(formatDifficultyLabel(state.difficulty))}</span>` +
-          elements.summaryTopics.innerHTML;
 
         elements.reviewList.innerHTML = state.results.map((entry) => createFinalReviewMarkup(entry)).join("");
 
@@ -2041,6 +2166,14 @@
             return "Second moments and variances usually boil down to two templates: E[X^2] = Var(X) + (E[X])^2, or variance additivity across independent pieces.\n\nWhen the sampling is without replacement, the main adjustment is the finite-population correction, which shrinks the variance compared with the binomial model.";
           }
 
+          if (question.category === "Covariance") {
+            return "Covariance asks what randomness the two quantities truly share. If two sums overlap, the shared terms are the only ones that contribute. If two counts split a fixed total across categories, the covariance is negative because extra mass in one bucket leaves less room for the other.\n\nFor count questions built from iid trials, write each count as a sum of indicators. Then covariance becomes a sum of one-trial covariances, and in multinomial settings the basic formula is Cov(N_i, N_j) = -n p_i p_j for different categories.";
+          }
+
+          if (question.category === "Correlation") {
+            return "Correlation is just covariance after dividing by the two standard deviations. That normalization often makes the answer simpler than the raw covariance, because the common factor of n cancels.\n\nThat is why multinomial count correlations often do not depend on the sample size at all, why a quantity and a larger total containing it often have correlation of square-root form, and why Poisson splitting gives correlation 0 through independence.";
+          }
+
           return "Moment generating functions package the distribution into one expression. If you recognize the family, you can plug in a convenient value of t or read off mean and variance from the standard form.\n\nFor finite weighted sums of e^(tx), the coefficients are often just the probabilities of the point masses.";
         }
 
@@ -2063,6 +2196,10 @@
 
           if (question.category === "Return probability") {
             return "To be back at 0 after 2m steps, the walk must take exactly m up-steps and m down-steps. Every length-2m step sequence is equally likely, so the return probability is just a counting problem.\n\nThere are C(2m, m) balanced sequences out of 2^(2m) total sequences, which means the probability of being back at the origin after 2m steps is C(2m, m) / 2^(2m).";
+          }
+
+          if (question.category === "Correlation") {
+            return "Positions at different times share the early increments. If S_40 is the position after 40 steps and S_100 is the position after 100 steps, then S_100 = S_40 + fresh 60-step increment, and that future increment is independent of S_40.\n\nSo Cov(S_40, S_100) = Var(S_40), which makes the correlation sqrt(Var(S_40) / Var(S_100)) = sqrt(40 / 100). The same idea works for any two times m <= n.";
           }
 
           return "A simple symmetric walk is built from independent +/-1 increments. That is why the variance grows linearly with the number of steps and the standard deviation grows like the square root of the number of steps.";
@@ -2740,6 +2877,7 @@
       function buildSupplementalQuestions() {
         const varianceRed10 = 10 * 0.5 * 0.5 * (42 / 51);
         const varianceAces13 = 13 * (4 / 52) * (48 / 52) * (39 / 51);
+        const fairDieVar = 35 / 12;
 
         return [
           createQuestion({
@@ -2890,6 +3028,19 @@
           createQuestion({
             topicId: "momentsMgf",
             category: "Variance",
+            prompt: "You throw 48 fair six-sided dice. Estimate the variance of the number of 1s.",
+            hint: "This count is binomial with n = 48 and p = 1/6, so use np(1-p).",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: 48 * (1 / 6) * (5 / 6),
+            mentalAnswer: 20 / 3,
+            absTolerance: 0.08,
+            explanation: "The number of 1s is Binomial(48, 1/6), so its variance is 48 times (1/6) times (5/6) = 20/3, about 6.67.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Variance",
             prompt: "You look at the first 10 cards of a well-shuffled standard deck. Estimate the variance of the number of red cards among those 10 cards.",
             hint: "Use the hypergeometric variance formula: n p (1-p) times the finite-population correction.",
             inputMode: "number",
@@ -2912,6 +3063,122 @@
             absTolerance: 0.05,
             explanation: "This is hypergeometric with sample size 13 and ace proportion 4/52. The variance works out to 13 * (4/52) * (48/52) * (39/51) = 12/17, about 0.706.",
             difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Covariance",
+            prompt: "You throw 60 fair six-sided dice. Let N1 and N2 be the numbers of 1s and 2s. Estimate the covariance between N1 and N2.",
+            hint: "For multinomial counts from n iid trials, different categories have covariance -n p_i p_j.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: -60 * (1 / 6) * (1 / 6),
+            mentalAnswer: -5 / 3,
+            absTolerance: 0.08,
+            explanation: "For one die, the indicators for 1 and 2 cannot both be 1, so the one-die covariance is 0 - (1/6)(1/6) = -1/36. Summing over 60 independent dice gives -60/36 = -5/3.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "You throw 120 fair six-sided dice. Let N1 and N2 be the numbers of 1s and 2s. Estimate the correlation between N1 and N2.",
+            hint: "Use covariance -n p^2 and variance np(1-p); the factor of n cancels.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: -1 / 5,
+            mentalAnswer: -0.2,
+            absTolerance: 0.03,
+            explanation: "Here p = 1/6. The covariance is -np^2 and each variance is np(1-p), so the correlation is -p/(1-p) = -(1/6)/(5/6) = -1/5 = -0.2.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "You throw 90 fair ten-sided dice. Let N1 and N2 be the numbers of 1s and 2s. Estimate the correlation between N1 and N2.",
+            hint: "For equal-probability multinomial buckets, Corr(count i, count j) = -1 / (s - 1).",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: -1 / 9,
+            mentalAnswer: -0.11,
+            absTolerance: 0.03,
+            explanation: "With 10 equally likely faces, p = 1/10. So the correlation between two distinct face counts is -p/(1-p) = -(1/10)/(9/10) = -1/9, about -0.111.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "You throw 72 fair six-sided dice. Let N1 be the number of 1s and Nodd be the number of odd faces. Estimate the correlation between N1 and Nodd.",
+            hint: "Work one die at a time: N1 is an indicator for face 1, and Nodd is an indicator for {1,3,5}. Then normalize the covariance.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: 1 / Math.sqrt(5),
+            mentalAnswer: 0.45,
+            absTolerance: 0.035,
+            explanation: "For one die, Cov(I{1}, I{odd}) = 1/6 - (1/6)(1/2) = 1/12. The one-die variances are 5/36 and 1/4. After summing over dice, the factor of 72 cancels, leaving correlation (1/12) / sqrt((5/36)(1/4)) = 1/sqrt(5), about 0.447.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "You roll two fair six-sided dice. Let X be the first die and S the total sum of the two dice. Estimate the correlation between X and S.",
+            hint: "Write S as X plus an independent second die.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: 1 / Math.sqrt(2),
+            mentalAnswer: 0.71,
+            absTolerance: 0.03,
+            explanation: "Write S = X + Y, where Y is the second die and is independent of X. Then Cov(X, S) = Var(X), while Var(S) = Var(X) + Var(Y) = 2Var(X). So the correlation is 1/sqrt(2), about 0.707.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Covariance",
+            prompt: "You roll three fair six-sided dice. Let X be the sum of the first two dice and Y be the sum of the last two dice. Estimate the covariance between X and Y.",
+            hint: "Only the shared die can contribute to the covariance.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: fairDieVar,
+            mentalAnswer: fairDieVar,
+            absTolerance: 0.08,
+            explanation: "Write X = D1 + D2 and Y = D2 + D3. The only shared randomness is D2, so Cov(X, Y) = Var(D2) = 35/12, about 2.92.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Covariance",
+            prompt: "A fixed batch of 100 customers each independently chooses desk A with probability 40% and desk B otherwise. Estimate the covariance between the counts sent to A and B.",
+            hint: "The two counts add to 100, so one is 100 minus the other.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: -100 * 0.4 * 0.6,
+            mentalAnswer: -24,
+            absTolerance: 0.12,
+            explanation: "If A is the count sent to desk A, then B = 100 - A. So Cov(A, B) = Cov(A, 100 - A) = -Var(A) = -100(0.4)(0.6) = -24.",
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "A Poisson(12) number of customers arrive. Each independently goes to desk A with probability 40% and desk B with probability 60%. Estimate the correlation between the counts sent to A and B.",
+            hint: "Poisson splitting turns the category counts into independent Poisson variables.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: 0,
+            absTolerance: 0.03,
+            explanation: "Poisson splitting says the A-count and B-count are independent Poisson variables with means 4.8 and 7.2. Independent variables have correlation 0.",
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation",
+            prompt: "You flip 100 fair coins. Let H1 be the number of heads in the first 50 flips and H the total number of heads in all 100 flips. Estimate the correlation between H1 and H.",
+            hint: "Write the total as first-half heads plus an independent second-half count.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: 1 / Math.sqrt(2),
+            mentalAnswer: 0.71,
+            absTolerance: 0.03,
+            explanation: "Write H = H1 + H2, where H2 is the heads count in the last 50 flips and is independent of H1. Then Cov(H1, H) = Var(H1) = 12.5, while Var(H) = 25, so the correlation is sqrt(12.5/25) = 1/sqrt(2).",
+            difficulty: "medium",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -3204,6 +3471,18 @@
             answer: 7,
             absTolerance: 0.2,
             explanation: "Variance after 49 steps is 49, so the standard deviation is 7.",
+          }),
+          createQuestion({
+            topicId: "randomWalks",
+            category: "Correlation",
+            prompt: "A simple symmetric random walk on the integers starts at 0. Let X be your position after 40 steps and Y your position after 100 steps. Estimate the correlation between X and Y.",
+            hint: "The later position equals the earlier position plus an independent future increment.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: Math.sqrt(40 / 100),
+            mentalAnswer: 0.63,
+            absTolerance: 0.035,
+            explanation: "Write Y as X plus the independent 60-step increment from step 41 through step 100. Then Cov(X, Y) = Var(X) = 40, while the variances are 40 and 100, so the correlation is sqrt(40/100), about 0.632.",
           }),
         ];
 
@@ -3541,7 +3820,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHH.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HHH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
             inputMode: "number",
             formatHint: "steps",
@@ -3553,7 +3832,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHHH.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HHHH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
             inputMode: "number",
             formatHint: "steps",
@@ -3565,7 +3844,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HTH.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HTH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
             inputMode: "number",
             formatHint: "steps",
@@ -3577,7 +3856,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHTT.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HHTT.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
             inputMode: "number",
             formatHint: "steps",
@@ -3589,7 +3868,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HHTH.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HHTH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
             inputMode: "number",
             formatHint: "steps",
@@ -3601,7 +3880,7 @@
           createQuestion({
             topicId: "greenBook",
             category: "Green Book: streak waiting time",
-            prompt: "Starting from scratch, estimate the expected number of fair-coin flips until you first see HTHT.",
+            prompt: "Estimate the expected number of fair-coin flips until you first see HTHT.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
             inputMode: "number",
             formatHint: "steps",
