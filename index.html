@@ -2754,22 +2754,22 @@
         const expandedSupplementalQuestions = buildExpandedSupplementalQuestions();
         const massiveSupplementalQuestions = buildMassiveSupplementalQuestions();
         return {
-          logs: [...buildNearOneLogs(), ...buildAnchorLogs(), ...buildBase2Logs(), ...buildExponentQuestions(), ...buildExpandedLogQuestions(), ...buildMassiveLogQuestions()],
-          roots: [...buildNearSquareRoots(), ...buildNearOneRoots(), ...buildExpandedRootQuestions(), ...buildMassiveRootQuestions()],
-          combos: [...buildComboQuestions(), ...buildExpandedComboQuestions(), ...buildMassiveComboQuestions()],
-          normal: [...buildNormalQuestions(), ...buildExpandedNormalQuestions(), ...buildMassiveNormalQuestions()],
+          logs: [...buildNearOneLogs(), ...buildAnchorLogs(), ...buildBase2Logs(), ...buildExponentQuestions(), ...buildExpandedLogQuestions(), ...buildMassiveLogQuestions(), ...buildUltraLogQuestions()],
+          roots: [...buildNearSquareRoots(), ...buildNearOneRoots(), ...buildExpandedRootQuestions(), ...buildMassiveRootQuestions(), ...buildUltraRootQuestions()],
+          combos: [...buildComboQuestions(), ...buildExpandedComboQuestions(), ...buildMassiveComboQuestions(), ...buildUltraComboQuestions()],
+          normal: [...buildNormalQuestions(), ...buildExpandedNormalQuestions(), ...buildMassiveNormalQuestions(), ...buildUltraNormalQuestions()],
           maxNormals: [...buildMaxNormalQuestions(), ...buildExpandedMaxNormalQuestions(), ...buildMassiveMaxNormalQuestions()],
           discreteExtremes: [...buildDiscreteExtremeQuestions(), ...buildExpandedDiscreteExtremeQuestions(), ...buildMassiveDiscreteExtremeQuestions()],
           cardsSampling: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "cardsSampling"),
-          momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf"),
+          momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf").concat(buildUltraMomentsQuestions()),
           regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions()],
-          newProblems: [...buildNewProblemsQuestions(), ...buildMassiveNewProblemsQuestions()],
+          newProblems: [...buildNewProblemsQuestions(), ...buildMassiveNewProblemsQuestions(), ...buildUltraNewProblemsQuestions()],
           options: [...buildOptionQuestions(), ...buildMassiveOptionQuestions()],
           greeks: [...buildGreekQuestions(), ...buildMassiveGreekQuestions()],
           stopping: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "stopping"),
           vol: [...buildVolQuestions(), ...buildExpandedVolQuestions(), ...buildMassiveVolQuestions()],
           ev: [...buildEvQuestions(), ...buildExpandedEvQuestions(), ...supplementalQuestions.filter((question) => question.topicId === "ev"), ...expandedSupplementalQuestions.filter((question) => question.topicId === "ev"), ...buildMassiveEvQuestions(), ...massiveSupplementalQuestions.filter((question) => question.topicId === "ev")],
-          randomWalks: [...buildRandomWalkQuestions(), ...buildExpandedRandomWalkQuestions(), ...buildMassiveRandomWalkQuestions()],
+          randomWalks: [...buildRandomWalkQuestions(), ...buildExpandedRandomWalkQuestions(), ...buildMassiveRandomWalkQuestions(), ...buildUltraRandomWalkQuestions()],
           polygons: [...buildPolygonQuestions(), ...buildExpandedPolygonQuestions(), ...buildMassivePolygonQuestions()],
           eigenvalues: [...buildEigenvalueQuestions(), ...buildExpandedEigenvalueQuestions(), ...buildMassiveEigenvalueQuestions()],
           greenBook: [...buildGreenBookQuestions(), ...buildExpandedGreenBookQuestions(), ...buildMassiveGreenBookQuestions()],
@@ -9095,6 +9095,1084 @@
         return questions;
       }
 
+      function buildUltraLogQuestions() {
+        const questions = [];
+        const nearOneValues = [0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9, 0.91, 0.93, 0.94, 1.06, 1.07, 1.09, 1.11, 1.13, 1.14, 1.15, 1.16, 1.18, 1.19, 1.22];
+
+        for (const x of nearOneValues) {
+          const u = x - 1;
+          questions.push(
+            createQuestion({
+              topicId: "logs",
+              category: "Log estimate",
+              prompt: `Estimate ln(${x}).`,
+              hint: "Use ln(1 + u) ~= u - u^2 / 2 for numbers near 1.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.log(x),
+              mentalAnswer: u - (u * u) / 2,
+              absTolerance: 0.025,
+              explanation: `Write ${x} as 1 ${u >= 0 ? "+" : "-"} ${formatNumber(Math.abs(u), 2)} and use the short Taylor expansion.`,
+              difficulty: Math.abs(u) <= 0.1 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        const anchorSpecs = [
+          { x: 16, mental: 4 * Math.log(2), explanation: "Use 4 ln(2)." },
+          { x: 18, mental: Math.log(2) + 2 * Math.log(3), explanation: "Use ln(2) + 2 ln(3)." },
+          { x: 24, mental: 3 * Math.log(2) + Math.log(3), explanation: "Use ln(8) + ln(3)." },
+          { x: 25, mental: 2 * Math.log(5), explanation: "Use 2 ln(5)." },
+          { x: 27, mental: 3 * Math.log(3), explanation: "Use 3 ln(3)." },
+          { x: 32, mental: 5 * Math.log(2), explanation: "Use 5 ln(2)." },
+          { x: 36, mental: 2 * Math.log(2) + 2 * Math.log(3), explanation: "Use 2 ln(2) + 2 ln(3)." },
+          { x: 40, mental: 3 * Math.log(2) + Math.log(5), explanation: "Use ln(8) + ln(5)." },
+          { x: 45, mental: 2 * Math.log(3) + Math.log(5), explanation: "Use 2 ln(3) + ln(5)." },
+          { x: 48, mental: 4 * Math.log(2) + Math.log(3), explanation: "Use ln(16) + ln(3)." },
+          { x: 54, mental: Math.log(2) + 3 * Math.log(3), explanation: "Use ln(2) + 3 ln(3)." },
+          { x: 72, mental: 3 * Math.log(2) + 2 * Math.log(3), explanation: "Use ln(8) + 2 ln(3)." },
+          { x: 75, mental: Math.log(3) + 2 * Math.log(5), explanation: "Use ln(3) + 2 ln(5)." },
+          { x: 80, mental: 4 * Math.log(2) + Math.log(5), explanation: "Use ln(16) + ln(5)." },
+          { x: 90, mental: 2 * Math.log(3) + Math.log(10), explanation: "Use 2 ln(3) + ln(10)." },
+          { x: 100, mental: 2 * Math.log(10), explanation: "Use 2 ln(10)." },
+          { x: 125, mental: 3 * Math.log(5), explanation: "Use 3 ln(5)." },
+        ];
+
+        for (const spec of anchorSpecs) {
+          questions.push(
+            createQuestion({
+              topicId: "logs",
+              category: "Log estimate",
+              prompt: `Estimate ln(${spec.x}).`,
+              hint: "Break the number into products of 2s, 3s, 5s, and 10s.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.log(spec.x),
+              mentalAnswer: spec.mental,
+              absTolerance: 0.05,
+              explanation: spec.explanation,
+              difficulty: spec.x <= 32 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        const base2Specs = [
+          { x: 12, mental: 3.585, explanation: "Use log base 2 of 3 plus 2." },
+          { x: 16, mental: 4, explanation: "Use 2^4 = 16." },
+          { x: 18, mental: 4.17, explanation: "Use log base 2 of 2 plus 2 log base 2 of 3." },
+          { x: 24, mental: 4.585, explanation: "Use log base 2 of 3 plus 3." },
+          { x: 25, mental: 4.644, explanation: "Use 2 log base 2 of 5." },
+          { x: 27, mental: 4.755, explanation: "Use 3 log base 2 of 3." },
+          { x: 32, mental: 5, explanation: "Use 2^5 = 32." },
+          { x: 40, mental: 5.322, explanation: "Use 1 plus log base 2 of 20 or 3 plus log base 2 of 5." },
+          { x: 45, mental: 5.492, explanation: "Use 2 log base 2 of 3 plus log base 2 of 5." },
+          { x: 48, mental: 5.585, explanation: "Use 4 plus log base 2 of 3." },
+          { x: 72, mental: 6.17, explanation: "Use 3 plus 2 log base 2 of 3." },
+          { x: 100, mental: 6.644, explanation: "Use 2 log base 2 of 10." },
+        ];
+
+        for (const spec of base2Specs) {
+          questions.push(
+            createQuestion({
+              topicId: "logs",
+              category: "Base-2 log",
+              prompt: `Estimate log base 2 of ${spec.x}.`,
+              hint: "Use factorization into familiar powers and log base 2 anchors.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.log2(spec.x),
+              mentalAnswer: spec.mental,
+              absTolerance: 0.06,
+              explanation: spec.explanation,
+              difficulty: Number.isInteger(spec.mental) ? "easy" : "medium",
+            }),
+          );
+        }
+
+        for (const u of [-0.45, -0.4, -0.25, -0.15, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.85, 1.25, 1.45, 1.75]) {
+          questions.push(
+            createQuestion({
+              topicId: "logs",
+              category: "Exponential estimate",
+              prompt: `Estimate e raised to ${u}.`,
+              hint: "Use the small-u expansion near 0, or split off an easy anchor like e or 2.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.exp(u),
+              mentalAnswer: approxExpMental(u),
+              absTolerance: Math.abs(u) <= 0.6 ? 0.05 : 0.12,
+              explanation: "Use a short Taylor expansion if the exponent is small, and otherwise split around an easy anchor.",
+              difficulty: Math.abs(u) <= 0.45 ? "easy" : Math.abs(u) <= 0.9 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const u of [-2.5, -1.5, -1.2, -0.8, 0.6, 1.4, 1.7, 2.3, 2.8, 3.2, 4.4, 5.5]) {
+          questions.push(
+            createQuestion({
+              topicId: "logs",
+              category: "Exponential estimate",
+              prompt: `Estimate 2 raised to ${u}.`,
+              hint: "Split off an integer power of 2 and handle the fractional piece separately.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: 2 ** u,
+              mentalAnswer: approxPow2Mental(u),
+              absTolerance: Math.abs(u) <= 2 ? 0.06 : 0.16,
+              explanation: "Use 2^u = 2^k times 2^(u-k), then approximate the leftover piece.",
+              difficulty: Math.abs(u) <= 1.5 ? "easy" : Math.abs(u) <= 3 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildUltraRootQuestions() {
+        const questions = [];
+        const seen = new Set();
+
+        for (const anchor of [49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400]) {
+          for (const offset of [-12, -9, -5, -3, -1, 1, 3, 5, 9, 12]) {
+            const x = anchor + offset;
+            if (x <= 0 || isPerfectSquare(x) || seen.has(x)) {
+              continue;
+            }
+            seen.add(x);
+            questions.push(
+              createQuestion({
+                topicId: "roots",
+                category: "Root estimate",
+                prompt: `Estimate sqrt(${x}).`,
+                hint: "Use a nearby perfect square and linearize.",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: Math.sqrt(x),
+                mentalAnswer: approxSqrtAroundAnchor(x, anchor),
+                absTolerance: anchor >= 144 ? 0.08 : 0.1,
+                explanation: `Anchor at ${anchor} and correct by ${formatSigned(x - anchor, 0)} divided by twice the root of the anchor.`,
+                difficulty: Math.abs(offset) <= 3 ? "easy" : Math.abs(offset) <= 9 ? "medium" : "hard",
+              }),
+            );
+          }
+        }
+
+        for (const x of [0.72, 0.75, 0.78, 0.81, 0.84, 0.88, 0.9, 0.94, 1.06, 1.1, 1.14, 1.18, 1.24, 1.28, 1.32, 1.36, 1.4, 1.48, 1.56, 1.62]) {
+          const u = x - 1;
+          questions.push(
+            createQuestion({
+              topicId: "roots",
+              category: "Root estimate",
+              prompt: `Estimate sqrt(${x}).`,
+              hint: "Near 1, use sqrt(1 + u) ~= 1 + u/2.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.sqrt(x),
+              mentalAnswer: 1 + u / 2,
+              absTolerance: 0.05,
+              explanation: "Use the first-order expansion around 1.",
+              difficulty: Math.abs(u) <= 0.18 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildUltraComboQuestions() {
+        const questions = [];
+        const rootValues = [147, 168, 195, 224, 255, 288, 323, 360, 399, 440];
+        const logValues = [2, 3, 5, 6, 8, 10, 12, 20];
+        const expValues = [0.15, 0.25, 0.35, 0.45, 0.55];
+
+        for (const rootValue of rootValues) {
+          for (const logValue of logValues) {
+            questions.push(
+              createQuestion({
+                topicId: "combos",
+                category: "Combo estimate",
+                prompt: `Estimate sqrt(${rootValue}) + ln(${logValue}).`,
+                hint: "Estimate each piece separately, then add.",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: Math.sqrt(rootValue) + Math.log(logValue),
+                mentalAnswer: approxSqrtMental(rootValue) + approxLnMental(logValue),
+                absTolerance: 0.12,
+                explanation: "This is a decomposition drill: anchor the root and the log separately before combining.",
+                difficulty: logValue <= 6 ? "medium" : "hard",
+              }),
+            );
+          }
+        }
+
+        for (const rootValue of [147, 224, 323, 399, 440, 528, 624, 728]) {
+          for (const expValue of expValues) {
+            questions.push(
+              createQuestion({
+                topicId: "combos",
+                category: "Combo estimate",
+                prompt: `Estimate sqrt(${rootValue}) + e raised to ${expValue}.`,
+                hint: "Use a root linearization plus an exponential anchor.",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: Math.sqrt(rootValue) + Math.exp(expValue),
+                mentalAnswer: approxSqrtMental(rootValue) + approxExpMental(expValue),
+                absTolerance: 0.14,
+                explanation: "Pair a nearby-square estimate with a short exponential estimate.",
+                difficulty: expValue <= 0.35 ? "medium" : "hard",
+              }),
+            );
+          }
+        }
+
+        for (const rootValue of [168, 255, 360, 483, 624, 783]) {
+          for (const logValue of [12, 20, 24, 40, 48]) {
+            questions.push(
+              createQuestion({
+                topicId: "combos",
+                category: "Combo estimate",
+                prompt: `Estimate sqrt(${rootValue}) - log base 2 of ${logValue}.`,
+                hint: "Use a nearby-square estimate and a base-2 log anchor.",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: Math.sqrt(rootValue) - Math.log2(logValue),
+                mentalAnswer: approxSqrtMental(rootValue) - Math.log2(logValue),
+                absTolerance: 0.14,
+                explanation: "The point is to blend two separate anchors without losing track of signs.",
+                difficulty: logValue <= 20 ? "medium" : "hard",
+              }),
+            );
+          }
+        }
+
+        return questions;
+      }
+
+      function buildUltraNormalQuestions() {
+        const questions = [];
+
+        for (const anchor of normalTailTable) {
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(Z < ${anchor.z}) for Z standard normal.`,
+              hint: "Use the upper-tail anchor and subtract from 1.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: standardNormalCDF(anchor.z),
+              mentalAnswer: 1 - anchor.tailMental,
+              absTolerance: 0.02,
+              explanation: "Convert the memorized upper-tail anchor into a left-tail probability.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(Z < -${anchor.z}) for Z standard normal.`,
+              hint: "Use symmetry of the standard normal.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: standardNormalCDF(-anchor.z),
+              mentalAnswer: anchor.tailMental,
+              absTolerance: 0.02,
+              explanation: "The left tail below -z matches the upper tail above +z.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(|Z| < ${anchor.z}) for Z standard normal.`,
+              hint: "Use the two equal tails outside +/-z.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 1 - (2 * anchor.tailMental),
+              mentalAnswer: 1 - (2 * anchor.tailMental),
+              absTolerance: 0.025,
+              explanation: "Subtract both tails outside +/-z from 1.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(|Z| > ${anchor.z}) for Z standard normal.`,
+              hint: "Double the one-sided upper tail.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 2 * anchor.tailMental,
+              mentalAnswer: 2 * anchor.tailMental,
+              absTolerance: 0.02,
+              explanation: "Use symmetry: one tail on each side.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal quantile",
+              prompt: `Estimate z such that P(Z > z) is about ${formatPercent(anchor.tailMental)}.`,
+              hint: "This is one of the standard upper-tail anchors.",
+              inputMode: "number",
+              formatHint: "z-score",
+              answer: anchor.quantileExact,
+              mentalAnswer: anchor.z,
+              absTolerance: 0.08,
+              explanation: "Map the tail probability back to its memorized z-score anchor.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal quantile",
+              prompt: `Estimate z such that P(|Z| < z) is about ${formatPercent(1 - (2 * anchor.tailMental))}.`,
+              hint: "Convert the central probability into one tail on each side.",
+              inputMode: "number",
+              formatHint: "z-score",
+              answer: anchor.quantileExact,
+              mentalAnswer: anchor.z,
+              absTolerance: 0.08,
+              explanation: "A central area of c leaves tail area (1-c)/2 on each side.",
+              difficulty: anchor.z <= 1.64 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        for (let index = 0; index < normalTailTable.length - 1; index += 1) {
+          const left = normalTailTable[index];
+          const right = normalTailTable[index + 1];
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(${left.z} < Z < ${right.z}) for Z standard normal.`,
+              hint: "Subtract two upper-tail anchors or two CDF anchors.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: standardNormalCDF(right.z) - standardNormalCDF(left.z),
+              mentalAnswer: left.tailMental - right.tailMental,
+              absTolerance: 0.02,
+              explanation: "The mass between the two z-levels is the difference between their CDF values, or equivalently the difference between their upper tails.",
+              difficulty: "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal tail",
+              prompt: `Estimate P(${left.z} < |Z| < ${right.z}) for Z standard normal.`,
+              hint: "Double the one-sided band between the two positive z-values.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 2 * (standardNormalCDF(right.z) - standardNormalCDF(left.z)),
+              mentalAnswer: 2 * (left.tailMental - right.tailMental),
+              absTolerance: 0.025,
+              explanation: "There is the same probability band on the left and on the right.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildUltraMomentsQuestions() {
+        const questions = [];
+        const evenSides = [4, 6, 8, 10, 12, 20];
+        const trialCounts = [12, 18, 24, 30, 40, 60];
+
+        for (const sides of evenSides) {
+          const p = 1 / sides;
+          for (const rolls of trialCounts) {
+            const mean = rolls * p;
+            const variance = rolls * p * (1 - p);
+
+            questions.push(
+              createQuestion({
+                topicId: "momentsMgf",
+                category: "Variance",
+                prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the variance of the number of 1s.`,
+                hint: "Treat the count of 1s as Binomial(n, 1/sides).",
+                inputMode: "number",
+                formatHint: "variance",
+                answer: variance,
+                mentalAnswer: variance,
+                absTolerance: 0.06,
+                explanation: "A count of one designated face is binomial.",
+                difficulty: rolls <= 24 ? "easy" : "medium",
+              }),
+            );
+
+            questions.push(
+              createQuestion({
+                topicId: "momentsMgf",
+                category: "Covariance",
+                prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the covariance between the number of 1s and the number of 2s.`,
+                hint: "Different category counts in a multinomial sample have covariance -n p_i p_j.",
+                inputMode: "number",
+                formatHint: "covariance",
+                answer: -(rolls * p * p),
+                mentalAnswer: -(rolls * p * p),
+                absTolerance: 0.04,
+                explanation: "Extra mass in one face count leaves less room for the other.",
+                difficulty: rolls <= 24 ? "medium" : "hard",
+              }),
+            );
+
+            questions.push(
+              createQuestion({
+                topicId: "momentsMgf",
+                category: "Second moment",
+                prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the expected square of the number of 1s.`,
+                hint: "Use E[X^2] = Var(X) + (E[X])^2.",
+                inputMode: "number",
+                formatHint: "moment",
+                answer: variance + (mean * mean),
+                mentalAnswer: variance + (mean * mean),
+                absTolerance: 0.08,
+                explanation: "Combine the binomial variance with the squared mean.",
+                difficulty: rolls <= 24 ? "medium" : "hard",
+              }),
+            );
+          }
+
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Correlation",
+              prompt: `You roll a fair ${sides}-sided die 60 times. Estimate the correlation between the number of 1s and the number of 2s.`,
+              hint: "For two distinct face counts, the multinomial correlation is -1/(sides - 1).",
+              inputMode: "number",
+              formatHint: "correlation",
+              answer: -1 / (sides - 1),
+              mentalAnswer: -1 / (sides - 1),
+              absTolerance: 0.03,
+              explanation: "The sample size cancels out after you normalize covariance by the two standard deviations.",
+              difficulty: sides <= 8 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const sides of evenSides) {
+          for (const rolls of [12, 24, 40, 60]) {
+            const covariance = rolls / (2 * sides);
+            questions.push(
+              createQuestion({
+                topicId: "momentsMgf",
+                category: "Covariance",
+                prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the covariance between the number of 1s and the number of odd rolls.`,
+                hint: "Use indicators: face 1 is a subset of odd rolls, so the overlap is positive.",
+                inputMode: "number",
+                formatHint: "covariance",
+                answer: covariance,
+                mentalAnswer: covariance,
+                absTolerance: 0.05,
+                explanation: "On one trial, P(1 and odd) = 1/sides and P(1)P(odd) = 1/(2sides).",
+                difficulty: "medium",
+              }),
+            );
+
+            questions.push(
+              createQuestion({
+                topicId: "momentsMgf",
+                category: "Variance",
+                prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the variance of the number of rolls that show either 1 or 2.`,
+                hint: "Combine the two faces into one success event with probability 2/sides.",
+                inputMode: "number",
+                formatHint: "variance",
+                answer: rolls * (2 / sides) * (1 - (2 / sides)),
+                mentalAnswer: rolls * (2 / sides) * (1 - (2 / sides)),
+                absTolerance: 0.06,
+                explanation: "The total count of 1s or 2s is just binomial with success probability 2/sides.",
+                difficulty: "medium",
+              }),
+            );
+          }
+        }
+
+        for (const [lambda, multiple] of [
+          [1, 2],
+          [2, 2],
+          [3, 2],
+          [4, 2],
+          [5, 2],
+          [6, 2],
+          [1, 3],
+          [2, 3],
+          [3, 3],
+          [4, 3],
+          [5, 3],
+          [6, 3],
+        ]) {
+          const t = Math.log(multiple);
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "MGF",
+              prompt: `If X is Poisson(${lambda}), estimate the moment generating function of X at t = ln ${multiple}.`,
+              hint: "For Poisson(lambda), M(t) = exp(lambda(e^t - 1)).",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: Math.exp(lambda * (multiple - 1)),
+              mentalAnswer: Math.exp(lambda * (multiple - 1)),
+              absTolerance: 0.12,
+              explanation: "Plug e^t = multiple into the Poisson mgf formula.",
+              difficulty: multiple === 2 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const [trials, probability, multiple] of [
+          [6, 0.5, 2],
+          [8, 0.5, 2],
+          [10, 0.5, 2],
+          [12, 0.5, 2],
+          [6, 0.25, 2],
+          [8, 0.25, 2],
+          [10, 0.25, 3],
+          [12, 0.25, 3],
+          [8, 0.2, 2],
+          [10, 0.2, 3],
+          [12, 0.3, 2],
+          [14, 0.3, 3],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "MGF",
+              prompt: `If X is Binomial with n = ${trials} and p = ${probability}, estimate the moment generating function of X at t = ln ${multiple}.`,
+              hint: "For Binomial(n, p), M(t) = (1 - p + p e^t)^n.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: ((1 - probability) + (probability * multiple)) ** trials,
+              mentalAnswer: ((1 - probability) + (probability * multiple)) ** trials,
+              absTolerance: 0.16,
+              explanation: "Substitute e^t = multiple into the binomial mgf.",
+              difficulty: multiple === 2 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildUltraRandomWalkQuestions() {
+        const questions = [];
+
+        for (const steps of [6, 8, 10, 12, 14, 16, 18, 20]) {
+          for (const position of [0, 2, 4]) {
+            if (Math.abs(position) > steps || (steps + position) % 2 !== 0) {
+              continue;
+            }
+
+            questions.push(
+              createQuestion({
+                topicId: "randomWalks",
+                category: "Position probability",
+                prompt: `A simple symmetric random walk on the integers starts at 0. What is the probability your position is ${position} after ${steps} steps?`,
+                hint: "Count how many up-steps are needed, then divide by 2^n.",
+                inputMode: "probability",
+                formatHint: "probability",
+                answer: probabilityWalkAtPosition(steps, position),
+                mentalAnswer: probabilityWalkAtPosition(steps, position),
+                absTolerance: 0.02,
+                explanation: "Reaching position k after n steps means taking (n+k)/2 up-steps and the rest down-steps.",
+                difficulty: position === 0 ? "medium" : "hard",
+              }),
+            );
+          }
+        }
+
+        for (const steps of [6, 8, 10, 12, 16, 20, 24, 30, 40, 50]) {
+          questions.push(
+            createQuestion({
+              topicId: "randomWalks",
+              category: "Second moment",
+              prompt: `A simple symmetric random walk on the integers starts at 0. Estimate the expected square of your position after ${steps} steps.`,
+              hint: "For a mean-zero walk, E[S_n^2] is just the variance.",
+              inputMode: "number",
+              formatHint: "moment",
+              answer: steps,
+              mentalAnswer: steps,
+              absTolerance: 0.03,
+              explanation: "The walk has mean 0 and variance n, so the second moment is n as well.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        for (const [earlierSteps, laterSteps] of [
+          [10, 40],
+          [12, 48],
+          [15, 60],
+          [18, 72],
+          [20, 80],
+          [25, 100],
+          [30, 90],
+          [30, 120],
+          [40, 140],
+          [50, 200],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "randomWalks",
+              category: "Covariance",
+              prompt: `A simple symmetric random walk on the integers starts at 0. Let X be your position after ${earlierSteps} steps and Y your position after ${laterSteps} steps. Estimate Cov(X, Y).`,
+              hint: "The later position is the earlier one plus an independent future increment.",
+              inputMode: "number",
+              formatHint: "covariance",
+              answer: earlierSteps,
+              mentalAnswer: earlierSteps,
+              absTolerance: 0.03,
+              explanation: "Only the shared early increments contribute to the covariance.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        for (const [upperBarrier, lowerDistance] of [
+          [3, 1],
+          [3, 2],
+          [4, 1],
+          [4, 3],
+          [5, 2],
+          [5, 4],
+          [6, 1],
+          [6, 2],
+          [6, 5],
+          [8, 2],
+          [8, 3],
+          [8, 5],
+          [10, 2],
+          [10, 4],
+          [10, 6],
+          [12, 3],
+          [12, 5],
+          [12, 7],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "randomWalks",
+              category: "Walk hitting probability",
+              prompt: `A simple symmetric random walk on Z starts at 0 and stops at ${upperBarrier} or -${lowerDistance}. Estimate the probability it hits ${upperBarrier} before -${lowerDistance}.`,
+              hint: "Shift the interval so the start is at x = lowerDistance on {0, lowerDistance + upperBarrier}.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: lowerDistance / (upperBarrier + lowerDistance),
+              mentalAnswer: lowerDistance / (upperBarrier + lowerDistance),
+              absTolerance: 0.025,
+              explanation: "Translate the barriers into a gambler's-ruin interval with the start in the interior.",
+              difficulty: lowerDistance === 1 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "randomWalks",
+              category: "Exit time",
+              prompt: `A simple symmetric random walk on Z starts at 0 and stops at ${upperBarrier} or -${lowerDistance}. Estimate the expected exit time.`,
+              hint: "After shifting, use x(N - x) with x = lowerDistance and N = upperBarrier + lowerDistance.",
+              inputMode: "number",
+              formatHint: "steps",
+              answer: upperBarrier * lowerDistance,
+              mentalAnswer: upperBarrier * lowerDistance,
+              absTolerance: 0.05,
+              explanation: "The translated gambler's-ruin formula collapses to upper barrier times lower distance.",
+              difficulty: lowerDistance === 1 ? "easy" : "medium",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "randomWalks",
+              category: "Hitting-time variance",
+              prompt: `A simple symmetric random walk on Z starts at 0 and stops at ${upperBarrier} or -${lowerDistance}. Estimate the variance of the exit time.`,
+              hint: "Translate to x = lowerDistance on {0, upperBarrier + lowerDistance}, then use the quartic-martingale variance formula.",
+              inputMode: "number",
+              formatHint: "variance",
+              answer: gamblerRuinExitTimeVariance(lowerDistance, upperBarrier + lowerDistance),
+              mentalAnswer: (upperBarrier * lowerDistance * ((upperBarrier * upperBarrier) + (lowerDistance * lowerDistance) - 2)) / 3,
+              absTolerance: 1.5,
+              explanation: "After translation, the variance formula simplifies neatly to ab(a^2 + b^2 - 2)/3.",
+              difficulty: lowerDistance <= 2 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildUltraNewProblemsQuestions() {
+        const questions = [];
+
+        for (const draws of [4, 6, 8, 10, 12, 15, 20, 25]) {
+          for (const rankFromTop of [1, 2, 3, 4]) {
+            if (rankFromTop > draws) {
+              continue;
+            }
+            questions.push(
+              createQuestion({
+                topicId: "newProblems",
+                category: "Order statistics",
+                prompt: `You draw ${draws} times independently from Uniform(0,1). Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+                hint: "Convert the top rank into a bottom rank and use r/(n+1).",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: uniformJthLargestExpectation(draws, rankFromTop),
+                mentalAnswer: uniformJthLargestExpectation(draws, rankFromTop),
+                absTolerance: 0.03,
+                explanation: "Uniform order-statistic means are exact and easy to memorize.",
+                difficulty: rankFromTop <= 2 ? "easy" : "medium",
+              }),
+            );
+          }
+        }
+
+        for (const draws of [5, 7, 9, 12, 16, 20, 30]) {
+          for (const rankFromBottom of [1, 2, 3]) {
+            questions.push(
+              createQuestion({
+                topicId: "newProblems",
+                category: "Order statistics",
+                prompt: `You draw ${draws} times independently from Uniform(0,1). Estimate the expected ${describeSmallestRank(rankFromBottom)} draw.`,
+                hint: "For Uniform(0,1), the expected r-th smallest draw is exactly r/(n+1).",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: rankFromBottom / (draws + 1),
+                mentalAnswer: rankFromBottom / (draws + 1),
+                absTolerance: 0.03,
+                explanation: "This is the lower-tail counterpart of the largest-draw formula.",
+                difficulty: rankFromBottom === 1 ? "easy" : "medium",
+              }),
+            );
+          }
+        }
+
+        for (const sides of [4, 6, 8, 10, 12, 20]) {
+          for (const rolls of [4, 6, 8, 10]) {
+            for (const rankFromTop of [1, 2, 3]) {
+              if (rankFromTop > rolls) {
+                continue;
+              }
+              questions.push(
+                createQuestion({
+                  topicId: "newProblems",
+                  category: "Order statistics",
+                  prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the expected ${describeLargestRank(rankFromTop)} roll.`,
+                  hint: "Use the continuous-uniform scaling rule as the mental anchor, but remember the exact answer is discrete.",
+                  inputMode: "number",
+                  formatHint: "decimal",
+                  answer: discreteUniformJthLargestExpectation(rolls, sides, rankFromTop),
+                  mentalAnswer: discreteUniformJthLargestUniformApproximation(rolls, sides, rankFromTop),
+                  absTolerance: sides <= 8 ? 0.65 : 0.95,
+                  explanation: "The accepted range intentionally covers both the exact discrete mean and the continuous-uniform shortcut.",
+                  difficulty: sides <= 6 && rankFromTop === 1 ? "medium" : "hard",
+                }),
+              );
+            }
+          }
+        }
+
+        for (const rate of [1, 2]) {
+          for (const draws of [4, 5, 6, 8, 10, 12, 16, 20]) {
+            for (const rankFromTop of [1, 2, 3, 4]) {
+              if (rankFromTop > draws) {
+                continue;
+              }
+              questions.push(
+                createQuestion({
+                  topicId: "newProblems",
+                  category: "Order statistics",
+                  prompt: `You draw ${draws} independent Exponential(rate ${rate}) variables. Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+                  hint: "Use harmonic-number gaps: the top order statistics peel off 1/rate, then 1/(2 rate), and so on.",
+                  inputMode: "number",
+                  formatHint: "decimal",
+                  answer: exponentialJthLargestExpectation(draws, rankFromTop, rate),
+                  mentalAnswer: exponentialJthLargestMental(draws, rankFromTop, rate),
+                  absTolerance: 0.08,
+                  explanation: "Exponentials are special because their order-statistic gaps stay independent.",
+                  difficulty: draws <= 6 ? "medium" : "hard",
+                }),
+              );
+            }
+          }
+        }
+
+        const bernoulliSpecs = [
+          [6, 10], [7, 12], [9, 15], [11, 18], [13, 20], [15, 24], [17, 25], [19, 30], [22, 32], [27, 40],
+        ];
+        for (const [successes, trials] of bernoulliSpecs) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `A Bernoulli experiment with unknown success probability p produces ${successes} successes in ${trials} trials. Estimate the maximum-likelihood estimate of p.`,
+              hint: "Use successes divided by trials.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: successes / trials,
+              mentalAnswer: successes / trials,
+              absTolerance: 0.03,
+              explanation: "The binomial likelihood is maximized at the sample proportion.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        const poissonSamples = [
+          [1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [2, 4, 6, 8], [1, 3, 5, 7, 9], [4, 4, 5, 5], [6, 7, 8], [2, 2, 3, 3, 4], [5, 6, 7, 8], [1, 4, 4, 7],
+        ];
+        for (const sample of poissonSamples) {
+          const mean = sample.reduce((sum, value) => sum + value, 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Poisson(lambda) counts observed over ${sample.length} intervals are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of lambda.`,
+              hint: "Average the counts.",
+              inputMode: "number",
+              formatHint: "mean",
+              answer: mean,
+              mentalAnswer: mean,
+              absTolerance: 0.05,
+              explanation: "For Poisson data, lambda-hat is the sample mean.",
+              difficulty: sample.length <= 4 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        const exponentialSamples = [
+          [1, 2, 3, 4], [2, 2, 4, 4], [1, 1, 2, 2, 4], [3, 3, 6], [2, 5, 8, 5], [4, 4, 4, 4], [1, 3, 3, 9], [2, 6, 6, 6], [3, 5, 7], [1, 2, 5, 8],
+        ];
+        for (const sample of exponentialSamples) {
+          const total = sample.reduce((sum, value) => sum + value, 0);
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Exponential(rate lambda) waiting times are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of lambda.`,
+              hint: "Use n divided by the total waiting time.",
+              inputMode: "number",
+              formatHint: "rate",
+              answer: sample.length / total,
+              mentalAnswer: sample.length / total,
+              absTolerance: 0.03,
+              explanation: "This is one over the sample mean.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const geometricSamples = [
+          [1, 2, 1, 3], [2, 2, 3, 3], [1, 1, 2, 2, 4], [3, 4, 5], [2, 5, 2, 1], [1, 3, 3, 3], [4, 4, 4, 2], [1, 2, 5, 2], [2, 6, 3, 1], [3, 3, 3, 3],
+        ];
+        for (const sample of geometricSamples) {
+          const total = sample.reduce((sum, value) => sum + value, 0);
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent geometric observations counting trials until first success are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of the success probability p.`,
+              hint: "For this geometric convention, p-hat is 1 divided by the sample mean.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: sample.length / total,
+              mentalAnswer: sample.length / total,
+              absTolerance: 0.03,
+              explanation: "The geometric likelihood is maximized at one over the sample mean.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const normalMeanSamples = [
+          [1, 2, 3, 4], [2, 4, 6], [3, 5, 7, 9], [10, 12, 14], [4, 4, 8, 8], [1, 3, 5, 7, 9], [6, 6, 6, 10], [2, 5, 8, 11],
+        ];
+        for (const sample of normalMeanSamples) {
+          const mean = sample.reduce((sum, value) => sum + value, 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Normal(mu, 1) observations are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of mu.`,
+              hint: "For a normal mean, the MLE is the sample mean.",
+              inputMode: "number",
+              formatHint: "mean",
+              answer: mean,
+              mentalAnswer: mean,
+              absTolerance: 0.04,
+              explanation: "Average the observations.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        const normalVarianceSamples = [
+          [1, -1, 2, -2], [2, -2, 2, -2], [1, 3, -1, -3], [2, 0, -2, 0], [3, -3, 6, -6], [1, -1, 1, -1, 2, -2], [2, -4, 4, -2], [5, -5, 5, -5],
+        ];
+        for (const sample of normalVarianceSamples) {
+          const varianceMLE = sample.reduce((sum, value) => sum + value * value, 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Normal(0, sigma^2) observations are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of sigma^2.`,
+              hint: "With mean fixed at 0, average the squared observations.",
+              inputMode: "number",
+              formatHint: "variance",
+              answer: varianceMLE,
+              mentalAnswer: varianceMLE,
+              absTolerance: 0.05,
+              explanation: "The MLE is the average squared residual around 0.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const centeredVarianceSamples = [
+          [1, 2, 3, 4], [2, 4, 6], [1, 3, 5, 7], [2, 3, 5, 10], [4, 4, 8, 8], [0, 2, 4, 6],
+        ];
+        for (const sample of centeredVarianceSamples) {
+          const sampleMean = sample.reduce((sum, value) => sum + value, 0) / sample.length;
+          const mleVariance = sample.reduce((sum, value) => sum + ((value - sampleMean) ** 2), 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Normal(mu, sigma^2) observations are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of sigma^2.`,
+              hint: "First compute the sample mean, then average squared deviations using denominator n.",
+              inputMode: "number",
+              formatHint: "variance",
+              answer: mleVariance,
+              mentalAnswer: mleVariance,
+              absTolerance: 0.05,
+              explanation: "With unknown mean, the likelihood uses squared residuals around the sample mean and divides by n for the MLE.",
+              difficulty: "hard",
+            }),
+          );
+        }
+
+        const laplaceLocationSamples = [
+          [2, 4, 7], [1, 3, 4, 8, 9], [5, 6, 10, 13, 15], [0, 2, 2, 4, 9], [3, 3, 7, 8, 20], [1, 2, 2, 2, 10], [4, 6, 7, 9, 12], [5, 5, 5, 8, 20],
+        ];
+        for (const sample of laplaceLocationSamples) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `In the Laplace-error model y_i = alpha + eps_i, the observed y values are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of alpha.`,
+              hint: "Use the sample median.",
+              inputMode: "number",
+              formatHint: "location",
+              answer: median(sample),
+              mentalAnswer: median(sample),
+              absTolerance: 0.04,
+              explanation: "Laplace location equals the median.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const laplaceScaleSamples = [
+          [0, 1, -1, 2, -2], [0, 2, -2, 4, -4], [0, 1, 1, -1, -1], [0, 3, -3, 6, -6], [0, 2, -1, 1, -2], [0, 4, -2, 2, -4],
+        ];
+        for (const sample of laplaceScaleSamples) {
+          const scale = sample.reduce((sum, value) => sum + Math.abs(value), 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Laplace(0, b) observations are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of b.`,
+              hint: "With location fixed at 0, the scale MLE is the average absolute observation.",
+              inputMode: "number",
+              formatHint: "scale",
+              answer: scale,
+              mentalAnswer: scale,
+              absTolerance: 0.05,
+              explanation: "Average the absolute deviations from 0.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        for (const [sumXY, sumXSquared] of [
+          [12, 4], [15, 5], [18, 6], [24, 8], [28, 7], [35, 14], [40, 16], [54, 18], [63, 21], [72, 24], [88, 32], [99, 33],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Regression MLE",
+              prompt: `In the Normal-error through-origin regression model y_i = beta x_i + eps_i, suppose sum x_i y_i = ${sumXY} and sum x_i^2 = ${sumXSquared}. Estimate the maximum-likelihood estimate of beta.`,
+              hint: "Use beta-hat = sum x_i y_i / sum x_i^2.",
+              inputMode: "number",
+              formatHint: "slope",
+              answer: sumXY / sumXSquared,
+              mentalAnswer: sumXY / sumXSquared,
+              absTolerance: 0.04,
+              explanation: "Normal-error MLE is least squares.",
+              difficulty: sumXSquared <= 8 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        const laplaceSlopeSpecs = [
+          { xs: [1, 2, 4], ratios: [2, 4, 5] },
+          { xs: [1, 3, 5], ratios: [1, 2, 3] },
+          { xs: [2, 3, 6], ratios: [1.5, 2, 2.5] },
+          { xs: [1, 4, 6], ratios: [3, 4, 6] },
+          { xs: [2, 5, 7], ratios: [2, 2.5, 4] },
+          { xs: [1, 2, 7], ratios: [1, 4, 5] },
+          { xs: [3, 4, 8], ratios: [1, 2, 2] },
+          { xs: [1, 6, 9], ratios: [3, 4, 5] },
+        ];
+        for (const spec of laplaceSlopeSpecs) {
+          const ys = spec.xs.map((x, index) => x * spec.ratios[index]);
+          const betaHat = weightedMedian(spec.ratios, spec.xs);
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Regression MLE",
+              prompt: `In the Laplace-error through-origin regression model y_i = beta x_i + eps_i with positive x_i, the observed pairs are ${spec.xs.map((x, index) => `(${x}, ${ys[index]})`).join(", ")}. Estimate the maximum-likelihood estimate of beta.`,
+              hint: "Use the weighted median of y_i/x_i with weights x_i.",
+              inputMode: "number",
+              formatHint: "slope",
+              answer: betaHat,
+              mentalAnswer: betaHat,
+              absTolerance: 0.05,
+              explanation: "Absolute-error regression becomes a weighted-median problem in the ratios.",
+              difficulty: "hard",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function isPerfectSquare(value) {
+        const root = Math.sqrt(value);
+        return Number.isInteger(root);
+      }
+
+      function probabilityWalkAtPosition(steps, position) {
+        const upSteps = (steps + position) / 2;
+        if (!Number.isInteger(upSteps) || upSteps < 0 || upSteps > steps) {
+          return 0;
+        }
+        return factorial(steps) / (factorial(upSteps) * factorial(steps - upSteps) * (2 ** steps));
+      }
+
       function describeLargestRank(rankFromTop) {
         if (rankFromTop === 1) {
           return "largest";
@@ -9109,6 +10187,22 @@
         }
 
         return `${rankFromTop}th-largest`;
+      }
+
+      function describeSmallestRank(rankFromBottom) {
+        if (rankFromBottom === 1) {
+          return "smallest";
+        }
+
+        if (rankFromBottom === 2) {
+          return "second-smallest";
+        }
+
+        if (rankFromBottom === 3) {
+          return "third-smallest";
+        }
+
+        return `${rankFromBottom}th-smallest`;
       }
 
       function rankFromPrompt(prompt) {
