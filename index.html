@@ -1354,7 +1354,7 @@
 
           <article class="guide-card">
             <h3>Markov Chain Spectra on Rings</h3>
-            <p>These spectrum cards are about the <strong>transition matrix</strong> of the simple random walk Markov chain, not the adjacency matrix of the graph. On an <code>n</code>-vertex ring, one step averages the two neighbors, and that averaging rule produces eigenvalues <code>cos(2πk/n)</code>.</p>
+            <p>These spectrum cards are about the <strong>transition matrix</strong> of the simple random walk Markov chain. On an <code>n</code>-vertex ring, one step averages the two neighbors, and that averaging rule produces eigenvalues <code>cos(2πk/n)</code>.</p>
             <div class="guide-example">
               <strong>Example:</strong> on an 8-vertex ring, the second-largest transition-matrix eigenvalue is <code>cos(2π/8) = cos(π/4) ≈ 0.707</code>, so the spectral gap is about <code>1 - 0.707 = 0.293</code>.
             </div>
@@ -1390,6 +1390,32 @@
               <p>For the Bayesian cards here, the intended model is explicit regression: <code>β ~ N(m₀, τ²)</code> and <code>y_i = β x_i + ε_i</code> with independent <code>ε_i ~ N(0, σ²)</code>. In that one-parameter Gaussian regression, the posterior variance is <code>1 / (1/τ² + Σx_i²/σ²)</code>, and the posterior mean is that variance times <code>m₀/τ² + Σx_i y_i / σ²</code>.</p>
               <p>So the Bayesian regression cards are really sufficient-statistic cards: once you know <code>Σx_i²</code> and <code>Σx_i y_i</code>, you already know the entire posterior for <code>β</code>. If all <code>x_i = 1</code>, the model reduces to a noisy-mean update, and the posterior mean becomes a precision-weighted average of the prior mean and the sample mean.</p>
               <p>That is also where shrinkage comes from. Noisy data means small data precision, so the posterior stays closer to the prior. Precise data means large data precision, so the posterior moves toward the regression estimate. For prediction, regression-to-the-mean is still the mental anchor: if <code>X</code> is <code>z</code> standard deviations above its mean, the fitted <code>Y</code> is only <code>ρz</code> standard deviations above its own mean.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Order Statistics</h3>
+            <p>For <code>Uniform(0,1)</code> draws, the expected <code>r</code>-th smallest value is <code>r/(n+1)</code>. That means the expected largest is <code>n/(n+1)</code>, the expected second-largest is <code>(n-1)/(n+1)</code>, and so on. For fair <code>m</code>-sided dice, a fast mental approximation is the same continuous rule scaled to <code>{1, ..., m}</code>: use <code>((n-j+1)/(n+1))(m+1)</code> for the <code>j</code>-th largest.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> among 5 uniform draws, the expected second-largest is <code>4/6 = 2/3</code>. Among 5 rolls of a fair 20-sided die, the expected second-largest is roughly <code>(4/6) × 21 = 14</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Why exponentials are special too</summary>
+              <p>Exponential order statistics are built from independent gaps. If the draws are <code>Exp(λ)</code>, the expected largest is <code>H_n/λ</code>, the expected second-largest is <code>(H_n - 1)/λ</code>, and the expected third-largest is <code>(H_n - 1 - 1/2)/λ</code>.</p>
+              <p>That gives a very fast mental rule because <code>H_n</code> is close to <code>ln n + γ</code>. So for a largest exponential you can often start with <code>ln n + 0.58</code>, then divide by the rate.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>MLE Quick Rules</h3>
+            <p>Most one-parameter MLE problems collapse to one of a few memorized templates: Bernoulli and binomial give sample proportion, Poisson gives sample mean, exponential rate gives reciprocal sample mean, normal mean gives sample mean, uniform upper-endpoint gives sample maximum, and Laplace location gives sample median.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> if 14 of 20 coin flips are heads, <code>p-hat = 14/20 = 0.7</code>. If exponential waiting times average <code>2.5</code>, then the rate MLE is <code>1/2.5 = 0.4</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Regression versions worth knowing</summary>
+              <p>With normal errors, linear-regression MLE is just least squares. Through the origin that means <code>beta-hat = sum x_i y_i / sum x_i²</code>. If the <code>x_i</code> are centered, the intercept is just <code>y-bar</code>.</p>
+              <p>With Laplace errors, replace squared residuals by absolute residuals. For an intercept-only model the MLE is the sample median. For through-origin regression with positive <code>x_i</code>, minimizing <code>sum |y_i - beta x_i|</code> makes <code>beta</code> the weighted median of the ratios <code>y_i / x_i</code> with weights <code>x_i</code>.</p>
             </details>
           </article>
 
@@ -1603,6 +1629,7 @@
       const DEFAULT_TIMER_MINUTES = 5;
       const DEFAULT_DIFFICULTY = "all";
       const STORAGE_KEY = "signal-deck-standalone-preferences";
+      const EULER_GAMMA = 0.5772156649;
 
       const TOPICS = [
         { id: "logs", label: "Logs", description: "Natural logs, base-2 logs, exponentials, and near-1 expansions.", meta: "ln / log2 / exp" },
@@ -1614,6 +1641,7 @@
         { id: "cardsSampling", label: "Cards and sampling", description: "Deck, urn, and without-replacement questions built on indicators and symmetry.", meta: "cards / urns" },
         { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variance, covariance, correlation, and mgf drills.", meta: "Var / Cov / Corr / MGF" },
         { id: "regression", label: "Regression", description: "Simple linear regression, R-squared, residual variance, and Bayesian shrinkage updates.", meta: "OLS / Bayes" },
+        { id: "newProblems", label: "New problems", description: "Temporary bucket for order statistics, MLE drills, and creative estimation questions.", meta: "order stats / MLE" },
         { id: "options", label: "Options pricing", description: "Put-call parity, synthetic forwards, binomial pricing, and intrinsic-versus-time-value drills.", meta: "calls / puts / parity" },
         { id: "greeks", label: "Greeks", description: "Delta, hedge sizing, vega intuition, and option-position sensitivity questions.", meta: "delta / gamma / vega" },
         { id: "stopping", label: "Stopping and martingales", description: "Threshold rerolls, continuation values, and bounded optional-stopping classics.", meta: "stopping" },
@@ -2440,6 +2468,30 @@
           return "For beta ~ N(m0, tau^2) and y_i = beta x_i + eps_i with known sigma^2, the posterior precision is 1/tau^2 + sum x_i^2 / sigma^2. So the posterior variance is the reciprocal of that quantity.\n\nThis is why every extra observation tightens the posterior, and why large |x_i| observations are especially informative in regression.";
         }
 
+        if (question.topicId === "newProblems") {
+          if (question.category === "Order statistics") {
+            if (question.prompt.includes("Uniform(0,1)")) {
+              return "For Uniform(0,1), the exact order-statistic means are simple: the expected r-th smallest value is r/(n+1). To get the j-th largest, convert it into the (n-j+1)-th smallest.\n\nSo the largest is n/(n+1), the second-largest is (n-1)/(n+1), and the third-largest is (n-2)/(n+1). These are exact, not just heuristics.";
+            }
+
+            if (question.prompt.includes("fair")) {
+              return "For discrete uniform dice, the exact top-order distribution comes from binomial tails: the j-th largest is at least k if at least j rolls land in {k, k+1, ..., m}. Summing those tail probabilities gives the exact expectation.\n\nThe fast mental shortcut is to pretend the die is continuous on the interval from 1 to m, which gives the approximation ((n-j+1)/(n+1))(m+1). That is why the review keeps both the exact discrete answer and the continuous-uniform estimate in play.";
+            }
+
+            return "Exponential order statistics are unusually clean because the gaps between successive order statistics are independent exponentials. That makes the expected largest H_n/lambda, the expected second-largest (H_n - 1)/lambda, and the expected third-largest (H_n - 1 - 1/2)/lambda.\n\nFor mental math, replace H_n by ln(n) + gamma. That usually gets you very close for the top one or two order statistics.";
+          }
+
+          if (question.category === "Regression MLE") {
+            if (question.prompt.includes("Laplace-error")) {
+              return "Laplace errors replace squared residuals by absolute residuals in the log-likelihood. For an intercept-only model that makes the MLE the sample median.\n\nFor through-origin regression with positive x_i, minimizing sum |y_i - beta x_i| is the same as minimizing sum x_i |(y_i/x_i) - beta|. So beta becomes the weighted median of the ratios y_i/x_i, with weights x_i.";
+            }
+
+            return "With Normal errors, maximizing likelihood is the same as minimizing the sum of squared residuals. That is why Normal-error regression MLE is just least squares.\n\nThrough the origin, beta-hat equals sum x_i y_i divided by sum x_i^2. If the x-values are centered, the fitted line's intercept is simply y-bar.";
+          }
+
+          return "Many one-parameter MLE problems reduce to a small lookup table. Bernoulli and binomial give sample proportion, Poisson and Normal mean give sample mean, Exponential rate gives one over sample mean, Uniform endpoint gives the sample max, and Laplace location gives the sample median.\n\nThe common reason is that once you write the log-likelihood, all the complicated constants drop out and only one summary statistic still matters.";
+        }
+
         if (question.topicId === "options") {
           if (question.category === "Put-call parity" || question.category === "Synthetic forward") {
             return "Most of these cards start from the European put-call parity identity C - P = S - K e^(-rT). At zero rates that becomes C - P = S - K, so one missing price or implied spot level is often just one subtraction away.\n\nThe same identity explains why long call plus short put behaves like a forward: the option pair leaves you with the stock payoff minus the strike payment at expiry.";
@@ -2711,6 +2763,7 @@
           cardsSampling: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "cardsSampling"),
           momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf"),
           regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions()],
+          newProblems: [...buildNewProblemsQuestions(), ...buildMassiveNewProblemsQuestions()],
           options: [...buildOptionQuestions(), ...buildMassiveOptionQuestions()],
           greeks: [...buildGreekQuestions(), ...buildMassiveGreekQuestions()],
           stopping: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "stopping"),
@@ -8562,6 +8615,573 @@
         return questions;
       }
 
+      function buildNewProblemsQuestions() {
+        const questions = [];
+
+        for (const [draws, rankFromTop] of [
+          [5, 1],
+          [5, 2],
+          [7, 3],
+          [8, 1],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Order statistics",
+              prompt: `You draw ${draws} times independently from Uniform(0,1). Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+              hint: "For Uniform(0,1), the expected r-th smallest is r/(n+1). Convert top ranks into bottom ranks.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: uniformJthLargestExpectation(draws, rankFromTop),
+              mentalAnswer: uniformJthLargestExpectation(draws, rankFromTop),
+              absTolerance: 0.03,
+              explanation: `Convert the ${describeLargestRank(rankFromTop)} into an order-statistic rank from the bottom, then use r/(n+1).`,
+              difficulty: rankFromTop === 1 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        for (const [rolls, sides, rankFromTop] of [
+          [4, 6, 1],
+          [5, 20, 2],
+          [6, 10, 3],
+          [8, 6, 2],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Order statistics",
+              prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the expected ${describeLargestRank(rankFromTop)} roll.`,
+              hint: "Scale the continuous-uniform rule: j-th largest is roughly ((n-j+1)/(n+1))(m+1).",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: discreteUniformJthLargestExpectation(rolls, sides, rankFromTop),
+              mentalAnswer: discreteUniformJthLargestUniformApproximation(rolls, sides, rankFromTop),
+              absTolerance: sides <= 6 ? 0.55 : 0.85,
+              explanation: "Use the continuous-uniform order-statistic rule as the mental anchor, while the exact answer comes from the discrete binomial-tail distribution of the top rank.",
+              difficulty: sides <= 6 && rankFromTop === 1 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const [draws, rankFromTop, rate] of [
+          [5, 1, 1],
+          [8, 2, 1],
+          [6, 3, 1],
+          [10, 1, 2],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Order statistics",
+              prompt: `You draw ${draws} independent Exponential(rate ${rate}) variables. Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+              hint: "For exponentials, the order-statistic gaps are independent. The largest is H_n/rate, then subtract 1/rate, 1/(2 rate), and so on for lower top ranks.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: exponentialJthLargestExpectation(draws, rankFromTop, rate),
+              mentalAnswer: exponentialJthLargestMental(draws, rankFromTop, rate),
+              absTolerance: 0.08,
+              explanation: "Use the harmonic-number formula for exponential order statistics, with ln(n) + gamma as the fast mental anchor for H_n.",
+              difficulty: draws <= 6 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        const mlePrompts = [
+          {
+            category: "MLE",
+            prompt: "A Bernoulli experiment with unknown success probability p produces 14 successes in 20 trials. Estimate the maximum-likelihood estimate of p.",
+            hint: "For Bernoulli or binomial data, the MLE is the sample success proportion.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 14 / 20,
+            explanation: "The Bernoulli log-likelihood is maximized at heads divided by total trials.",
+            difficulty: "easy",
+          },
+          {
+            category: "MLE",
+            prompt: "Independent Poisson(lambda) counts observed over 5 intervals are 2, 4, 3, 5, and 6. Estimate the maximum-likelihood estimate of lambda.",
+            hint: "For Poisson data, the MLE is the sample mean.",
+            answer: 4,
+            explanation: "Average the observed counts.",
+            difficulty: "easy",
+          },
+          {
+            category: "MLE",
+            prompt: "Independent Exponential(rate lambda) waiting times are 1, 2, 3, and 4. Estimate the maximum-likelihood estimate of lambda.",
+            hint: "For Exponential(rate lambda), lambda-hat is 1 divided by the sample mean.",
+            answer: 4 / 10,
+            explanation: "The sample mean is 2.5, so the rate MLE is 1/2.5 = 0.4.",
+            difficulty: "medium",
+          },
+          {
+            category: "MLE",
+            prompt: "Independent Uniform(0, theta) draws are 1.2, 0.9, 1.8, and 1.5. Estimate the maximum-likelihood estimate of theta.",
+            hint: "For a Uniform(0, theta) endpoint, the MLE is the sample maximum.",
+            answer: 1.8,
+            explanation: "Any smaller theta would make the sample impossible, so the likelihood is maximized at the largest observation.",
+            difficulty: "easy",
+          },
+          {
+            category: "MLE",
+            prompt: "In the Laplace-error model y_i = alpha + eps_i, the observed y values are 2, 4, 5, 9, and 10. Estimate the maximum-likelihood estimate of alpha.",
+            hint: "Laplace errors turn likelihood maximization into minimizing total absolute deviation, so the center is the sample median.",
+            answer: 5,
+            explanation: "For Laplace location, the MLE is the median.",
+            difficulty: "medium",
+          },
+          {
+            category: "Regression MLE",
+            prompt: "In the Normal-error through-origin regression model y_i = beta x_i + eps_i, suppose sum x_i y_i = 54 and sum x_i^2 = 18. Estimate the maximum-likelihood estimate of beta.",
+            hint: "With Normal errors, regression MLE is least squares. Through the origin, beta-hat = sum x_i y_i / sum x_i^2.",
+            answer: 3,
+            explanation: "Normal-error MLE and least squares coincide here, so divide 54 by 18.",
+            difficulty: "medium",
+          },
+          {
+            category: "Regression MLE",
+            prompt: "In a centered-x Normal-error linear model, x-average is 0, y-average is 5, sum x_i y_i = 36, and sum x_i^2 = 12. Estimate the maximum-likelihood estimate of the slope beta.",
+            hint: "Centered x-values make beta-hat = sum x_i y_i / sum x_i^2.",
+            answer: 3,
+            explanation: "With x-average equal to 0, the usual least-squares slope formula reduces to 36/12.",
+            difficulty: "medium",
+          },
+          {
+            category: "Regression MLE",
+            prompt: "In that same centered-x Normal-error linear model, estimate the maximum-likelihood estimate of the intercept alpha.",
+            hint: "If x-average is 0, the fitted line's intercept is the y-average.",
+            answer: 5,
+            explanation: "Centered x-values force the intercept estimate to be y-average.",
+            difficulty: "easy",
+          },
+          {
+            category: "Regression MLE",
+            prompt: "In the Laplace-error through-origin regression model y_i = beta x_i + eps_i with positive x_i, the observed pairs are (1, 2), (2, 8), and (4, 20). Estimate the maximum-likelihood estimate of beta.",
+            hint: "For through-origin Laplace regression with positive x_i, beta is the weighted median of y_i/x_i with weights x_i.",
+            answer: 5,
+            explanation: "The ratios are 2, 4, and 5 with weights 1, 2, and 4, so the weighted median lands at 5.",
+            difficulty: "hard",
+          },
+        ];
+
+        return questions.concat(
+          mlePrompts.map((entry) =>
+            createQuestion({
+              topicId: "newProblems",
+              category: entry.category,
+              prompt: entry.prompt,
+              hint: entry.hint,
+              inputMode: entry.inputMode || "number",
+              formatHint: entry.formatHint || "decimal",
+              answer: entry.answer,
+              mentalAnswer: entry.answer,
+              absTolerance: 0.05,
+              explanation: entry.explanation,
+              difficulty: entry.difficulty,
+            }),
+          ),
+        );
+      }
+
+      function buildMassiveNewProblemsQuestions() {
+        const questions = [];
+
+        for (const draws of [3, 4, 5, 6, 8, 10, 12]) {
+          for (const rankFromTop of [1, 2, 3]) {
+            if (rankFromTop > draws) {
+              continue;
+            }
+
+            questions.push(
+              createQuestion({
+                topicId: "newProblems",
+                category: "Order statistics",
+                prompt: `You draw ${draws} times independently from Uniform(0,1). Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+                hint: "Use the Uniform(0,1) order-statistic rule r/(n+1).",
+                inputMode: "number",
+                formatHint: "decimal",
+                answer: uniformJthLargestExpectation(draws, rankFromTop),
+                mentalAnswer: uniformJthLargestExpectation(draws, rankFromTop),
+                absTolerance: 0.03,
+                explanation: "Uniform order statistics are exact quantile cards.",
+                difficulty: rankFromTop === 1 ? "easy" : "medium",
+              }),
+            );
+          }
+        }
+
+        for (const sides of [6, 8, 10, 12, 20]) {
+          for (const rolls of [3, 4, 5, 6, 8]) {
+            for (const rankFromTop of [1, 2, 3]) {
+              if (rankFromTop > rolls) {
+                continue;
+              }
+
+              questions.push(
+                createQuestion({
+                  topicId: "newProblems",
+                  category: "Order statistics",
+                  prompt: `You roll a fair ${sides}-sided die ${rolls} times. Estimate the expected ${describeLargestRank(rankFromTop)} roll.`,
+                  hint: "Scale the continuous-uniform order-statistic rule to the 1 through m grid.",
+                  inputMode: "number",
+                  formatHint: "decimal",
+                  answer: discreteUniformJthLargestExpectation(rolls, sides, rankFromTop),
+                  mentalAnswer: discreteUniformJthLargestUniformApproximation(rolls, sides, rankFromTop),
+                  absTolerance: sides <= 8 ? 0.6 : 0.9,
+                  explanation: "The exact answer is discrete, but the continuous-uniform rule is the intended mental shortcut.",
+                  difficulty: sides <= 8 && rankFromTop === 1 ? "medium" : "hard",
+                }),
+              );
+            }
+          }
+        }
+
+        for (const rate of [1, 2]) {
+          for (const draws of [4, 5, 6, 8, 10, 12, 16]) {
+            for (const rankFromTop of [1, 2, 3]) {
+              if (rankFromTop > draws) {
+                continue;
+              }
+
+              questions.push(
+                createQuestion({
+                  topicId: "newProblems",
+                  category: "Order statistics",
+                  prompt: `You draw ${draws} independent Exponential(rate ${rate}) variables. Estimate the expected ${describeLargestRank(rankFromTop)} draw.`,
+                  hint: "Use the harmonic-number rule for exponential order statistics.",
+                  inputMode: "number",
+                  formatHint: "decimal",
+                  answer: exponentialJthLargestExpectation(draws, rankFromTop, rate),
+                  mentalAnswer: exponentialJthLargestMental(draws, rankFromTop, rate),
+                  absTolerance: 0.08,
+                  explanation: "Exponentials are special because the order-statistic gaps stay independent.",
+                  difficulty: draws <= 6 ? "medium" : "hard",
+                }),
+              );
+            }
+          }
+        }
+
+        for (const [successes, trials] of [
+          [7, 10],
+          [9, 12],
+          [11, 20],
+          [13, 20],
+          [17, 25],
+          [24, 30],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `A Bernoulli experiment with unknown success probability p produces ${successes} successes in ${trials} trials. Estimate the maximum-likelihood estimate of p.`,
+              hint: "Use sample proportion.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: successes / trials,
+              mentalAnswer: successes / trials,
+              absTolerance: 0.03,
+              explanation: "For Bernoulli and binomial data, p-hat is successes divided by total trials.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        const poissonSamples = [
+          [1, 2, 3, 4],
+          [2, 4, 4, 6],
+          [3, 3, 5, 5],
+          [4, 5, 6, 7],
+          [2, 3, 5, 6, 9],
+        ];
+
+        for (const sample of poissonSamples) {
+          const mean = sample.reduce((sum, value) => sum + value, 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Poisson(lambda) counts observed over ${sample.length} intervals are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of lambda.`,
+              hint: "For Poisson data, lambda-hat is the sample mean.",
+              inputMode: "number",
+              formatHint: "mean",
+              answer: mean,
+              mentalAnswer: mean,
+              absTolerance: 0.04,
+              explanation: "Average the counts.",
+              difficulty: sample.length <= 4 ? "easy" : "medium",
+            }),
+          );
+        }
+
+        const exponentialSamples = [
+          [1, 2, 3, 4],
+          [2, 2, 4, 4],
+          [1, 1, 2, 2, 4],
+          [3, 3, 6],
+          [2, 5, 8, 5],
+        ];
+
+        for (const sample of exponentialSamples) {
+          const total = sample.reduce((sum, value) => sum + value, 0);
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Exponential(rate lambda) waiting times are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of lambda.`,
+              hint: "The rate MLE is n divided by the total waiting time.",
+              inputMode: "number",
+              formatHint: "rate",
+              answer: sample.length / total,
+              mentalAnswer: sample.length / total,
+              absTolerance: 0.03,
+              explanation: "Compute n over the sum of the observations, or 1 over the sample mean.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const uniformEndpointSamples = [
+          [1.1, 1.4, 1.9, 1.6],
+          [0.7, 1.2, 1.5, 1.3],
+          [2.2, 1.8, 2.6, 2.4],
+          [3.1, 2.8, 3.7],
+        ];
+
+        for (const sample of uniformEndpointSamples) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Uniform(0, theta) draws are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of theta.`,
+              hint: "Use the sample maximum.",
+              inputMode: "number",
+              formatHint: "endpoint",
+              answer: Math.max(...sample),
+              mentalAnswer: Math.max(...sample),
+              absTolerance: 0.03,
+              explanation: "For a uniform upper endpoint, the likelihood is flat until the largest observation and zero below it.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        const laplaceLocationSamples = [
+          [2, 4, 7],
+          [1, 3, 4, 8, 9],
+          [5, 6, 10, 13, 15],
+          [0, 2, 2, 4, 9],
+        ];
+
+        for (const sample of laplaceLocationSamples) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `In the Laplace-error model y_i = alpha + eps_i, the observed y values are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of alpha.`,
+              hint: "Laplace location means median.",
+              inputMode: "number",
+              formatHint: "location",
+              answer: median(sample),
+              mentalAnswer: median(sample),
+              absTolerance: 0.03,
+              explanation: "The Laplace log-likelihood is maximized by minimizing total absolute deviation, which picks the median.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        const normalVarianceSamples = [
+          [1, -1, 2, -2],
+          [2, -2, 2, -2],
+          [1, 3, -1, -3],
+          [2, 0, -2, 0],
+        ];
+
+        for (const sample of normalVarianceSamples) {
+          const varianceMLE = sample.reduce((sum, value) => sum + value * value, 0) / sample.length;
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "MLE",
+              prompt: `Independent Normal(0, sigma^2) observations are ${sample.join(", ")}. Estimate the maximum-likelihood estimate of sigma^2.`,
+              hint: "With mean fixed at 0, sigma^2-hat is the average squared observation.",
+              inputMode: "number",
+              formatHint: "variance",
+              answer: varianceMLE,
+              mentalAnswer: varianceMLE,
+              absTolerance: 0.05,
+              explanation: "Add the squares and divide by n.",
+              difficulty: "medium",
+            }),
+          );
+        }
+
+        for (const [sumXY, sumXSquared] of [
+          [18, 6],
+          [24, 8],
+          [35, 14],
+          [40, 16],
+          [54, 18],
+          [72, 24],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Regression MLE",
+              prompt: `In the Normal-error through-origin regression model y_i = beta x_i + eps_i, suppose sum x_i y_i = ${sumXY} and sum x_i^2 = ${sumXSquared}. Estimate the maximum-likelihood estimate of beta.`,
+              hint: "Normal-error MLE equals least squares through the origin.",
+              inputMode: "number",
+              formatHint: "slope",
+              answer: sumXY / sumXSquared,
+              mentalAnswer: sumXY / sumXSquared,
+              absTolerance: 0.04,
+              explanation: "Divide sum x_i y_i by sum x_i^2.",
+              difficulty: sumXSquared <= 8 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const [sumXY, sumXSquared, yBar] of [
+          [20, 10, 4],
+          [27, 9, 5],
+          [32, 8, 6],
+          [45, 15, 7],
+        ]) {
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Regression MLE",
+              prompt: `In a centered-x Normal-error linear model, x-average is 0, y-average is ${yBar}, sum x_i y_i = ${sumXY}, and sum x_i^2 = ${sumXSquared}. Estimate the maximum-likelihood estimate of the intercept alpha.`,
+              hint: "When x-average is 0, the intercept estimate is the y-average.",
+              inputMode: "number",
+              formatHint: "intercept",
+              answer: yBar,
+              mentalAnswer: yBar,
+              absTolerance: 0.03,
+              explanation: "Centered x-values make the intercept equal to y-average.",
+              difficulty: "easy",
+            }),
+          );
+        }
+
+        const laplaceSlopeSpecs = [
+          { xs: [1, 2, 4], ratios: [2, 4, 5] },
+          { xs: [1, 3, 5], ratios: [1, 2, 3] },
+          { xs: [2, 3, 6], ratios: [1.5, 2, 2.5] },
+          { xs: [1, 4, 6], ratios: [3, 4, 6] },
+        ];
+
+        for (const spec of laplaceSlopeSpecs) {
+          const ys = spec.xs.map((x, index) => x * spec.ratios[index]);
+          const betaHat = weightedMedian(spec.ratios, spec.xs);
+          questions.push(
+            createQuestion({
+              topicId: "newProblems",
+              category: "Regression MLE",
+              prompt: `In the Laplace-error through-origin regression model y_i = beta x_i + eps_i with positive x_i, the observed pairs are ${spec.xs.map((x, index) => `(${x}, ${ys[index]})`).join(", ")}. Estimate the maximum-likelihood estimate of beta.`,
+              hint: "For through-origin Laplace regression, beta is the weighted median of y_i/x_i with weights x_i.",
+              inputMode: "number",
+              formatHint: "slope",
+              answer: betaHat,
+              mentalAnswer: betaHat,
+              absTolerance: 0.05,
+              explanation: "The Laplace likelihood turns into a weighted absolute-deviation problem in the ratios y_i/x_i.",
+              difficulty: "hard",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function describeLargestRank(rankFromTop) {
+        if (rankFromTop === 1) {
+          return "largest";
+        }
+
+        if (rankFromTop === 2) {
+          return "second-largest";
+        }
+
+        if (rankFromTop === 3) {
+          return "third-largest";
+        }
+
+        return `${rankFromTop}th-largest`;
+      }
+
+      function rankFromPrompt(prompt) {
+        if (prompt.includes("second-largest")) {
+          return 2;
+        }
+
+        if (prompt.includes("third-largest")) {
+          return 3;
+        }
+
+        return 1;
+      }
+
+      function uniformJthLargestExpectation(draws, rankFromTop) {
+        return (draws - rankFromTop + 1) / (draws + 1);
+      }
+
+      function binomialProbabilityAtLeast(trials, probability, threshold) {
+        let total = 0;
+        for (let k = threshold; k <= trials; k += 1) {
+          total += (factorial(trials) / (factorial(k) * factorial(trials - k))) * (probability ** k) * ((1 - probability) ** (trials - k));
+        }
+        return total;
+      }
+
+      function discreteUniformJthLargestExpectation(rolls, sides, rankFromTop) {
+        let expectation = 0;
+        for (let face = 1; face <= sides; face += 1) {
+          const tailProbability = (sides - face + 1) / sides;
+          expectation += binomialProbabilityAtLeast(rolls, tailProbability, rankFromTop);
+        }
+        return expectation;
+      }
+
+      function discreteUniformJthLargestUniformApproximation(rolls, sides, rankFromTop) {
+        return ((rolls - rankFromTop + 1) / (rolls + 1)) * (sides + 1);
+      }
+
+      function exponentialJthLargestExpectation(draws, rankFromTop, rate) {
+        return (harmonicNumber(draws) - harmonicNumber(rankFromTop - 1)) / rate;
+      }
+
+      function exponentialJthLargestMental(draws, rankFromTop, rate) {
+        return ((Math.log(draws) + EULER_GAMMA) - harmonicNumber(rankFromTop - 1)) / rate;
+      }
+
+      function median(values) {
+        const sorted = [...values].sort((left, right) => left - right);
+        const middle = Math.floor(sorted.length / 2);
+        if (sorted.length % 2 === 1) {
+          return sorted[middle];
+        }
+        return (sorted[middle - 1] + sorted[middle]) / 2;
+      }
+
+      function weightedMedian(values, weights) {
+        const pairs = values
+          .map((value, index) => ({ value, weight: weights[index] }))
+          .sort((left, right) => left.value - right.value);
+        const totalWeight = pairs.reduce((sum, entry) => sum + entry.weight, 0);
+        let cumulativeWeight = 0;
+
+        for (const pair of pairs) {
+          cumulativeWeight += pair.weight;
+          if (cumulativeWeight > totalWeight / 2) {
+            return pair.value;
+          }
+        }
+
+        return pairs[pairs.length - 1].value;
+      }
+
       function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty }) {
         return {
           topicId,
@@ -9017,6 +9637,31 @@
             return "hard";
           }
           return prompt.includes("observe 3 data points") || prompt.includes("observe 4 data points") || prompt.includes("observe 5 data points") ? "hard" : "medium";
+        }
+
+        if (topicId === "newProblems") {
+          if (category === "Order statistics") {
+            if (prompt.includes("Uniform(0,1)")) {
+              return rankFromPrompt(prompt) <= 2 ? "easy" : "medium";
+            }
+            if (prompt.includes("fair 6-sided") || prompt.includes("fair 8-sided")) {
+              return "medium";
+            }
+            if (prompt.includes("Exponential")) {
+              return prompt.includes("rate 2") ? "hard" : "medium";
+            }
+            return "hard";
+          }
+
+          if (category === "Regression MLE") {
+            return prompt.includes("Laplace-error") ? "hard" : "medium";
+          }
+
+          if (prompt.includes("Uniform(0, theta)") || prompt.includes("Bernoulli") || prompt.includes("Poisson")) {
+            return "easy";
+          }
+
+          return prompt.includes("Laplace-error") ? "medium" : "medium";
         }
 
         if (topicId === "options") {
