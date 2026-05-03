@@ -1222,7 +1222,7 @@
           </div>
           <p class="panel-copy">
             This section is meant to be read like a compact playbook: each technique has a fast rule, a worked
-            example, and a note on what the quiz is trying to train.
+            example, and expandable reasoning for where the shortcut comes from.
           </p>
         </div>
 
@@ -1232,24 +1232,17 @@
 
         <div class="learning-grid">
           <article class="guide-card">
-            <h3>Logs and Exponentials</h3>
-            <p>For numbers close to 1, write <code>x = 1 + u</code> and use <code>ln(1 + u) ≈ u - u²/2</code>. For base-2 logs, use <code>log₂(x) = ln(x) / ln(2)</code>. For exponentials, use <code>e^u ≈ 1 + u + u²/2</code> when <code>u</code> is small, and convert <code>2^u</code> into <code>e^{u \, ln(2)}</code> when useful.</p>
+            <h3>Logs, Roots, and Exponents</h3>
+            <p>The core mental-math cards all use the same idea: anchor at an easy nearby value, then take one or two terms of a local expansion. For logs, write <code>x = 1 + u</code> and use <code>ln(1 + u) ≈ u - u²/2</code>. For roots, if <code>x = a + h</code> with <code>a</code> a nearby perfect square, use <code>sqrt(a + h) ≈ sqrt(a) + h / (2sqrt(a))</code>. For exponentials, use <code>e^u ≈ 1 + u + u²/2</code> when <code>u</code> is small, and convert <code>2^u</code> into <code>e^{u \, ln(2)}</code> when useful.</p>
             <div class="guide-example">
-              <strong>Examples:</strong> <code>ln(1.08) ≈ 0.0768</code>, <code>log₂(10) ≈ 2.303 / 0.693 ≈ 3.32</code>, and <code>e^0.2 ≈ 1 + 0.2 + 0.02 = 1.22</code>.
+              <strong>Examples:</strong> <code>ln(1.08) ≈ 0.08 - 0.0032 = 0.0768</code>, <code>sqrt(50) ≈ 7 + 1/14 = 7.07</code>, <code>log₂(10) ≈ 2.303 / 0.693 ≈ 3.32</code>, and <code>e^0.2 ≈ 1 + 0.2 + 0.02 = 1.22</code>.
             </div>
             <details class="guide-details">
               <summary>Why this works</summary>
-              <p>The log and exponential cards are all different faces of the same local-linear idea. Near a familiar anchor, the Taylor series is doing the work: <code>ln(1 + u)</code> and <code>e^u</code> both have short truncations that stay accurate when <code>u</code> is small.</p>
-              <p>Base-2 logs are not a new object to memorize separately. The change-of-base identity turns them back into natural logs, and powers of 2 can be split into an easy integer part plus a small leftover fractional exponent.</p>
+              <p>These cards are really tangent-line cards. If a smooth function <code>f</code> is evaluated near an anchor <code>a</code>, then <code>f(a + h)</code> is approximately <code>f(a) + h f'(a)</code>. That is why square roots pick up the derivative <code>1 / (2sqrt(a))</code>, why logs near 1 look almost linear with slope 1, and why exponentials near 0 begin with <code>1 + u</code>.</p>
+              <p>The second-order term explains when the shortcut bends. For <code>ln(1 + u)</code>, the negative <code>-u²/2</code> correction tells you the linear answer is a little too high. For <code>e^u</code>, the positive <code>u²/2</code> correction tells you the linear answer is a little too low. That sign information alone already improves a lot of mental estimates.</p>
+              <p>Base-2 logs and mixed combo cards are not separate ideas. Change of base turns <code>log₂(x)</code> back into natural logs, and mixed expressions like <code>sqrt(x) - ln(y)</code> just ask you to anchor each piece separately and then combine them without losing track of scale.</p>
             </details>
-          </article>
-
-          <article class="guide-card">
-            <h3>Square Roots</h3>
-            <p>Anchor at a nearby perfect square. If <code>x = a + h</code> and <code>a</code> is a square, use <code>sqrt(a + h) ≈ sqrt(a) + h / (2sqrt(a))</code>.</p>
-            <div class="guide-example">
-              <strong>Example:</strong> <code>sqrt(50)</code> is near <code>49</code>, so <code>7 + 1/14 ≈ 7.07</code>.
-            </div>
           </article>
 
           <article class="guide-card">
@@ -1258,6 +1251,11 @@
             <div class="guide-example">
               <strong>Example:</strong> if someone asks for <code>P(Z &gt; 1.64)</code>, your fast answer is about <code>5%</code>.
             </div>
+            <details class="guide-details">
+              <summary>Why anchor tables are enough</summary>
+              <p>Most interview-speed normal questions are not asking for a six-decimal cdf value. They are asking whether you know the scale of the tail. Once you memorize a few anchor pairs, nearby values can be interpolated and many extreme-value heuristics reduce to matching a target tail probability to one of those anchors.</p>
+              <p>That is why the same small table keeps reappearing across the site: one card may ask directly for a tail probability, another for a quantile, and another for a max or min estimate that secretly just needs the tail level <code>1/n</code>.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1380,13 +1378,16 @@
           </article>
 
           <article class="guide-card">
-            <h3>Linear and Bayesian Regression</h3>
+            <h3>Regression and Bayesian Updates</h3>
             <p>In simple linear regression, the slope is <code>β₁ = ρ σ_Y / σ_X</code> and the intercept is <code>β₀ = ȳ - β₁ x̄</code>. If the variables are standardized, the slope is just the correlation. In that same one-factor world, <code>R² = ρ²</code>, the explained variance is <code>ρ² Var(Y)</code>, and the residual variance is <code>(1 - ρ²) Var(Y)</code>.</p>
             <div class="guide-example">
               <strong>Examples:</strong> if <code>Corr(X,Y)=0.6</code>, <code>sd(X)=2</code>, and <code>sd(Y)=5</code>, then the slope of <code>Y</code> on <code>X</code> is <code>0.6 × 5 / 2 = 1.5</code>. If <code>Var(Y)=25</code>, then the residual variance is <code>25(1 - 0.36)=16</code>.
             </div>
             <details class="guide-details">
-              <summary>Why the Bayesian formulas stay simple</summary>
+              <summary>Why the regression formulas stay simple</summary>
+              <p>Least squares is geometry in disguise. The fitted line chooses coefficients so the residual vector is orthogonal to the span of the regressors. In simple regression that orthogonality condition collapses to the familiar slope formula based on covariance divided by variance, which is why correlation and standard deviations are enough to recover the slope mentally.</p>
+              <p>Normal-error regression MLE is the same problem because the Gaussian log-likelihood is a constant minus a multiple of the sum of squared residuals. So maximizing likelihood and minimizing squared error are literally the same optimization. Through the origin, that gives <code>beta-hat = sum x_i y_i / sum x_i²</code>. When the <code>x_i</code> are centered, the intercept falls out as <code>y-bar</code>.</p>
+              <p>Laplace-error regression changes only one ingredient: squared residuals become absolute residuals. That is why medians and weighted medians appear. The log-likelihood becomes a constant minus a multiple of <code>sum |residual|</code>, so the best-fit coefficient is whichever value balances total weight on both sides instead of balancing squared deviations.</p>
               <p>For the Bayesian cards here, the intended model is explicit regression: <code>β ~ N(m₀, τ²)</code> and <code>y_i = β x_i + ε_i</code> with independent <code>ε_i ~ N(0, σ²)</code>. In that one-parameter Gaussian regression, the posterior variance is <code>1 / (1/τ² + Σx_i²/σ²)</code>, and the posterior mean is that variance times <code>m₀/τ² + Σx_i y_i / σ²</code>.</p>
               <p>So the Bayesian regression cards are really sufficient-statistic cards: once you know <code>Σx_i²</code> and <code>Σx_i y_i</code>, you already know the entire posterior for <code>β</code>. If all <code>x_i = 1</code>, the model reduces to a noisy-mean update, and the posterior mean becomes a precision-weighted average of the prior mean and the sample mean.</p>
               <p>That is also where shrinkage comes from. Noisy data means small data precision, so the posterior stays closer to the prior. Precise data means large data precision, so the posterior moves toward the regression estimate. For prediction, regression-to-the-mean is still the mental anchor: if <code>X</code> is <code>z</code> standard deviations above its mean, the fitted <code>Y</code> is only <code>ρz</code> standard deviations above its own mean.</p>
@@ -1400,22 +1401,24 @@
               <strong>Examples:</strong> among 5 uniform draws, the expected second-largest is <code>4/6 = 2/3</code>. Among 5 rolls of a fair 20-sided die, the expected second-largest is roughly <code>(4/6) × 21 = 14</code>.
             </div>
             <details class="guide-details">
-              <summary>Why exponentials are special too</summary>
-              <p>Exponential order statistics are built from independent gaps. If the draws are <code>Exp(λ)</code>, the expected largest is <code>H_n/λ</code>, the expected second-largest is <code>(H_n - 1)/λ</code>, and the expected third-largest is <code>(H_n - 1 - 1/2)/λ</code>.</p>
-              <p>That gives a very fast mental rule because <code>H_n</code> is close to <code>ln n + γ</code>. So for a largest exponential you can often start with <code>ln n + 0.58</code>, then divide by the rate.</p>
+              <summary>Why these formulas are so structured</summary>
+              <p>For <code>Uniform(0,1)</code>, the order statistics carve the unit interval into <code>n + 1</code> exchangeable spacings. By symmetry, each spacing has expected length <code>1/(n+1)</code>. Summing the first <code>r</code> spacings gives the expected <code>r</code>-th smallest value <code>r/(n+1)</code>. That is why the formula is exact and so clean.</p>
+              <p>For discrete dice, exact expectations come from survival probabilities: the <code>j</code>-th largest roll is at least <code>k</code> exactly when at least <code>j</code> rolls land in <code>{k, k+1, ..., m}</code>. The site computes that exact discrete answer, but the mental shortcut treats the die as a continuous uniform grid, which is why the accepted range covers both.</p>
+              <p>Exponentials are special because of the memoryless property. After the smallest draw occurs, the remaining gaps are still exponential with updated rates, which makes the ordered spacings independent. That turns the expected largest into a harmonic sum: <code>H_n / λ</code>, then <code>(H_n - 1)/λ</code> for the second-largest, and so on. Mentally, <code>H_n ≈ ln n + γ</code> is the quick anchor.</p>
             </details>
           </article>
 
           <article class="guide-card">
-            <h3>MLE Quick Rules</h3>
+            <h3>Estimation and MLE</h3>
             <p>Most one-parameter MLE problems collapse to one of a few memorized templates: Bernoulli and binomial give sample proportion, Poisson gives sample mean, exponential rate gives reciprocal sample mean, normal mean gives sample mean, uniform upper-endpoint gives sample maximum, and Laplace location gives sample median.</p>
             <div class="guide-example">
               <strong>Examples:</strong> if 14 of 20 coin flips are heads, <code>p-hat = 14/20 = 0.7</code>. If exponential waiting times average <code>2.5</code>, then the rate MLE is <code>1/2.5 = 0.4</code>.
             </div>
             <details class="guide-details">
-              <summary>Regression versions worth knowing</summary>
-              <p>With normal errors, linear-regression MLE is just least squares. Through the origin that means <code>beta-hat = sum x_i y_i / sum x_i²</code>. If the <code>x_i</code> are centered, the intercept is just <code>y-bar</code>.</p>
-              <p>With Laplace errors, replace squared residuals by absolute residuals. For an intercept-only model the MLE is the sample median. For through-origin regression with positive <code>x_i</code>, minimizing <code>sum |y_i - beta x_i|</code> makes <code>beta</code> the weighted median of the ratios <code>y_i / x_i</code> with weights <code>x_i</code>.</p>
+              <summary>Why the same few summaries keep appearing</summary>
+              <p>MLE is about finding the parameter value that makes the observed sample most plausible. Once you take logs, the pieces that do not depend on the parameter disappear, and the whole problem often collapses to one statistic. For Bernoulli data it is the number of successes, for Poisson data it is the total count, for exponentials it is the total waiting time, and for a uniform endpoint it is the sample maximum because smaller endpoints make the sample impossible.</p>
+              <p>That is also why medians show up for Laplace models. The Laplace log-likelihood is proportional to minus total absolute deviation, so maximizing it means choosing the point that minimizes absolute deviations. In one dimension, that minimizer is the median.</p>
+              <p>In the regression versions, the same principle survives with more structure. Normal errors lead to squared-loss minimization, hence least squares. Laplace errors lead to absolute-loss minimization, hence medians or weighted medians after rescaling. The important habit is to ask what summary statistic the log-likelihood is really paying attention to.</p>
             </details>
           </article>
 
@@ -1632,16 +1635,15 @@
       const EULER_GAMMA = 0.5772156649;
 
       const TOPICS = [
-        { id: "logs", label: "Logs", description: "Natural logs, base-2 logs, exponentials, and near-1 expansions.", meta: "ln / log2 / exp" },
-        { id: "roots", label: "Square roots", description: "Nearby-square linearizations and near-1 shortcuts.", meta: "sqrt(x)" },
-        { id: "combos", label: "Mixed combos", description: "Fast sums and differences of mental-log and root estimates.", meta: "combo drills" },
+        { id: "mentalMath", label: "Logs, roots, and exponents", description: "Natural logs, base-2 logs, square roots, exponentials, and mixed approximation drills.", meta: "ln / log2 / sqrt / exp" },
         { id: "normal", label: "Normal tails", description: "Memorized tail anchors and reverse-quantile questions.", meta: "N(0,1)" },
         { id: "maxNormals", label: "Expected max", description: "Use nP(Z > x) ~= 1 to estimate maxima of iid normals.", meta: "E[max Z_i]" },
         { id: "discreteExtremes", label: "Discrete extremes", description: "Geometric and Poisson max/min questions plus full-set occupancy approximations.", meta: "geom / Pois / dice" },
         { id: "cardsSampling", label: "Cards and sampling", description: "Deck, urn, and without-replacement questions built on indicators and symmetry.", meta: "cards / urns" },
         { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variance, covariance, correlation, and mgf drills.", meta: "Var / Cov / Corr / MGF" },
-        { id: "regression", label: "Regression", description: "Simple linear regression, R-squared, residual variance, and Bayesian shrinkage updates.", meta: "OLS / Bayes" },
-        { id: "newProblems", label: "New problems", description: "Temporary bucket for order statistics, MLE drills, and creative estimation questions.", meta: "order stats / MLE" },
+        { id: "regression", label: "Regression", description: "OLS, regression MLE, residual variance, prediction, and Bayesian coefficient updates.", meta: "OLS / MLE / Bayes" },
+        { id: "orderStats", label: "Order statistics", description: "Uniform, dice, and exponential top-k / bottom-k estimate drills.", meta: "max / 2nd / min" },
+        { id: "estimation", label: "Estimation and MLE", description: "Likelihood-based parameter recovery, sample summaries, and fast inference rules.", meta: "MLE / inference" },
         { id: "options", label: "Options pricing", description: "Put-call parity, synthetic forwards, binomial pricing, and intrinsic-versus-time-value drills.", meta: "calls / puts / parity" },
         { id: "greeks", label: "Greeks", description: "Delta, hedge sizing, vega intuition, and option-position sensitivity questions.", meta: "delta / gamma / vega" },
         { id: "stopping", label: "Stopping and martingales", description: "Threshold rerolls, continuation values, and bounded optional-stopping classics.", meta: "stopping" },
@@ -1730,7 +1732,7 @@
         showHints: false,
         sessionLength: DEFAULT_QUESTION_COUNT,
         difficulty: DEFAULT_DIFFICULTY,
-        selectedTopics: TOPICS.map((topic) => topic.id),
+        selectedTopics: getAllTopicIds(),
         lastResultStatus: null,
         summaryOpen: false,
         updateSequence: 0,
@@ -1838,6 +1840,35 @@
         ).join("");
       }
 
+      function getAllTopicIds() {
+        return TOPICS.map((topic) => topic.id);
+      }
+
+      function normalizeSelectedTopicIds(selectedTopics) {
+        const validTopicIds = new Set(getAllTopicIds());
+        const normalized = new Set();
+
+        for (const topicId of Array.isArray(selectedTopics) ? selectedTopics : []) {
+          if (topicId === "logs" || topicId === "roots" || topicId === "combos") {
+            normalized.add("mentalMath");
+            continue;
+          }
+
+          if (topicId === "newProblems") {
+            normalized.add("orderStats");
+            normalized.add("estimation");
+            normalized.add("regression");
+            continue;
+          }
+
+          if (validTopicIds.has(topicId)) {
+            normalized.add(topicId);
+          }
+        }
+
+        return [...normalized].filter((topicId) => validTopicIds.has(topicId));
+      }
+
       function loadPreferences() {
         const stored = loadStoredData();
         elements.timerMinutes.value = stored.timerMinutes !== undefined ? String(stored.timerMinutes) : String(DEFAULT_TIMER_MINUTES);
@@ -1845,8 +1876,8 @@
         elements.difficultySelect.value = stored.difficulty || DEFAULT_DIFFICULTY;
         elements.showHints.checked = stored.showHints === true;
 
-        const storedTopics = Array.isArray(stored.selectedTopics) ? stored.selectedTopics : TOPICS.map((topic) => topic.id);
-        setSelectedTopics(storedTopics.length > 0 ? storedTopics : TOPICS.map((topic) => topic.id));
+        const storedTopics = normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds());
+        setSelectedTopics(storedTopics.length > 0 ? storedTopics : getAllTopicIds());
       }
 
       function renderBestScore() {
@@ -2354,7 +2385,15 @@
       }
 
       function getExpandedExplanation(question) {
-        if (question.topicId === "logs") {
+        if (question.topicId === "mentalMath") {
+          if ((question.prompt.includes("sqrt") || question.prompt.includes("√")) && (question.prompt.includes("ln(") || question.prompt.includes("log₂") || question.prompt.includes("2^") || question.prompt.includes("e^"))) {
+            return "These combo cards are decomposition cards. The intended move is to split the expression into pieces that each have their own easy anchor, estimate each piece locally, and only then combine them.\n\nThat is why the accepted range is built to cover both the exact final value and the shortcut value produced by combining the intended sub-estimates. The only real risk is compounding small sign or scale errors across the pieces.";
+          }
+
+          if (question.prompt.includes("sqrt") || question.prompt.includes("√")) {
+            return "The square-root estimate comes from linearizing the function f(x) = sqrt(x) around a nearby perfect square a. Since f'(a) = 1 / (2 sqrt(a)), the first-order expansion gives sqrt(a + h) approximately sqrt(a) + h / (2 sqrt(a)).\n\nSo the real skill is picking a good anchor square and noticing whether the correction should be positive or negative. If the target is very close to the anchor, the tangent-line estimate does almost all of the work.";
+          }
+
           if (question.category === "Base-2 log") {
             return "Base-2 logs are just natural logs in disguise. The change-of-base identity says log base 2 of x equals ln(x) divided by ln(2), so the same log anchors still do the work.\n\nThat is why these cards are really about reuse: once you know ln(2), ln(3), ln(5), and ln(10), you can translate them into quick base-2 estimates.";
           }
@@ -2367,15 +2406,7 @@
             return "Write x = 1 + u. The Taylor expansion ln(1 + u) = u - u^2/2 + u^3/3 - ... is very accurate when |u| is small, so keeping one or two terms gives a mental estimate.\n\nThe shortcut answer is the truncated series, while the exact answer keeps the higher-order terms. That is why the review shows both the exact value and the mental anchor.";
           }
 
-          return "Anchor logs come from the identities ln(ab) = ln a + ln b and ln(a/b) = ln a - ln b. So once you remember a few values like ln(2), ln(3), ln(5), and ln(10), many other logs become short additions or subtractions.\n\nThe point of these cards is not memorizing every log individually; it is reducing the target number to a product or quotient of familiar anchors.";
-        }
-
-        if (question.topicId === "roots") {
-          return "The square-root estimate is a first-order Taylor expansion. Around a nearby anchor a, sqrt(a + h) is approximately sqrt(a) + h / (2 sqrt(a)).\n\nSo the whole trick is choosing an anchor square that is close enough for the linear correction to do most of the work mentally.";
-        }
-
-        if (question.topicId === "combos") {
-          return "These are built to train decomposition. Each expression is chosen so that every piece has a separate fast anchor, and the total answer comes from combining those anchors.\n\nThe mental error usually comes from each sub-estimate separately, so the accepted range is widened enough to include both the exact total and the shortcut total.";
+          return "Anchor logs and exponentials come from the identities ln(ab) = ln a + ln b, ln(a/b) = ln a - ln b, and 2^u = e^(u ln 2). So once you remember a few values like ln(2), ln(3), ln(5), and ln(10), many other expressions become short additions, subtractions, or small expansions around those anchors.\n\nThe point of these cards is not memorizing every value individually; it is reducing the target number to a familiar anchor plus a manageable local correction.";
         }
 
         if (question.topicId === "normal") {
@@ -2449,6 +2480,14 @@
         }
 
         if (question.topicId === "regression") {
+          if (question.category === "Regression MLE") {
+            if (question.prompt.includes("Laplace-error")) {
+              return "Laplace errors replace squared residuals by absolute residuals in the log-likelihood. For an intercept-only model that makes the MLE the sample median.\n\nFor through-origin regression with positive x_i, minimizing sum |y_i - beta x_i| is the same as minimizing sum x_i |(y_i/x_i) - beta|. So beta becomes the weighted median of the ratios y_i/x_i, with weights x_i.";
+            }
+
+            return "With Normal errors, maximizing likelihood is the same as minimizing the sum of squared residuals. That is why Normal-error regression MLE is just least squares.\n\nThrough the origin, beta-hat equals sum x_i y_i divided by sum x_i^2. If the x-values are centered, the fitted line's intercept is simply y-bar.";
+          }
+
           if (question.category === "OLS slope" || question.category === "OLS intercept") {
             return "In simple regression, the slope is correlation times the ratio of standard deviations: beta_1 = rho sigma_Y / sigma_X. Once you know the slope, the intercept is just beta_0 = y-bar - beta_1 x-bar.\n\nSo these cards are usually about translating between scale-free correlation and slope on the original units.";
           }
@@ -2468,28 +2507,20 @@
           return "For beta ~ N(m0, tau^2) and y_i = beta x_i + eps_i with known sigma^2, the posterior precision is 1/tau^2 + sum x_i^2 / sigma^2. So the posterior variance is the reciprocal of that quantity.\n\nThis is why every extra observation tightens the posterior, and why large |x_i| observations are especially informative in regression.";
         }
 
-        if (question.topicId === "newProblems") {
-          if (question.category === "Order statistics") {
-            if (question.prompt.includes("Uniform(0,1)")) {
-              return "For Uniform(0,1), the exact order-statistic means are simple: the expected r-th smallest value is r/(n+1). To get the j-th largest, convert it into the (n-j+1)-th smallest.\n\nSo the largest is n/(n+1), the second-largest is (n-1)/(n+1), and the third-largest is (n-2)/(n+1). These are exact, not just heuristics.";
-            }
-
-            if (question.prompt.includes("fair")) {
-              return "For discrete uniform dice, the exact top-order distribution comes from binomial tails: the j-th largest is at least k if at least j rolls land in {k, k+1, ..., m}. Summing those tail probabilities gives the exact expectation.\n\nThe fast mental shortcut is to pretend the die is continuous on the interval from 1 to m, which gives the approximation ((n-j+1)/(n+1))(m+1). That is why the review keeps both the exact discrete answer and the continuous-uniform estimate in play.";
-            }
-
-            return "Exponential order statistics are unusually clean because the gaps between successive order statistics are independent exponentials. That makes the expected largest H_n/lambda, the expected second-largest (H_n - 1)/lambda, and the expected third-largest (H_n - 1 - 1/2)/lambda.\n\nFor mental math, replace H_n by ln(n) + gamma. That usually gets you very close for the top one or two order statistics.";
+        if (question.topicId === "orderStats") {
+          if (question.prompt.includes("Uniform(0,1)")) {
+            return "For Uniform(0,1), the exact order-statistic means are simple: the expected r-th smallest value is r/(n+1). To get the j-th largest, convert it into the (n-j+1)-th smallest.\n\nSo the largest is n/(n+1), the second-largest is (n-1)/(n+1), and the third-largest is (n-2)/(n+1). These are exact, not just heuristics, because the unit interval is split into n+1 exchangeable expected spacings.";
           }
 
-          if (question.category === "Regression MLE") {
-            if (question.prompt.includes("Laplace-error")) {
-              return "Laplace errors replace squared residuals by absolute residuals in the log-likelihood. For an intercept-only model that makes the MLE the sample median.\n\nFor through-origin regression with positive x_i, minimizing sum |y_i - beta x_i| is the same as minimizing sum x_i |(y_i/x_i) - beta|. So beta becomes the weighted median of the ratios y_i/x_i, with weights x_i.";
-            }
-
-            return "With Normal errors, maximizing likelihood is the same as minimizing the sum of squared residuals. That is why Normal-error regression MLE is just least squares.\n\nThrough the origin, beta-hat equals sum x_i y_i divided by sum x_i^2. If the x-values are centered, the fitted line's intercept is simply y-bar.";
+          if (question.prompt.includes("fair")) {
+            return "For discrete uniform dice, the exact top-order distribution comes from binomial tails: the j-th largest is at least k if at least j rolls land in {k, k+1, ..., m}. Summing those tail probabilities gives the exact expectation.\n\nThe fast mental shortcut is to pretend the die is continuous on the interval from 1 to m, which gives the approximation ((n-j+1)/(n+1))(m+1). That is why the review keeps both the exact discrete answer and the continuous-uniform estimate in play.";
           }
 
-          return "Many one-parameter MLE problems reduce to a small lookup table. Bernoulli and binomial give sample proportion, Poisson and Normal mean give sample mean, Exponential rate gives one over sample mean, Uniform endpoint gives the sample max, and Laplace location gives the sample median.\n\nThe common reason is that once you write the log-likelihood, all the complicated constants drop out and only one summary statistic still matters.";
+          return "Exponential order statistics are unusually clean because the gaps between successive order statistics are independent exponentials. That makes the expected largest H_n/lambda, the expected second-largest (H_n - 1)/lambda, and the expected third-largest (H_n - 1 - 1/2)/lambda.\n\nFor mental math, replace H_n by ln(n) + gamma. That usually gets you very close for the top one or two order statistics.";
+        }
+
+        if (question.topicId === "estimation") {
+          return "Many one-parameter MLE problems reduce to a small lookup table. Bernoulli and binomial give sample proportion, Poisson and Normal mean give sample mean, Exponential or geometric rate-style parameters give one over the sample mean, Uniform endpoint gives the sample max, and Laplace location gives the sample median.\n\nThe common reason is that once you write the log-likelihood, all the complicated constants drop out and only one summary statistic still matters. The quickest path is to ask which statistic the likelihood is really trying to optimize.";
         }
 
         if (question.topicId === "options") {
@@ -2753,17 +2784,37 @@
         const supplementalQuestions = buildSupplementalQuestions();
         const expandedSupplementalQuestions = buildExpandedSupplementalQuestions();
         const massiveSupplementalQuestions = buildMassiveSupplementalQuestions();
+        const distributedNewQuestions = [...buildNewProblemsQuestions(), ...buildMassiveNewProblemsQuestions(), ...buildUltraNewProblemsQuestions()].map(distributeNewProblemQuestion);
         return {
-          logs: [...buildNearOneLogs(), ...buildAnchorLogs(), ...buildBase2Logs(), ...buildExponentQuestions(), ...buildExpandedLogQuestions(), ...buildMassiveLogQuestions(), ...buildUltraLogQuestions()],
-          roots: [...buildNearSquareRoots(), ...buildNearOneRoots(), ...buildExpandedRootQuestions(), ...buildMassiveRootQuestions(), ...buildUltraRootQuestions()],
-          combos: [...buildComboQuestions(), ...buildExpandedComboQuestions(), ...buildMassiveComboQuestions(), ...buildUltraComboQuestions()],
+          mentalMath: retagQuestions(
+            [
+              ...buildNearOneLogs(),
+              ...buildAnchorLogs(),
+              ...buildBase2Logs(),
+              ...buildExponentQuestions(),
+              ...buildExpandedLogQuestions(),
+              ...buildMassiveLogQuestions(),
+              ...buildUltraLogQuestions(),
+              ...buildNearSquareRoots(),
+              ...buildNearOneRoots(),
+              ...buildExpandedRootQuestions(),
+              ...buildMassiveRootQuestions(),
+              ...buildUltraRootQuestions(),
+              ...buildComboQuestions(),
+              ...buildExpandedComboQuestions(),
+              ...buildMassiveComboQuestions(),
+              ...buildUltraComboQuestions(),
+            ],
+            "mentalMath",
+          ),
           normal: [...buildNormalQuestions(), ...buildExpandedNormalQuestions(), ...buildMassiveNormalQuestions(), ...buildUltraNormalQuestions()],
           maxNormals: [...buildMaxNormalQuestions(), ...buildExpandedMaxNormalQuestions(), ...buildMassiveMaxNormalQuestions()],
           discreteExtremes: [...buildDiscreteExtremeQuestions(), ...buildExpandedDiscreteExtremeQuestions(), ...buildMassiveDiscreteExtremeQuestions()],
           cardsSampling: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "cardsSampling"),
           momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf").concat(buildUltraMomentsQuestions()),
-          regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions()],
-          newProblems: [...buildNewProblemsQuestions(), ...buildMassiveNewProblemsQuestions(), ...buildUltraNewProblemsQuestions()],
+          regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions(), ...distributedNewQuestions.filter((question) => question.topicId === "regression")],
+          orderStats: distributedNewQuestions.filter((question) => question.topicId === "orderStats"),
+          estimation: distributedNewQuestions.filter((question) => question.topicId === "estimation"),
           options: [...buildOptionQuestions(), ...buildMassiveOptionQuestions()],
           greeks: [...buildGreekQuestions(), ...buildMassiveGreekQuestions()],
           stopping: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "stopping"),
@@ -2774,6 +2825,22 @@
           eigenvalues: [...buildEigenvalueQuestions(), ...buildExpandedEigenvalueQuestions(), ...buildMassiveEigenvalueQuestions()],
           greenBook: [...buildGreenBookQuestions(), ...buildExpandedGreenBookQuestions(), ...buildMassiveGreenBookQuestions()],
         };
+      }
+
+      function retagQuestions(questions, topicId) {
+        return questions.map((question) => ({ ...question, topicId }));
+      }
+
+      function distributeNewProblemQuestion(question) {
+        if (question.category === "Order statistics") {
+          return { ...question, topicId: "orderStats" };
+        }
+
+        if (question.category === "Regression MLE") {
+          return { ...question, topicId: "regression" };
+        }
+
+        return { ...question, topicId: "estimation" };
       }
 
       function buildNearOneLogs() {
