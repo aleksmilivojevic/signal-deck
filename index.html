@@ -355,6 +355,34 @@
         letter-spacing: 0;
       }
 
+      .answer-pad {
+        display: none;
+        gap: 0.45rem;
+        margin-top: 0.65rem;
+      }
+
+      .answer-pad-button {
+        min-width: 3.1rem;
+        padding: 0.42rem 0.58rem;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        background: var(--win-panel);
+        color: #000000;
+        font: inherit;
+        font-size: 0.88rem;
+        cursor: pointer;
+      }
+
+      .answer-pad-button:active {
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        transform: translate(1px, 1px);
+      }
+
       .field-input:focus,
       .answer-input:focus {
         outline: none;
@@ -799,6 +827,22 @@
         line-height: 1.65;
       }
 
+      .explanation-section + .explanation-section {
+        margin-top: 1rem;
+        padding-top: 0.95rem;
+        border-top: 1px solid #b7b7b7;
+      }
+
+      .explanation-section-title {
+        display: block;
+        margin-bottom: 0.15rem;
+        color: var(--ink);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
       details.live-item,
       .review-row {
         padding: 0.95rem 1rem;
@@ -1041,6 +1085,11 @@
       }
 
       @media (max-width: 640px) {
+        .answer-pad {
+          display: flex;
+          flex-wrap: wrap;
+        }
+
         .app-shell {
           width: min(100% - 1rem, 1180px);
           padding-top: 1rem;
@@ -1378,6 +1427,46 @@
           </article>
 
           <article class="guide-card">
+            <h3>Birthday Matches</h3>
+            <p>There are two nearby but different birthday expectations. The expected number of matching pairs in a group of <code>n</code> is <code>choose(n, 2) / 365</code>. The expected number of people who have at least one match is <code>n(1 - (364/365)^(n-1))</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> with <code>25</code> people, the expected number of matching pairs is <code>300 / 365 ≈ 0.822</code>, while the expected number of people who would raise their hands because someone else shares their birthday is about <code>1.59</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Why the formulas differ</summary>
+              <p>For matching pairs, put an indicator on each unordered pair of people. Each pair matches with probability <code>1/365</code>, and there are <code>choose(n, 2)</code> such pairs, so linearity gives the expectation immediately.</p>
+              <p>For raised hands, fix one person and ask for the chance that at least one of the other <code>n - 1</code> people shares their birthday. That probability is <code>1 - (364/365)^(n-1)</code>, and summing that same expectation over all people gives the hand count.</p>
+              <p>If four people share one birthday, that produces <code>6</code> matching pairs but only <code>4</code> raised hands, so the two quantities are measuring different things.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Symmetry Tricks</h3>
+            <p>Some interview questions look computational until you spot a symmetry. If one player gets one extra fair coin toss after an otherwise symmetric contest, that extra toss is just a fair tiebreaker. If you need three equally likely outcomes from fair coins, use two-flip rounds and restart on one bad pattern.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> getting more heads in <code>5</code> fair tosses than someone else gets in <code>4</code> fair tosses has probability <code>1/2</code>. Choosing fairly among three children via <code>HH</code>, <code>HT</code>, <code>TH</code>, and restart-on-<code>TT</code> takes an expected <code>8/3</code> flips.
+            </div>
+            <details class="guide-details">
+              <summary>Why these shortcuts work</summary>
+              <p>For the <code>5</code>-versus-<code>4</code> coin game, imagine both players first toss <code>4</code> coins. The game is completely symmetric up to that point. If they tie, the extra fifth toss is simply a fair tiebreaker for the player with the extra coin.</p>
+              <p>For the three-child selection trick, two fair flips create four equally likely outcomes. Three outcomes are useful and one means “start over,” so each round succeeds with probability <code>3/4</code> and costs <code>2</code> flips. That gives expected flips <code>2 / (3/4) = 8/3</code>.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Circle and Modulo Tricks</h3>
+            <p>Circle problems often hide a semicircle criterion, and divisibility questions with many fair dice often hide modular uniformity. These are both places where one structural observation can replace a long count.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> three random points on a circle contain the center in their triangle with probability <code>1/4</code>. The sum of <code>10</code> fair six-sided dice is divisible by <code>6</code> with probability exactly <code>1/6</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Why the clean answers appear</summary>
+              <p>The center lies inside the triangle exactly when the three chosen points are not all contained in any semicircle. The complement event has probability <code>3/4</code>, leaving the desired probability <code>1/4</code>.</p>
+              <p>For fair six-sided dice, each die is uniform modulo <code>6</code>, since the faces correspond to the residues <code>1,2,3,4,5,0</code> equally often. Adding an independent uniform residue modulo <code>6</code> keeps the sum uniform modulo <code>6</code>, so every residue class occurs with probability <code>1/6</code>.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
             <h3>Regression and Bayesian Updates</h3>
             <p>In simple linear regression, the slope is <code>β₁ = ρ σ_Y / σ_X</code> and the intercept is <code>β₀ = ȳ - β₁ x̄</code>. If the variables are standardized, the slope is just the correlation. In that same one-factor world, <code>R² = ρ²</code>, the explained variance is <code>ρ² Var(Y)</code>, and the residual variance is <code>(1 - ρ²) Var(Y)</code>.</p>
             <div class="guide-example">
@@ -1433,6 +1522,7 @@
               <p>Before doing anything else, ask whether the problem is really a parity problem. If call and put share the same strike and expiry, <code>C - P</code> behaves like a forward, so missing prices, implied spot values, and synthetic positions often become one-line calculations.</p>
               <p>For rough pricing, separate intrinsic value from time value. Near expiry, deep in-the-money calls are close to <code>S - K e^{-rT}</code>, deep out-of-the-money calls are near zero, and short-dated at-the-money options live on the scale <code>S σ sqrt(T)</code> with the constant about <code>0.4</code> for a call and about <code>0.8</code> for a straddle.</p>
               <p>In one-step trees, the fair option price is just the discounted risk-neutral expected payoff. With zero rates and a symmetric up/down tree around today’s price, that often collapses to a plain average of the terminal payoffs.</p>
+              <p>Digital calls are closely tied to tight call spreads. A narrow call spread divided by its strike width behaves like a digital payoff, which is why a fast market estimate for a 1-dollar digital is often just <code>(C(K) - C(K + h)) / h</code>.</p>
             </details>
           </article>
 
@@ -1477,6 +1567,35 @@
             <div class="guide-example">
               <strong>Example:</strong> in <code>20</code> flips, the expected number of runs is <code>10.5</code>. In <code>64</code> flips, the longest head run is mentally around <code>6</code>.
             </div>
+          </article>
+
+          <article class="guide-card">
+            <h3>Return to Origin via Stirling</h3>
+            <p>For a simple symmetric random walk, the probability of being back at the origin after <code>2n</code> steps is <code>choose(2n, n) / 2^(2n)</code>. Stirling turns that into the fast mental heuristic <code>1 / sqrt(pi n)</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> after <code>20</code> steps, a walk returns to the origin with probability <code>choose(20, 10) / 2^20 ≈ 1 / sqrt(10 pi) ≈ 0.178</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Where the approximation comes from</summary>
+              <p>Start from <code>choose(2n, n) = (2n)! / (n!)²</code> and apply Stirling’s formula <code>m! ≈ sqrt(2 pi m) (m/e)^m</code>. The exponential pieces simplify cleanly: <code>(2n/e)^(2n)</code> divided by <code>(n/e)^(2n)</code> leaves <code>2^(2n) = 4^n</code>.</p>
+              <p>The square-root terms leave the only surviving denominator: <code>sqrt(4 pi n) / (2 pi n) = 1 / sqrt(pi n)</code>. So <code>choose(2n, n)</code> is approximately <code>4^n / sqrt(pi n)</code>. After dividing by <code>2^(2n) = 4^n</code>, the return probability becomes about <code>1 / sqrt(pi n)</code>.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>First Collision Time</h3>
+            <p>If you keep drawing uniformly from <code>{1, ..., n}</code> with replacement, the expected time until the first repeated value is about <code>sqrt(pi n / 2)</code>. The cruder but very useful scale heuristic is that collisions start to appear when <code>k² / (2n)</code> gets near <code>1</code>, so the answer should live on the order of <code>sqrt(n)</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> for <code>n = 365</code>, the estimate is <code>sqrt(pi × 365 / 2) ≈ 23.9</code>, which is the usual birthday-paradox scale.
+            </div>
+            <details class="guide-details">
+              <summary>Why the square-root law appears</summary>
+              <p>The probability of no collision in the first <code>k</code> draws is
+              <code>(1)(1 - 1/n)(1 - 2/n)...(1 - (k-1)/n)</code>. When <code>k</code> is much smaller than <code>n</code>, take logs and use <code>ln(1 - u) ≈ -u</code> to get
+              <code>P(no collision by k) ≈ exp(-k(k-1)/(2n))</code>.</p>
+              <p>That shows the transition from “unlikely collision” to “likely collision” happens when <code>k(k-1)/(2n)</code> is around <code>1</code>, which already gives the right mental scale <code>k ≈ sqrt(2n)</code>. To get the expectation, sum the tail probabilities or approximate by an integral:
+              <code>E[T] ≈ ∫₀^∞ exp(-x²/(2n)) dx = sqrt(pi n / 2)</code>.</p>
+            </details>
           </article>
 
           <article class="guide-card">
@@ -1546,10 +1665,18 @@
                 id="answer-input"
                 class="answer-input"
                 type="text"
-                inputmode="decimal"
+                inputmode="text"
                 autocomplete="off"
+                autocapitalize="off"
+                autocorrect="off"
+                enterkeyhint="done"
                 spellcheck="false"
               />
+              <div id="answer-pad" class="answer-pad" aria-label="Answer helper buttons">
+                <button class="answer-pad-button" type="button" data-insert="-">-</button>
+                <button class="answer-pad-button" type="button" data-insert="/">/</button>
+                <button class="answer-pad-button" type="button" data-insert=".">.</button>
+              </div>
             </div>
 
             <div class="card-actions">
@@ -1558,7 +1685,7 @@
               <button id="exit-session" class="button button--ghost" type="button">New quiz</button>
             </div>
 
-            <p class="keyboard-note">Press <code>Enter</code> to submit and move straight to the next card, or <code>S</code> to skip. Skipped cards come back once later.</p>
+            <p class="keyboard-note">Press <code>Enter</code> to submit and move straight to the next card, or <code>S</code> to skip. Fractions and negatives are allowed, and mobile shows helper keys for <code>-</code>, <code>/</code>, and <code>.</code> only. Skipped cards come back once later.</p>
             <p id="input-error" class="inline-note inline-note--error" aria-live="polite"></p>
           </article>
 
@@ -1693,6 +1820,7 @@
         hintPanel: document.getElementById("hint-panel"),
         hintText: document.getElementById("hint-text"),
         answerInput: document.getElementById("answer-input"),
+        answerPad: document.getElementById("answer-pad"),
         primaryAction: document.getElementById("primary-action"),
         secondaryAction: document.getElementById("secondary-action"),
         inputError: document.getElementById("input-error"),
@@ -1717,6 +1845,7 @@
       const expectedMaxCache = new Map();
       const poissonPMFCache = new Map();
       const occupancyMinCache = new Map();
+      const optimalGuessRewardCache = new Map();
 
       const questionBank = buildQuestionBank();
 
@@ -1772,6 +1901,35 @@
           if (event.key === "Enter") {
             event.preventDefault();
             handlePrimaryAction();
+          }
+        });
+
+        elements.answerPad.addEventListener("click", (event) => {
+          if (!(event.target instanceof HTMLElement)) {
+            return;
+          }
+
+          const button = event.target.closest("button");
+          if (!button) {
+            return;
+          }
+
+          const insertText = button.dataset.insert;
+          const action = button.dataset.action;
+
+          if (insertText) {
+            insertIntoAnswerInput(insertText);
+            return;
+          }
+
+          if (action === "backspace") {
+            backspaceAnswerInput();
+            return;
+          }
+
+          if (action === "clear") {
+            elements.answerInput.value = "";
+            elements.answerInput.focus();
           }
         });
 
@@ -2366,22 +2524,60 @@
       }
 
       function renderExpandedExplanation(question) {
-        const explanation = getExpandedExplanation(question);
-        if (!explanation) {
+        const workedExplanation = getWorkedExplanation(question);
+        const methodExplanation = getExpandedExplanation(question);
+        if (!workedExplanation && !methodExplanation) {
           return "";
         }
 
-        const paragraphs = explanation
+        const sections = [];
+
+        if (workedExplanation) {
+          sections.push(renderExplanationSection("Worked solution", workedExplanation));
+        }
+
+        if (methodExplanation) {
+          sections.push(renderExplanationSection("Why the method works", methodExplanation));
+        }
+
+        return `
+          <details class="explanation-details">
+            <summary>Expand Worked Solution</summary>
+            <div class="explanation-body">${sections.join("")}</div>
+          </details>
+        `;
+      }
+
+      function renderExplanationSection(title, text) {
+        const paragraphs = text
           .split("\n\n")
           .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
           .join("");
 
         return `
-          <details class="explanation-details">
-            <summary>Expand Derivation</summary>
-            <div class="explanation-body">${paragraphs}</div>
-          </details>
+          <section class="explanation-section">
+            <strong class="explanation-section-title">${escapeHtml(title)}</strong>
+            ${paragraphs}
+          </section>
         `;
+      }
+
+      function getWorkedExplanation(question) {
+        const paragraphs = [];
+
+        if (question.explanation) {
+          paragraphs.push(question.explanation);
+        }
+
+        paragraphs.push(`Exact answer for this card: ${formatAnswer(question)}.`);
+
+        if (questionHasDistinctMentalAnswer(question)) {
+          paragraphs.push(`Intended shortcut answer: ${formatMentalAnswer(question)}.`);
+        }
+
+        paragraphs.push(`Anything in the accepted range ${getAcceptedRange(question)} is marked correct.`);
+
+        return paragraphs.join("\n\n");
       }
 
       function getExpandedExplanation(question) {
@@ -2620,6 +2816,14 @@
             return "For a fair-coin target pattern w, the exact expected waiting time is the sum of 2^k over all overlap lengths k whose prefix and suffix match. This comes from the standard martingale or betting-system proof.\n\nIntuitively, overlaps matter because when the pattern finally appears, earlier partial matches may already have been in progress. Those surviving aligned bettors are exactly what create the extra 2^k terms.";
           }
 
+          if (question.category === "Green Book: return probability") {
+            return "These cards are about the return probability choose(2n, n) / 2^(2n), not the raw central binomial coefficient itself. Stirling gives choose(2n, n) ~= 4^n / sqrt(pi n), and dividing by 2^(2n) = 4^n leaves the clean heuristic 1 / sqrt(pi n).\n\nSo the fast mental move is: count balanced paths with choose(2n, n), then notice that the 4^n total step sequences cancel the 4^n in the Stirling approximation.";
+          }
+
+          if (question.category === "Green Book: collisions") {
+            return "Let T be the first draw on which a repeat appears. The survival probability P(T > k) is the probability that the first k draws are all distinct, which is a falling-factorial product.\n\nWhen k is small relative to n, log-linearizing that product gives P(T > k) ~= exp(-k(k - 1)/(2n)). Summing those tail probabilities, or replacing the sum by a Gaussian integral, yields E[T] ~= sqrt(pi n / 2).";
+          }
+
           if (question.category === "Green Book: permutations") {
             return "The expected number of cycles in a random permutation is H_n. One way to see it is to let I_k indicate that the element k is the smallest label in its cycle; that event has probability 1/k.\n\nAdding the expectations of those indicators gives 1 + 1/2 + ... + 1/n.";
           }
@@ -2701,6 +2905,38 @@
 
       function clearInputError() {
         elements.inputError.textContent = "";
+      }
+
+      function insertIntoAnswerInput(text) {
+        const input = elements.answerInput;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        input.value = `${input.value.slice(0, start)}${text}${input.value.slice(end)}`;
+        const nextPosition = start + text.length;
+        input.focus();
+        input.setSelectionRange(nextPosition, nextPosition);
+      }
+
+      function backspaceAnswerInput() {
+        const input = elements.answerInput;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+
+        if (start !== end) {
+          input.value = `${input.value.slice(0, start)}${input.value.slice(end)}`;
+          input.focus();
+          input.setSelectionRange(start, start);
+          return;
+        }
+
+        if (start === 0) {
+          input.focus();
+          return;
+        }
+
+        input.value = `${input.value.slice(0, start - 1)}${input.value.slice(end)}`;
+        input.focus();
+        input.setSelectionRange(start - 1, start - 1);
       }
 
       function setAllTopics(checked) {
@@ -3142,7 +3378,38 @@
           }),
         );
 
-        return [...tailPrompts, ...quantilePrompts];
+        const sourcedQuestions = [
+          createQuestion({
+            topicId: "normal",
+            category: "Normal approximation",
+            prompt: "You flip 400 fair coins. Estimate the probability of getting at least 220 heads.",
+            hint: "Use a normal approximation to Binomial(400, 1/2) with mean 200 and standard deviation 10, plus a continuity correction.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: binomialProbabilityAtLeast(400, 0.5, 220),
+            mentalAnswer: standardNormalUpperTail((219.5 - 200) / 10),
+            absTolerance: 0.01,
+            explanation: "The exact binomial tail is a bit under 3%. The quick normal route uses z = (219.5 - 200) / 10 = 1.95, which gives an upper tail around 2.6%.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "normal",
+            category: "Normal linear form",
+            prompt: "X, Y, and Z are jointly standard normal with pairwise correlations all equal to 0.5. Estimate P(X + Y > Z + 2).",
+            hint: "A linear combination of jointly normal variables is normal. First compute the variance of X + Y - Z.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: standardNormalUpperTail(Math.SQRT2),
+            mentalAnswer: 0.08,
+            absTolerance: 0.015,
+            explanation: "Let W = X + Y - Z. Then Var(W) = 1 + 1 + 1 + 2(0.5) - 2(0.5) - 2(0.5) = 2, so W ~ N(0, 2). The target probability is P(W > 2) = P(N(0,1) > sqrt(2)), about 7.9%.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+        ];
+
+        return [...tailPrompts, ...quantilePrompts, ...sourcedQuestions, ...buildSourcedNormalQuestionVariations()];
       }
 
       function buildMaxNormalQuestions() {
@@ -3690,6 +3957,251 @@
             explanation: "Keep 6 through 10, whose average is 8, and reroll 1 through 5, which is worth 5.5. Since each case has probability 1/2, the optimal expectation is (1/2) * 8 + (1/2) * 5.5 = 6.75.",
             difficulty: "medium",
           }),
+          createQuestion({
+            topicId: "cardsSampling",
+            category: "Cards",
+            prompt: "You are dealt exactly 2 cards from a standard 52-card deck. Estimate the probability both cards are kings.",
+            hint: "Use 4/52 for the first king and 3/51 for the second, or count two-card hands directly.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: (4 / 52) * (3 / 51),
+            mentalAnswer: 1 / 221,
+            absTolerance: 0.004,
+            explanation: "The chance is (4/52)(3/51) = 12/2652 = 1/221, about 0.45%.",
+            difficulty: "easy",
+            source: "Heard on the Street (22nd ed.), Q4.19",
+          }),
+          createQuestion({
+            topicId: "cardsSampling",
+            category: "Sampling",
+            prompt: "A bag contains 2 red balls and 2 blue balls. Balls are drawn one at a time without replacement, and before each draw you guess the color. You earn 1 dollar for each correct guess. Estimate the optimal expected winnings.",
+            hint: "At each stage, guess the color that is currently more common among the unseen balls and work backward.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: expectedOptimalColorGuessReward(2, 2),
+            mentalAnswer: 17 / 6,
+            absTolerance: 0.05,
+            explanation: "Dynamic programming gives the exact value 17/6 ≈ 2.833. The optimal rule is always to guess the more numerous remaining color; ties are neutral by symmetry.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "cardsSampling",
+            category: "Cards",
+            prompt: "Four cards are shuffled face down: water, earth, wind, and fire. You turn them over one by one. You win if you see water and earth before ever seeing fire. Estimate the probability of winning.",
+            hint: "Wind is irrelevant. Among water, earth, and fire, ask whether fire is last.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 3,
+            absTolerance: 0.025,
+            explanation: "Only the relative order of water, earth, and fire matters. You win exactly when fire is last among those three symbols, which happens with probability 1/3.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), Q4.30",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Coin symmetry",
+            prompt: "One player tosses 5 fair coins and another tosses 4 fair coins. Estimate the probability the 5-coin player gets strictly more heads.",
+            hint: "Think of both players tossing 4 coins first. The extra fifth coin only matters if the first 4-vs-4 contest is tied.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 0.5,
+            absTolerance: 0.025,
+            explanation: "After both players toss 4 coins, the situation is symmetric. If those 4-vs-4 totals tie, the fifth toss is just a fair tiebreaker for the 5-coin player, so the overall win probability is exactly 1/2.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), Q4.7",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Coin symmetry",
+            prompt: "You and someone else each toss 3 fair coins. Estimate the probability you get the same number of heads.",
+            hint: "Square the Binomial(3, 1/2) probabilities and add them.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 5 / 16,
+            absTolerance: 0.025,
+            explanation: "The Binomial(3, 1/2) probabilities are 1, 3, 3, and 1 over 8, so the match probability is (1^2 + 3^2 + 3^2 + 1^2) / 8^2 = 20/64 = 5/16.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Modulo probability",
+            prompt: "You roll 10 fair six-sided dice. Estimate the probability that the total sum is divisible by 6.",
+            hint: "Think modulo 6 instead of on the raw scale.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 6,
+            absTolerance: 0.02,
+            explanation: "Each die is uniform modulo 6, and the sum of independent uniform residues modulo 6 is still uniform. So every residue class, including 0 mod 6, has probability 1/6.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Arithmetic progression probability",
+            prompt: "Three integers are drawn independently and uniformly from 1 through 20. Estimate the probability that one of them is exactly the average of the other two.",
+            hint: "This happens exactly when the three numbers form a 3-term arithmetic progression, allowing equal numbers too.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: probabilityAnyOfThreeIsAverage(20),
+            mentalAnswer: 0.07,
+            absTolerance: 0.01,
+            explanation: "Count ordered endpoint pairs with the same parity, because only then their midpoint is an integer. Correcting the all-equal overcount leaves 560 favorable ordered triples out of 20^3, so the probability is 560/8000 = 0.07.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Bayes update",
+            prompt: "A jar has 99 fair coins and 1 two-headed coin. You pick one coin uniformly at random and get 7 heads in a row. Estimate the probability you picked the two-headed coin.",
+            hint: "Use Bayes: compare the special coin's prior weight with the fair-coin prior weight times 2^(-7).",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 128 / 227,
+            mentalAnswer: 0.56,
+            absTolerance: 0.03,
+            explanation: "The posterior is proportional to 1 × 1/100 for the two-headed coin versus 2^(-7) × 99/100 for the fair-coin case. So the probability is 1 / (1 + 99/128) = 128/227 ≈ 0.564.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Bayes update",
+            prompt: "A jar has 999 fair coins and 1 two-headed coin. You pick one coin uniformly at random and get 10 heads in a row. Estimate the probability you picked the two-headed coin.",
+            hint: "The prior odds for the special coin are about 1 to 999, while 10 fair heads cost a factor of about 1/1024.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / (1 + (999 / (2 ** 10))),
+            mentalAnswer: 0.5,
+            absTolerance: 0.03,
+            explanation: "Ten fair heads cost a factor of 1/1024, which is almost the same size as the 1-in-1000 prior on the two-headed coin. So the posterior lands just above 1/2, specifically about 0.506.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), Q4.29",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Bayes update",
+            prompt: "Suppose 50% of people are non-smokers, 30% are light smokers, and 20% are heavy smokers. Light smokers die at twice the rate of non-smokers, and heavy smokers die at twice the rate of light smokers. Estimate the probability a randomly observed death came from a heavy smoker.",
+            hint: "Weight each group by prior probability times death rate, then renormalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 8 / 19,
+            mentalAnswer: 0.42,
+            absTolerance: 0.025,
+            explanation: "Use death-rate weights 0.5 × 1, 0.3 × 2, and 0.2 × 4, which are 0.5, 0.6, and 0.8. The heavy-smoker posterior is 0.8 / (0.5 + 0.6 + 0.8) = 8/19 ≈ 0.421.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "momentsMgf",
+            category: "Correlation bound",
+            prompt: "Three random variables X, Y, and Z have Corr(X,Y) = 0.9 and Corr(Y,Z) = 0.9. Estimate the smallest possible value of Corr(X,Z).",
+            hint: "Force the 3x3 correlation matrix to stay positive semidefinite.",
+            inputMode: "number",
+            formatHint: "correlation",
+            answer: 0.62,
+            mentalAnswer: 0.62,
+            absTolerance: 0.03,
+            explanation: "For the 3x3 correlation matrix, the determinant must be nonnegative. With the two known correlations both 0.9, that condition reduces to (c - 0.62)(c - 1) ≤ 0, so the smallest feasible Corr(X,Z) is 0.62.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "ev",
+            category: "Expected value",
+            prompt: "An integer X is drawn uniformly from 1 through 10. If X is prime, you win X dollars. Otherwise you lose X/2 dollars. Estimate the expected payoff.",
+            hint: "List the primes in 1 through 10, then average the signed payoffs.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: -0.2,
+            mentalAnswer: -0.2,
+            absTolerance: 0.04,
+            explanation: "The prime wins are 2, 3, 5, and 7, totaling 17. The non-prime losses are 1/2, 2, 3, 4, 4.5, and 5, totaling 19. Divide 17 - 19 by 10 to get -0.2.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "ev",
+            category: "Kelly criterion",
+            prompt: "A repeated even-money bet wins 1 dollar with probability 60% and loses 1 dollar with probability 40%. Estimate the Kelly fraction of wealth to bet each round.",
+            hint: "For an even-money bet, Kelly fraction is p - q.",
+            inputMode: "number",
+            formatHint: "fraction",
+            answer: 0.2,
+            absTolerance: 0.025,
+            explanation: "At even odds, the Kelly fraction is p - q = 0.6 - 0.4 = 0.2.",
+            difficulty: "easy",
+            source: "Wilmott FAQ (Kelly criterion)",
+          }),
+          createQuestion({
+            topicId: "ev",
+            category: "Kelly criterion",
+            prompt: "A repeated even-money bet wins 1 dollar with probability 55% and loses 1 dollar with probability 45%. Estimate the Kelly fraction of wealth to bet each round.",
+            hint: "For an even-money bet, Kelly fraction is p - q.",
+            inputMode: "number",
+            formatHint: "fraction",
+            answer: 0.1,
+            absTolerance: 0.02,
+            explanation: "At even odds, the Kelly fraction is p - q = 0.55 - 0.45 = 0.1.",
+            difficulty: "easy",
+            source: "Wilmott FAQ (Kelly criterion)",
+          }),
+          createQuestion({
+            topicId: "stopping",
+            category: "Expected value",
+            prompt: "A fair die pays its face value in dollars. Estimate the fair ticket price for one play.",
+            hint: "Average the six equally likely payoffs.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: 3.5,
+            absTolerance: 0.03,
+            explanation: "The average of 1 through 6 is 3.5, so that is the fair price.",
+            difficulty: "easy",
+            source: "Heard on the Street (22nd ed.), Q4.6",
+          }),
+          createQuestion({
+            topicId: "stopping",
+            category: "Optimal stopping",
+            prompt: "A fair die may be rolled up to 3 times. After the first or second roll, you may stop and take that face value; otherwise you must take the third roll. Estimate the optimal expected payoff.",
+            hint: "Work backward: on roll 2, compare the current face to the value 3.5 of a forced final roll.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: 14 / 3,
+            mentalAnswer: 4.67,
+            absTolerance: 0.06,
+            explanation: "On roll 2, keep 4, 5, or 6 and continue on 1, 2, or 3, so the continuation value from roll 1 is 4.25. Therefore on roll 1 you keep 5 or 6 and continue otherwise, giving overall value 14/3 ≈ 4.67.",
+            difficulty: "hard",
+            source: "Heard on the Street (22nd ed.), Q4.8",
+          }),
+          createQuestion({
+            topicId: "stopping",
+            category: "Expected value",
+            prompt: "A fair die is rolled until the first time it shows something other than 1. You are paid that final face value. Estimate the expected payoff.",
+            hint: "Condition on the fact that the game ends only on 2, 3, 4, 5, or 6, each equally likely.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: 4,
+            absTolerance: 0.04,
+            explanation: "Once 1 is excluded as the terminal face, the ending value is uniform on {2,3,4,5,6}. Their average is 20/5 = 4.",
+            difficulty: "easy",
+            source: "Heard on the Street (22nd ed.), Q4.18",
+          }),
+          createQuestion({
+            topicId: "stopping",
+            category: "Conditional probability",
+            prompt: "In Russian roulette with 6 chambers and 2 adjacent bullets, the cylinder was spun, the trigger was pulled once, and it clicked. If you now choose not to respin before the second trigger pull, estimate your survival probability on that second pull.",
+            hint: "Condition on the first click having ruled out one bullet position.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 3 / 4,
+            mentalAnswer: 0.75,
+            absTolerance: 0.03,
+            explanation: "After the first click, only 4 chamber positions remain possible for the current alignment, and only 1 of those leads to a bullet next if the cylinder is not respun. So survival probability is 3/4.",
+            difficulty: "hard",
+            source: "Heard on the Street (22nd ed.), Q4.28",
+          }),
+          ...buildSourcedSupplementalQuestionVariations(),
         ];
       }
 
@@ -3946,6 +4458,7 @@
           }),
         ];
 
+        questions.push(...buildSourcedPolygonQuestionVariations());
         return questions;
       }
 
@@ -4071,6 +4584,33 @@
             answer: 1,
             absTolerance: 0.04,
             explanation: "The side is a 60-degree chord, so it equals the radius.",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "Three points are chosen independently and uniformly on the circumference of a circle. Estimate the probability that the center of the circle lies inside the triangle they form.",
+            hint: "The center is inside exactly when the three points are not all contained in a single semicircle.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 4,
+            absTolerance: 0.025,
+            explanation: "A classic fact is that the center fails to lie inside exactly when all three points fit inside some semicircle. That complement event has probability 3/4, so the desired probability is 1/4.",
+            difficulty: "medium",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "Two points are chosen independently and uniformly on the circumference of a unit circle. Estimate the expected distance between them.",
+            hint: "Think in terms of the chord length 2 sin(theta/2) and average over a uniform angle.",
+            inputMode: "number",
+            formatHint: "distance",
+            answer: 4 / Math.PI,
+            mentalAnswer: 1.27,
+            absTolerance: 0.05,
+            explanation: "The expected chord length on the unit circle is 4/pi, about 1.273.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
           }),
         ];
 
@@ -4351,6 +4891,60 @@
           }),
           createQuestion({
             topicId: "greenBook",
+            category: "Green Book: return probability",
+            prompt: "A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after 16 steps.",
+            hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n) with n = 8.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: centralBinomialReturnProbability(8),
+            mentalAnswer: centralBinomialReturnHeuristic(8),
+            absTolerance: 0.015,
+            relTolerance: 0.08,
+            explanation: `The exact return probability is choose(16, 8) / 2^16 = ${formatNumber(centralBinomialReturnProbability(8), 4)}. The Stirling shortcut is 1 / sqrt(8 pi) ~= ${formatNumber(centralBinomialReturnHeuristic(8), 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: return probability",
+            prompt: "A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after 20 steps.",
+            hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n) with n = 10.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: centralBinomialReturnProbability(10),
+            mentalAnswer: centralBinomialReturnHeuristic(10),
+            absTolerance: 0.012,
+            relTolerance: 0.08,
+            explanation: `The exact return probability is choose(20, 10) / 2^20 = ${formatNumber(centralBinomialReturnProbability(10), 4)}. The Stirling shortcut is 1 / sqrt(10 pi) ~= ${formatNumber(centralBinomialReturnHeuristic(10), 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: collisions",
+            prompt: "You keep drawing uniformly from {1, ..., 52} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.",
+            hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
+            inputMode: "number",
+            formatHint: "draw",
+            answer: expectedFirstCollisionTime(52),
+            mentalAnswer: firstCollisionHeuristic(52),
+            absTolerance: 0.7,
+            explanation: `The quick birthday anchor is sqrt(pi * 52 / 2) ~= ${formatNumber(firstCollisionHeuristic(52), 3)}. The exact expectation is about ${formatNumber(expectedFirstCollisionTime(52), 4)}.`,
+            difficulty: "medium",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: collisions",
+            prompt: "You keep drawing uniformly from {1, ..., 365} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.",
+            hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
+            inputMode: "number",
+            formatHint: "draw",
+            answer: expectedFirstCollisionTime(365),
+            mentalAnswer: firstCollisionHeuristic(365),
+            absTolerance: 0.9,
+            explanation: `The quick birthday anchor is sqrt(pi * 365 / 2) ~= ${formatNumber(firstCollisionHeuristic(365), 3)}. The exact expectation is about ${formatNumber(expectedFirstCollisionTime(365), 4)}.`,
+            difficulty: "hard",
+          }),
+          createQuestion({
+            topicId: "greenBook",
             category: "Green Book: permutations",
             prompt: "A uniformly random permutation of 6 items is drawn. Estimate the expected number of cycles.",
             hint: "The expected number of cycles in a random permutation of n items is H_n.",
@@ -4422,7 +5016,639 @@
             explanation: "Use nH_n, so 5(1 + 1/2 + 1/3 + 1/4 + 1/5).",
             difficulty: "hard",
           }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: birthdays",
+            prompt: "There are 25 people at a party. Estimate the expected number of matching birthday pairs.",
+            hint: "Use one indicator for each unordered pair.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedBirthdayPairs(25),
+            mentalAnswer: 300 / 365,
+            absTolerance: 0.05,
+            explanation: "There are choose(25, 2) = 300 pairs, and each specific pair matches with probability 1/365. So the expectation is 300/365 ≈ 0.822.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), Q1.36",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: birthdays",
+            prompt: "There are 25 people at a party. Everyone who shares a birthday with at least one other person raises a hand. Estimate the expected number of hands raised.",
+            hint: "Fix one person and ask for the probability that at least one of the other 24 people matches their birthday.",
+            inputMode: "number",
+            formatHint: "decimal",
+            answer: expectedBirthdayMatchHands(25),
+            mentalAnswer: 1.59,
+            absTolerance: 0.08,
+            explanation: "For a fixed person, the chance nobody else matches them is (364/365)^24, so the chance they raise a hand is 1 - (364/365)^24. Multiply by 25 to get about 1.59.",
+            difficulty: "hard",
+            source: "Heard on the Street (22nd ed.), Q1.37",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: fair selection",
+            prompt: "You want to choose uniformly among 3 children using only a fair coin, by assigning outcomes and restarting on one bad pattern. Estimate the expected number of flips needed.",
+            hint: "Use two flips per round, with 3 useful outcomes and 1 restart outcome.",
+            inputMode: "number",
+            formatHint: "flips",
+            answer: 8 / 3,
+            mentalAnswer: 2.67,
+            absTolerance: 0.05,
+            explanation: "Two flips generate four equally likely outcomes. Use HH, HT, and TH for the three children and restart on TT. Each round takes 2 flips and succeeds with probability 3/4, so the expected number of flips is 2 / (3/4) = 8/3.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), Q4.12-Q4.14",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: arrangements",
+            prompt: "Three people choose seats uniformly on an 8-seat round table. Estimate the probability that no two of them sit next to each other.",
+            hint: "Count 3-seat subsets on the circle with no adjacent seats, then divide by all choose(8, 3) seat sets.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 2 / 7,
+            mentalAnswer: 0.286,
+            absTolerance: 0.02,
+            explanation: "There are choose(8, 3) = 56 seat triples in total. The non-adjacent triples on an 8-cycle number 16, giving probability 16/56 = 2/7 ≈ 0.286.",
+            difficulty: "hard",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: arrangements",
+            prompt: "Seven people A, B, C, D, E, F, and G sit uniformly in 7 of the 10 seats around a rectangular table with 5 seats on each long side. Estimate the probability that A and B sit directly opposite each other.",
+            hint: "After A sits, exactly 1 of the remaining 9 open seats faces A.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 9,
+            absTolerance: 0.02,
+            explanation: "Condition on A's seat first. Of the 9 remaining open seats, exactly 1 sits directly opposite A, so B is opposite A with probability 1/9.",
+            difficulty: "easy",
+            source: "allSIG interview collection",
+          }),
+          createQuestion({
+            topicId: "greenBook",
+            category: "Green Book: arithmetic",
+            prompt: "One bell rings 5 times per minute and another rings 4 times per minute, each at evenly spaced intervals. They ring together now. Estimate how long until they next ring together.",
+            hint: "Convert the ringing rates into the time between rings, then take the least common multiple.",
+            inputMode: "number",
+            formatHint: "seconds",
+            answer: 60,
+            absTolerance: 0.5,
+            explanation: "Five times per minute means every 12 seconds, and four times per minute means every 15 seconds. The next common ringing time is lcm(12, 15) = 60 seconds.",
+            difficulty: "easy",
+            source: "Heard on the Street (22nd ed.), Q1.3",
+          }),
+          ...buildSourcedGreenBookQuestionVariations(),
         ];
+      }
+
+      function buildSourcedNormalQuestionVariations() {
+        const questions = [];
+
+        for (const [flips, threshold] of [[200, 115], [200, 120], [400, 220], [400, 225], [1000, 540], [1000, 550]]) {
+          const mean = flips / 2;
+          const standardDeviation = Math.sqrt(flips / 4);
+          const continuityZ = (threshold - 0.5 - mean) / standardDeviation;
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal approximation",
+              prompt: `You flip ${flips} fair coins. Estimate the probability of getting at least ${threshold} heads.`,
+              hint: "Use a normal approximation with mean n/2, standard deviation sqrt(n/4), and a continuity correction.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: binomialProbabilityAtLeast(flips, 0.5, threshold),
+              mentalAnswer: standardNormalUpperTail(continuityZ),
+              absTolerance: flips >= 1000 ? 0.008 : 0.012,
+              explanation: `Approximate Binomial(${flips}, 1/2) by a normal with mean ${mean} and standard deviation ${formatNumber(standardDeviation, 4)}. Using the continuity correction gives z ≈ ${formatNumber(continuityZ, 3)}.`,
+              difficulty: "hard",
+              source: "allSIG-inspired normal family",
+            }),
+          );
+        }
+
+        for (const [rho, threshold] of [[0.25, 1.5], [0.4, 2], [0.5, 2.5], [0.6, 1.8], [0.75, 1]]) {
+          const variance = 3 - (2 * rho);
+          const z = threshold / Math.sqrt(variance);
+          questions.push(
+            createQuestion({
+              topicId: "normal",
+              category: "Normal linear form",
+              prompt: `X, Y, and Z are jointly standard normal with every pairwise correlation equal to ${rho}. Estimate P(X + Y > Z + ${threshold}).`,
+              hint: "Compute the variance of X + Y - Z, then convert the event to a 1-dimensional normal tail.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: standardNormalUpperTail(z),
+              mentalAnswer: standardNormalUpperTail(Math.round(z * 100) / 100),
+              absTolerance: 0.015,
+              explanation: `Let W = X + Y - Z. Then Var(W) = 3 - 2ρ = ${formatNumber(variance, 4)}, so the event becomes P(N(0,1) > ${formatNumber(z, 4)}).`,
+              difficulty: "hard",
+              source: "allSIG-inspired normal family",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildSourcedSupplementalQuestionVariations() {
+        const questions = [];
+
+        for (const rankName of ["aces", "kings", "queens", "jacks"]) {
+          questions.push(
+            createQuestion({
+              topicId: "cardsSampling",
+              category: "Cards",
+              prompt: `You are dealt exactly 2 cards from a standard 52-card deck. Estimate the probability both cards are ${rankName}.`,
+              hint: "There are 4 cards of any fixed rank. Use 4/52 for the first and 3/51 for the second.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 1 / 221,
+              mentalAnswer: 0.0045,
+              absTolerance: 0.004,
+              explanation: "For any fixed rank, the chance is (4/52)(3/51) = 1/221.",
+              difficulty: "easy",
+              source: "Heard on the Street-inspired card family",
+            }),
+          );
+        }
+
+        for (const [redCount, blueCount] of [[1, 1], [2, 1], [2, 2], [3, 1], [3, 2], [3, 3], [4, 2], [4, 4]]) {
+          questions.push(
+            createQuestion({
+              topicId: "cardsSampling",
+              category: "Sampling",
+              prompt: `A bag contains ${redCount} red balls and ${blueCount} blue balls. Balls are drawn one at a time without replacement, and before each draw you guess the color. You earn 1 dollar for each correct guess. Estimate the optimal expected winnings.`,
+              hint: "At each stage, guess the color that is currently more numerous among the unseen balls and work backward.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: expectedOptimalColorGuessReward(redCount, blueCount),
+              mentalAnswer: expectedOptimalColorGuessReward(redCount, blueCount),
+              absTolerance: 0.05,
+              explanation: "The optimal policy is to guess the majority color among the remaining balls. Dynamic programming then gives the exact expected score.",
+              difficulty: redCount + blueCount >= 6 ? "hard" : "medium",
+              source: "allSIG-inspired guessing family",
+            }),
+          );
+        }
+
+        for (const baseTosses of [1, 2, 3, 4, 5, 6, 7, 8]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Coin symmetry",
+              prompt: `One player tosses ${baseTosses + 1} fair coins and another tosses ${baseTosses} fair coins. Estimate the probability the player with ${baseTosses + 1} coins gets strictly more heads.`,
+              hint: "View the first ${baseTosses} tosses on both sides as a symmetric contest; the extra toss only breaks ties.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 0.5,
+              absTolerance: 0.02,
+              explanation: "After both players toss the same number of coins, symmetry makes the contest fair. If those totals tie, the extra toss is a fair tiebreaker, so the overall probability is exactly 1/2.",
+              difficulty: "medium",
+              source: "Heard on the Street-inspired symmetry family",
+            }),
+          );
+        }
+
+        for (const tosses of [2, 3, 4, 5, 6, 7, 8]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Coin symmetry",
+              prompt: `You and someone else each toss ${tosses} fair coins. Estimate the probability you get the same number of heads.`,
+              hint: "Square the Binomial(n, 1/2) probabilities and add them, or use the central-binomial shortcut.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: matchingHeadsProbability(tosses),
+              mentalAnswer: matchingHeadsProbability(tosses),
+              absTolerance: 0.02,
+              explanation: `The exact probability is Σ_k P(H = k)^2 = choose(${2 * tosses}, ${tosses}) / 4^${tosses}.`,
+              difficulty: tosses >= 6 ? "hard" : "medium",
+              source: "allSIG-inspired coin family",
+            }),
+          );
+        }
+
+        for (const [sides, diceCount] of [[4, 7], [6, 10], [8, 9], [10, 12], [12, 11], [20, 15], [30, 18]]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Modulo probability",
+              prompt: `You roll ${diceCount} fair ${sides}-sided dice. Estimate the probability that the total sum is divisible by ${sides}.`,
+              hint: "Reduce each die modulo the number of sides.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 1 / sides,
+              absTolerance: 0.02,
+              explanation: `Each die is uniform modulo ${sides}, and summing independent uniform residues preserves uniformity. So every residue class has probability 1/${sides}.`,
+              difficulty: "medium",
+              source: "allSIG-inspired modulo family",
+            }),
+          );
+        }
+
+        for (const maxInteger of [10, 15, 20, 25, 30, 40, 50, 100]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Arithmetic progression probability",
+              prompt: `Three integers are drawn independently and uniformly from 1 through ${maxInteger}. Estimate the probability that one of them is exactly the average of the other two.`,
+              hint: "This is the same as asking for a 3-term arithmetic progression, allowing equal numbers too.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: probabilityAnyOfThreeIsAverage(maxInteger),
+              mentalAnswer: probabilityAnyOfThreeIsAverage(maxInteger),
+              absTolerance: 0.01,
+              explanation: "Count ordered endpoint pairs with the same parity so the midpoint is integral, then correct the all-equal overcount.",
+              difficulty: "hard",
+              source: "allSIG-inspired arithmetic family",
+            }),
+          );
+        }
+
+        for (const [fairCoinCount, observedHeads] of [[49, 6], [99, 7], [199, 8], [499, 9], [999, 10], [1999, 11]]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Bayes update",
+              prompt: `A jar has ${fairCoinCount} fair coins and 1 two-headed coin. You pick one coin uniformly at random and get ${observedHeads} heads in a row. Estimate the probability you picked the two-headed coin.`,
+              hint: "Compare the prior weight of the special coin with the fair-coin weight times 2^(-heads).",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: posteriorTwoHeadedCoinProbability(fairCoinCount, observedHeads),
+              mentalAnswer: posteriorTwoHeadedCoinProbability(fairCoinCount, observedHeads),
+              absTolerance: 0.025,
+              explanation: "The posterior is proportional to 1 for the two-headed coin versus fairCoinCount/2^heads for the fair-coin possibility.",
+              difficulty: "medium",
+              source: "Heard on the Street-inspired Bayes family",
+            }),
+          );
+        }
+
+        for (const spec of [
+          { non: 0.4, light: 0.4, heavy: 0.2, lightRate: 2, heavyRate: 3 },
+          { non: 0.6, light: 0.25, heavy: 0.15, lightRate: 2, heavyRate: 5 },
+          { non: 0.45, light: 0.35, heavy: 0.2, lightRate: 1.5, heavyRate: 3 },
+          { non: 0.55, light: 0.25, heavy: 0.2, lightRate: 2, heavyRate: 6 },
+        ]) {
+          const heavyWeight = spec.heavy * spec.heavyRate;
+          const totalWeight = (spec.non * 1) + (spec.light * spec.lightRate) + heavyWeight;
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Bayes update",
+              prompt: `Suppose ${formatPercent(spec.non)} of people are non-smokers, ${formatPercent(spec.light)} are light smokers, and ${formatPercent(spec.heavy)} are heavy smokers. Light smokers die at ${formatNumber(spec.lightRate, 2)} times the rate of non-smokers, and heavy smokers die at ${formatNumber(spec.heavyRate / spec.lightRate, 2)} times the rate of light smokers. Estimate the probability a randomly observed death came from a heavy smoker.`,
+              hint: "Weight each group by prior probability times death rate, then renormalize.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: heavyWeight / totalWeight,
+              mentalAnswer: heavyWeight / totalWeight,
+              absTolerance: 0.025,
+              explanation: "Posterior group probabilities are proportional to prior mass times death rate.",
+              difficulty: "medium",
+              source: "allSIG-inspired Bayes family",
+            }),
+          );
+        }
+
+        for (const [rxy, ryz] of [[0.9, 0.9], [0.8, 0.8], [0.8, 0.6], [0.75, 0.75], [0.9, 0.6], [0.7, 0.5]]) {
+          questions.push(
+            createQuestion({
+              topicId: "momentsMgf",
+              category: "Correlation bound",
+              prompt: `Three random variables X, Y, and Z have Corr(X,Y) = ${rxy} and Corr(Y,Z) = ${ryz}. Estimate the smallest possible value of Corr(X,Z).`,
+              hint: "Force the 3x3 correlation matrix to stay positive semidefinite.",
+              inputMode: "number",
+              formatHint: "correlation",
+              answer: correlationLowerBoundFromTwoLinks(rxy, ryz),
+              mentalAnswer: correlationLowerBoundFromTwoLinks(rxy, ryz),
+              absTolerance: 0.03,
+              explanation: "Set the 3x3 correlation-matrix determinant to zero to find the lower endpoint of the feasible range.",
+              difficulty: "hard",
+              source: "allSIG-inspired correlation family",
+            }),
+          );
+        }
+
+        for (const upper of [10, 12, 15, 20]) {
+          let payoffSum = 0;
+          for (let x = 1; x <= upper; x += 1) {
+            const prime = [2, 3, 5, 7, 11, 13, 17, 19].includes(x);
+            payoffSum += prime ? x : (-x / 2);
+          }
+          questions.push(
+            createQuestion({
+              topicId: "ev",
+              category: "Expected value",
+              prompt: `An integer X is drawn uniformly from 1 through ${upper}. If X is prime, you win X dollars. Otherwise you lose X/2 dollars. Estimate the expected payoff.`,
+              hint: "List the prime and non-prime contributions, then average over all values.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: payoffSum / upper,
+              mentalAnswer: payoffSum / upper,
+              absTolerance: 0.05,
+              explanation: "Average the signed payoff over the uniform support.",
+              difficulty: upper >= 15 ? "hard" : "medium",
+              source: "allSIG-inspired expected-value family",
+            }),
+          );
+        }
+
+        for (const winProbability of [0.51, 0.53, 0.55, 0.57, 0.6, 0.65, 0.7]) {
+          questions.push(
+            createQuestion({
+              topicId: "ev",
+              category: "Kelly criterion",
+              prompt: `A repeated even-money bet wins 1 dollar with probability ${formatPercent(winProbability)} and loses 1 dollar otherwise. Estimate the Kelly fraction of wealth to bet each round.`,
+              hint: "For an even-money bet, Kelly fraction is p - q.",
+              inputMode: "number",
+              formatHint: "fraction",
+              answer: (2 * winProbability) - 1,
+              mentalAnswer: (2 * winProbability) - 1,
+              absTolerance: 0.02,
+              explanation: "At even odds, the Kelly stake is p - (1 - p) = 2p - 1.",
+              difficulty: "easy",
+              source: "Wilmott-inspired Kelly family",
+            }),
+          );
+        }
+
+        for (const sides of [4, 6, 8, 10, 12, 20]) {
+          questions.push(
+            createQuestion({
+              topicId: "stopping",
+              category: "Expected value",
+              prompt: `A fair ${sides}-sided die pays its face value in dollars. Estimate the fair ticket price for one play.`,
+              hint: "Average the equally likely face values.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: (sides + 1) / 2,
+              mentalAnswer: (sides + 1) / 2,
+              absTolerance: 0.04,
+              explanation: "The fair price is the average of 1 through the top face.",
+              difficulty: "easy",
+              source: "Heard on the Street-inspired die family",
+            }),
+          );
+        }
+
+        for (const sides of [4, 6, 8, 10, 12, 20]) {
+          questions.push(
+            createQuestion({
+              topicId: "stopping",
+              category: "Optimal stopping",
+              prompt: `A fair ${sides}-sided die may be rolled up to 3 times. After the first or second roll, you may stop and take that face value; otherwise you must take the third roll. Estimate the optimal expected payoff.`,
+              hint: "Work backward: on roll 2 compare the current face to the expected value of a forced final roll.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: expectedValueWithUpToThreeRolls(sides),
+              mentalAnswer: expectedValueWithUpToThreeRolls(sides),
+              absTolerance: sides >= 10 ? 0.08 : 0.06,
+              explanation: "Backward induction gives a stopping threshold on roll 2, then a higher threshold on roll 1.",
+              difficulty: sides >= 10 ? "hard" : "medium",
+              source: "Heard on the Street-inspired stopping family",
+            }),
+          );
+        }
+
+        for (const sides of [4, 6, 8, 10, 12, 20]) {
+          questions.push(
+            createQuestion({
+              topicId: "stopping",
+              category: "Expected value",
+              prompt: `A fair ${sides}-sided die is rolled until the first time it shows something other than 1. You are paid that final face value. Estimate the expected payoff.`,
+              hint: "Condition on the game ending on one of the non-1 faces, which are equally likely.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: expectedStoppedDieAfterLeavingOne(sides),
+              mentalAnswer: expectedStoppedDieAfterLeavingOne(sides),
+              absTolerance: 0.05,
+              explanation: "Once the game ends, the terminal face is uniform on {2, ..., top face}.",
+              difficulty: "easy",
+              source: "Heard on the Street-inspired die family",
+            }),
+          );
+        }
+
+        for (const chambers of [6, 8, 10, 12]) {
+          questions.push(
+            createQuestion({
+              topicId: "stopping",
+              category: "Conditional probability",
+              prompt: `In Russian roulette with ${chambers} chambers and 2 adjacent bullets, the cylinder was spun, the trigger was pulled once, and it clicked. If you do not respin before the second trigger pull, estimate your survival probability on that second pull.`,
+              hint: "Condition on the first click having ruled out the bullet block itself.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: russianRouletteSurvivalNoRespin(chambers),
+              mentalAnswer: russianRouletteSurvivalNoRespin(chambers),
+              absTolerance: 0.02,
+              explanation: "After the first click, there are chambers - 2 possible safe alignments left, and exactly one of them puts the next trigger on a bullet.",
+              difficulty: "hard",
+              source: "Heard on the Street-inspired Russian-roulette family",
+            }),
+          );
+          questions.push(
+            createQuestion({
+              topicId: "stopping",
+              category: "Conditional probability",
+              prompt: `In Russian roulette with ${chambers} chambers and 2 adjacent bullets, the cylinder was spun, the trigger was pulled once, and it clicked. If you respin before the second trigger pull, estimate your survival probability on that second pull.`,
+              hint: "A fresh spin ignores the first click information and makes all chambers active again.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: russianRouletteSurvivalWithRespin(chambers),
+              mentalAnswer: russianRouletteSurvivalWithRespin(chambers),
+              absTolerance: 0.02,
+              explanation: "After a fresh spin, only the raw live-chamber fraction matters.",
+              difficulty: "medium",
+              source: "Heard on the Street-inspired Russian-roulette family",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildSourcedOptionQuestionVariations() {
+        const questions = [];
+
+        for (const [spotNow, spotUp, spotDown, strike] of [[100, 110, 95, 100], [100, 120, 90, 100], [100, 130, 90, 100], [100, 125, 75, 100], [100, 105, 90, 100], [100, 130, 90, 110]]) {
+          questions.push(
+            createQuestion({
+              topicId: "options",
+              category: "One-step binomial",
+              prompt: `A stock is at ${spotNow}. Tomorrow it will be either ${spotUp} or ${spotDown}, with rates 0. Estimate the price of a 1-step digital call that pays 1 dollar if the stock finishes above ${strike}.`,
+              hint: "If the strike lies between the down and up states, the price is just the risk-neutral up probability.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: (strike >= spotUp) ? 0 : (strike < spotDown ? 1 : oneStepRiskNeutralProbability(spotNow, spotUp, spotDown)),
+              mentalAnswer: (strike >= spotUp) ? 0 : (strike < spotDown ? 1 : oneStepRiskNeutralProbability(spotNow, spotUp, spotDown)),
+              absTolerance: 0.04,
+              explanation: "Under zero rates, solve for the risk-neutral up probability q from today's stock price. If only the up state finishes above the strike, the digital price is q.",
+              difficulty: "medium",
+              source: "Heard on the Street-inspired digital-option family",
+            }),
+          );
+        }
+
+        for (const [lowerStrike, lowerCallPrice, upperStrike, upperCallPrice] of [[100, 8.4, 101, 7.8], [95, 11.2, 96, 10.5], [100, 9.6, 102, 8.8], [90, 15.3, 91, 14.6], [110, 4.2, 111, 3.7], [120, 2.6, 122, 2.0]]) {
+          questions.push(
+            createQuestion({
+              topicId: "options",
+              category: "Digital estimate",
+              prompt: `A call with strike ${lowerStrike} costs ${lowerCallPrice}, and a call with strike ${upperStrike} costs ${upperCallPrice}, with the same expiry. Estimate the price of a 1-dollar digital call near strike ${lowerStrike} using a tight call spread.`,
+              hint: "Use the call-price drop per strike dollar as the digital proxy.",
+              inputMode: "number",
+              formatHint: "dollars",
+              answer: digitalFromCallSpread(lowerCallPrice, upperCallPrice, upperStrike - lowerStrike),
+              mentalAnswer: digitalFromCallSpread(lowerCallPrice, upperCallPrice, upperStrike - lowerStrike),
+              absTolerance: 0.05,
+              explanation: "A tight call spread divided by strike width is the standard discrete approximation to a digital call payoff.",
+              difficulty: "medium",
+              source: "Wilmott-inspired digital-call-spread family",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildSourcedGreenBookQuestionVariations() {
+        const questions = [];
+
+        for (const groupSize of [15, 20, 23, 30, 40, 50]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: birthdays",
+              prompt: `There are ${groupSize} people at a party. Estimate the expected number of matching birthday pairs.`,
+              hint: "Use one indicator for each unordered pair.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: expectedBirthdayPairs(groupSize),
+              mentalAnswer: expectedBirthdayPairs(groupSize),
+              absTolerance: 0.06,
+              explanation: `There are choose(${groupSize}, 2) pairs, and each pair matches with probability 1/365.`,
+              difficulty: "medium",
+              source: "Heard on the Street-inspired birthday family",
+            }),
+          );
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: birthdays",
+              prompt: `There are ${groupSize} people at a party. Everyone who shares a birthday with at least one other person raises a hand. Estimate the expected number of hands raised.`,
+              hint: "Fix one person and ask for the probability at least one of the other people matches their birthday.",
+              inputMode: "number",
+              formatHint: "decimal",
+              answer: expectedBirthdayMatchHands(groupSize),
+              mentalAnswer: expectedBirthdayMatchHands(groupSize),
+              absTolerance: 0.08,
+              explanation: "For each person separately, the chance of raising a hand is 1 minus the probability that nobody else shares their birthday.",
+              difficulty: "hard",
+              source: "Heard on the Street-inspired birthday family",
+            }),
+          );
+        }
+
+        for (const seats of [10, 12, 14]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: arrangements",
+              prompt: `Three people choose seats uniformly on a ${seats}-seat round table. Estimate the probability that no two of them sit next to each other.`,
+              hint: "Count 3-seat subsets on the cycle with no adjacent seats, then divide by all choose(n,3) seat sets.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: noAdjacentSelectionsOnCycleProbability(seats, 3),
+              mentalAnswer: noAdjacentSelectionsOnCycleProbability(seats, 3),
+              absTolerance: 0.02,
+              explanation: "For seat subsets on a cycle, the no-adjacency count has a clean combinatorial formula.",
+              difficulty: "hard",
+              source: "allSIG-inspired seating family",
+            }),
+          );
+        }
+
+        for (const longSideSeats of [4, 6, 7, 8]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: arrangements",
+              prompt: `People A and B sit uniformly in 2 of the ${2 * longSideSeats} seats around a rectangular table with ${longSideSeats} seats on each long side. Estimate the probability that A and B sit directly opposite each other.`,
+              hint: "After A sits, exactly one of the remaining seats is directly opposite.",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: 1 / ((2 * longSideSeats) - 1),
+              mentalAnswer: 1 / ((2 * longSideSeats) - 1),
+              absTolerance: 0.02,
+              explanation: "Condition on A's seat. Among the remaining seats, exactly one is directly opposite A.",
+              difficulty: "easy",
+              source: "allSIG-inspired seating family",
+            }),
+          );
+        }
+
+        for (const [rateA, rateB] of [[6, 4], [8, 6], [9, 6], [10, 4], [12, 8]]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: arithmetic",
+              prompt: `One bell rings ${rateA} times per minute and another rings ${rateB} times per minute, each at evenly spaced intervals. They ring together now. Estimate how long until they next ring together.`,
+              hint: "Convert the rates into equally spaced ringing intervals and take the least common multiple.",
+              inputMode: "number",
+              formatHint: "seconds",
+              answer: bellNextTogetherSeconds(rateA, rateB),
+              mentalAnswer: bellNextTogetherSeconds(rateA, rateB),
+              absTolerance: 0.5,
+              explanation: "If the bells ring a and b times per minute, the next common ringing time is 60 / gcd(a, b) seconds.",
+              difficulty: "easy",
+              source: "Heard on the Street-inspired arithmetic family",
+            }),
+          );
+        }
+
+        return questions;
+      }
+
+      function buildSourcedPolygonQuestionVariations() {
+        const questions = [];
+
+        for (const radius of [2, 3, 5, 10]) {
+          questions.push(
+            createQuestion({
+              topicId: "polygons",
+              category: "Polygon geometry",
+              prompt: `Two points are chosen independently and uniformly on the circumference of a circle of radius ${radius}. Estimate the expected distance between them.`,
+              hint: "Scale the unit-circle chord formula linearly by the radius.",
+              inputMode: "number",
+              formatHint: "distance",
+              answer: expectedChordLength(radius),
+              mentalAnswer: expectedChordLength(radius),
+              absTolerance: 0.08,
+              explanation: "Expected chord length scales linearly with the circle's radius.",
+              difficulty: "medium",
+              source: "allSIG-inspired circle family",
+            }),
+          );
+        }
+
+        questions.push(
+          createQuestion({
+            topicId: "polygons",
+            category: "Polygon geometry",
+            prompt: "Three points are chosen independently and uniformly on the circumference of a circle. Estimate the probability that the triangle they form is acute.",
+            hint: "A triangle inscribed in a circle is acute exactly when the circle's center lies inside it.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 4,
+            absTolerance: 0.02,
+            explanation: "For inscribed triangles, 'acute' is equivalent to the center lying inside the triangle, so the same classic answer 1/4 applies.",
+            difficulty: "medium",
+            source: "allSIG-inspired circle family",
+          }),
+        );
+
+        return questions;
       }
 
       function buildExpandedLogQuestions() {
@@ -5862,9 +7088,17 @@
             explanation: "Solve for the risk-neutral probability q from 100 = 120q + 90(1 - q), so q = 1/3. Then the call price is q times 20, which is 20/3.",
             difficulty: "medium",
           },
+          {
+            prompt: "A stock is at 100. Tomorrow it will be either 120 or 90 with rates 0. Estimate the price of a 1-step digital call that pays 1 dollar if the stock finishes above 100.",
+            answer: oneStepRiskNeutralProbability(100, 120, 90),
+            mentalAnswer: 1 / 3,
+            explanation: "Solve 100 = 120q + 90(1 - q), which gives q = 1/3. A digital call pays 1 only in the up state, so its price is q = 1/3.",
+            difficulty: "medium",
+            source: "Heard on the Street (22nd ed.), digital-option sequence",
+          },
         ];
 
-        const binomialQuestions = treeQuestions.map(({ prompt, answer, mentalAnswer, explanation, difficulty }) =>
+        const binomialQuestions = treeQuestions.map(({ prompt, answer, mentalAnswer, explanation, difficulty, source }) =>
           createQuestion({
             topicId: "options",
             category: "One-step binomial",
@@ -5877,6 +7111,7 @@
             absTolerance: 0.12,
             explanation,
             difficulty,
+            source,
           }),
         );
 
@@ -5965,9 +7200,22 @@
             explanation: "The put guarantees you can sell at 95, so the worst expiry value is 95.",
             difficulty: "medium",
           }),
+          createQuestion({
+            topicId: "options",
+            category: "Digital estimate",
+            prompt: "A call with strike 100 costs 8.4 and a call with strike 101 costs 7.8, with the same expiry. Estimate the price of a 1-dollar digital call at strike 100 using a tight call spread.",
+            hint: "A narrow call spread divided by its strike width is the discrete strike-slope approximation to a digital option.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer: 0.6,
+            absTolerance: 0.05,
+            explanation: "Use (C(100) - C(101)) / (101 - 100) = 8.4 - 7.8 = 0.6. That tight call spread is the standard mental proxy for a digital call.",
+            difficulty: "medium",
+            source: "Wilmott FAQ / digital-call-spread heuristic",
+          }),
         ];
 
-        return [...parityQuestions, rateParityQuestion, ...atmQuestions, ...binomialQuestions, ...structureQuestions];
+        return [...parityQuestions, rateParityQuestion, ...atmQuestions, ...binomialQuestions, ...structureQuestions, ...buildSourcedOptionQuestionVariations()];
       }
 
       function buildGreekQuestions() {
@@ -6818,7 +8066,7 @@
           { label: "aces", count: 4, difficulty: "easy" },
           { label: "kings", count: 4, difficulty: "easy" },
           { label: "queens", count: 4, difficulty: "easy" },
-          { label: "face cards", count: 12, difficulty: "medium" },
+          { label: "face cards (J, Q, K only; aces do not count)", count: 12, difficulty: "medium" },
         ];
         const handSizes = [3, 4, 5, 7, 8, 9, 10, 12, 13, 15, 18, 20, 26];
 
@@ -7699,6 +8947,59 @@
               absTolerance: 0.1,
               explanation: "Use the prefix-suffix overlap rule from the martingale argument.",
               difficulty: pattern.length <= 2 ? "easy" : pattern.length === 3 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const n of [4, 5, 6, 8, 10, 12, 16]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: return probability",
+              prompt: `A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after ${2 * n} steps.`,
+              hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n).",
+              inputMode: "probability",
+              formatHint: "probability",
+              answer: centralBinomialReturnProbability(n),
+              mentalAnswer: centralBinomialReturnHeuristic(n),
+              absTolerance: Math.max(0.006, centralBinomialReturnProbability(n) * 0.08),
+              relTolerance: 0.08,
+              explanation: "Use the return-probability shortcut 1 / sqrt(pi n), with n equal to half the number of steps.",
+              difficulty: n <= 6 ? "medium" : "hard",
+            }),
+          );
+
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: collisions",
+              prompt: `You keep drawing uniformly from {1, ..., ${n * n}} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.`,
+              hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2) with the domain size in place of n.",
+              inputMode: "number",
+              formatHint: "draw",
+              answer: expectedFirstCollisionTime(n * n),
+              mentalAnswer: firstCollisionHeuristic(n * n),
+              absTolerance: 1,
+              explanation: "This is the birthday-collision scale: collisions arrive when the number of pair opportunities becomes comparable to the domain size.",
+              difficulty: n <= 6 ? "medium" : "hard",
+            }),
+          );
+        }
+
+        for (const domainSize of [20, 50, 100, 200, 365, 500, 1000]) {
+          questions.push(
+            createQuestion({
+              topicId: "greenBook",
+              category: "Green Book: collisions",
+              prompt: `You keep drawing uniformly from {1, ..., ${domainSize}} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.`,
+              hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
+              inputMode: "number",
+              formatHint: "draw",
+              answer: expectedFirstCollisionTime(domainSize),
+              mentalAnswer: firstCollisionHeuristic(domainSize),
+              absTolerance: 1,
+              explanation: "Use the birthday-collision heuristic sqrt(pi n / 2), then remember the exact expectation is very close but not identical.",
+              difficulty: domainSize <= 100 ? "medium" : "hard",
             }),
           );
         }
@@ -10343,7 +11644,158 @@
         return pairs[pairs.length - 1].value;
       }
 
-      function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty }) {
+      function centralBinomialCoefficient(n) {
+        let result = 1;
+        for (let k = 1; k <= n; k += 1) {
+          result = (result * (n + k)) / k;
+        }
+        return result;
+      }
+
+      function centralBinomialStirling(n) {
+        return (4 ** n) / Math.sqrt(Math.PI * n);
+      }
+
+      function centralBinomialReturnProbability(n) {
+        return centralBinomialCoefficient(n) / (4 ** n);
+      }
+
+      function centralBinomialReturnHeuristic(n) {
+        return 1 / Math.sqrt(Math.PI * n);
+      }
+
+      function expectedFirstCollisionTime(domainSize) {
+        let survivalProbability = 1;
+        let expectation = 1;
+
+        for (let distinctDraws = 1; distinctDraws <= domainSize; distinctDraws += 1) {
+          survivalProbability *= (domainSize - (distinctDraws - 1)) / domainSize;
+          expectation += survivalProbability;
+        }
+
+        return expectation;
+      }
+
+      function firstCollisionHeuristic(domainSize) {
+        return Math.sqrt((Math.PI * domainSize) / 2);
+      }
+
+      function binomialCoefficient(n, k) {
+        const useK = Math.min(k, n - k);
+        let result = 1;
+        for (let j = 1; j <= useK; j += 1) {
+          result = (result * (n - useK + j)) / j;
+        }
+        return result;
+      }
+
+      function expectedBirthdayPairs(groupSize, days = 365) {
+        return binomialCoefficient(groupSize, 2) / days;
+      }
+
+      function expectedBirthdayMatchHands(groupSize, days = 365) {
+        return groupSize * (1 - (((days - 1) / days) ** (groupSize - 1)));
+      }
+
+      function probabilityAnyOfThreeIsAverage(maxInteger) {
+        const oddCount = Math.ceil(maxInteger / 2);
+        const evenCount = Math.floor(maxInteger / 2);
+        const sameParityEndpointPairs = (oddCount * oddCount) + (evenCount * evenCount);
+        const favorableOrderedTriples = (3 * sameParityEndpointPairs) - (2 * maxInteger);
+        return favorableOrderedTriples / (maxInteger ** 3);
+      }
+
+      function expectedOptimalColorGuessReward(redCount, blueCount) {
+        const key = `${redCount}:${blueCount}`;
+        if (optimalGuessRewardCache.has(key)) {
+          return optimalGuessRewardCache.get(key);
+        }
+
+        let value;
+        if (redCount === 0 || blueCount === 0) {
+          value = redCount + blueCount;
+        } else if (redCount >= blueCount) {
+          value = (redCount / (redCount + blueCount)) * (1 + expectedOptimalColorGuessReward(redCount - 1, blueCount))
+            + (blueCount / (redCount + blueCount)) * expectedOptimalColorGuessReward(redCount, blueCount - 1);
+        } else {
+          value = (blueCount / (redCount + blueCount)) * (1 + expectedOptimalColorGuessReward(redCount, blueCount - 1))
+            + (redCount / (redCount + blueCount)) * expectedOptimalColorGuessReward(redCount - 1, blueCount);
+        }
+
+        optimalGuessRewardCache.set(key, value);
+        return value;
+      }
+
+      function posteriorTwoHeadedCoinProbability(fairCoinCount, observedHeads) {
+        return 1 / (1 + (fairCoinCount / (2 ** observedHeads)));
+      }
+
+      function correlationLowerBoundFromTwoLinks(rxy, ryz) {
+        return (rxy * ryz) - Math.sqrt((1 - (rxy * rxy)) * (1 - (ryz * ryz)));
+      }
+
+      function expectedValueWithUpToThreeRolls(sides) {
+        const finalRollValue = (sides + 1) / 2;
+        let secondStageValue = 0;
+        for (let face = 1; face <= sides; face += 1) {
+          secondStageValue += Math.max(face, finalRollValue);
+        }
+        secondStageValue /= sides;
+
+        let firstStageValue = 0;
+        for (let face = 1; face <= sides; face += 1) {
+          firstStageValue += Math.max(face, secondStageValue);
+        }
+        return firstStageValue / sides;
+      }
+
+      function expectedStoppedDieAfterLeavingOne(sides) {
+        return (sides + 2) / 2;
+      }
+
+      function gcd(a, b) {
+        let x = Math.abs(a);
+        let y = Math.abs(b);
+        while (y !== 0) {
+          const next = x % y;
+          x = y;
+          y = next;
+        }
+        return x;
+      }
+
+      function bellNextTogetherSeconds(rateA, rateB) {
+        return 60 / gcd(rateA, rateB);
+      }
+
+      function russianRouletteSurvivalNoRespin(chambers, contiguousBullets = 2) {
+        return (chambers - contiguousBullets - 1) / (chambers - contiguousBullets);
+      }
+
+      function russianRouletteSurvivalWithRespin(chambers, bullets = 2) {
+        return (chambers - bullets) / chambers;
+      }
+
+      function noAdjacentSelectionsOnCycleProbability(seats, chosen) {
+        if (seats < 2 * chosen) {
+          return 0;
+        }
+        return (seats * binomialCoefficient(seats - chosen, chosen)) / ((seats - chosen) * binomialCoefficient(seats, chosen));
+      }
+
+      function matchingHeadsProbability(tosses) {
+        return centralBinomialCoefficient(tosses) / (4 ** tosses);
+      }
+
+      function expectedChordLength(radius) {
+        return (4 * radius) / Math.PI;
+      }
+
+      function digitalFromCallSpread(lowerCallPrice, upperCallPrice, strikeGap) {
+        return (lowerCallPrice - upperCallPrice) / strikeGap;
+      }
+
+      function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty, source }) {
         return {
           topicId,
           category,
@@ -10357,6 +11809,7 @@
           relTolerance: relTolerance || 0,
           explanation,
           difficulty: difficulty || inferDifficulty(topicId, category, prompt),
+          source: source || null,
         };
       }
 
@@ -10879,6 +12332,12 @@
         if (topicId === "greenBook") {
           if (category === "Green Book: runs" || category === "Green Book: fixed points") {
             return "easy";
+          }
+          if (category === "Green Book: return probability") {
+            return prompt.includes("after 16 steps") || prompt.includes("after 20 steps") ? "medium" : "hard";
+          }
+          if (category === "Green Book: collisions") {
+            return prompt.includes("52}") || prompt.includes("100}") ? "medium" : "hard";
           }
           if (
             category === "Green Book: longest run" ||
