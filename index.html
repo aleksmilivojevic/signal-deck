@@ -656,6 +656,58 @@
         font-weight: 700;
       }
 
+      .question-visual {
+        margin-top: 1rem;
+      }
+
+      .pnl-chart-card {
+        padding: 0.85rem;
+        background: #ffffff;
+        border-top: 2px solid var(--win-shadow);
+        border-left: 2px solid var(--win-shadow);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        box-shadow: inset 1px 1px 0 var(--win-black);
+      }
+
+      .pnl-chart-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: baseline;
+        margin-bottom: 0.5rem;
+        color: #000080;
+      }
+
+      .pnl-chart-head strong {
+        font-size: 0.9rem;
+      }
+
+      .pnl-chart-head span {
+        font-size: 0.75rem;
+        color: #444444;
+      }
+
+      .pnl-chart-svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #ffffff;
+      }
+
+      .pnl-chart-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 0.45rem;
+        font-size: 0.74rem;
+        color: #444444;
+      }
+
+      .review-chart {
+        margin-top: 0.65rem;
+      }
+
       .hint-panel {
         margin-top: 1rem;
         padding: 0.95rem 1rem;
@@ -1413,6 +1465,34 @@
           </article>
 
           <article class="guide-card">
+            <h3>Sharpe from a PnL Graph</h3>
+            <p>For these graph cards, the line shown is cumulative PnL. The actual return series is the sequence of point-to-point changes, and the denser cards do not print every move. The mental task is to judge drift versus wiggle size from the graph, then remember that Sharpe is <code>mean / standard deviation</code>. If the prompt asks for annualization you multiply by <code>sqrt(periods per year)</code>.</p>
+            <div class="guide-example">
+              <strong>Example:</strong> if monthly cumulative PnL goes <code>0, 2, 2, 4, 4, 6</code>, then the monthly returns are <code>2, 0, 2, 0, 2</code>. Their mean is <code>1.2</code>, their standard deviation is about <code>0.98</code>, so the monthly Sharpe is about <code>1.22</code> and the annualized Sharpe is about <code>1.22 × sqrt(12) ≈ 4.2</code>.
+            </div>
+            <details class="guide-details">
+              <summary>What to do quickly</summary>
+              <p>First ignore the cumulative levels and think in increments. Those increments are the realized returns or PnLs for the stated period. On a dense chart you are estimating their average size and their standard deviation from the slope and roughness of the path, not reconstructing every point exactly. If the graph is in percent of capital or in risk units, the Sharpe is unchanged by that scale, because both the mean and the standard deviation scale together.</p>
+              <p>The cleanest mental cases are two-level or three-level paths. If the returns alternate between <code>a</code> and <code>b</code> equally often, then the mean is just their midpoint and the standard deviation is half their gap. That turns many graph cards into one line of arithmetic.</p>
+              <p>Only annualize if the prompt asks you to. Monthly Sharpe scales by <code>sqrt(12)</code>, weekly Sharpe by <code>sqrt(52)</code>, and daily Sharpe by <code>sqrt(252)</code>.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Sharpe and Return Probabilities</h3>
+            <p>If you know Sharpe and volatility, then you know the mean return too, because <code>mean = Sharpe × volatility</code> for the same period. After that, either use a distributional model like normal returns, or if no distribution is given use a probability bound based only on mean and variance.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> if monthly Sharpe is <code>0.5</code> and monthly vol is <code>2%</code>, then the mean is <code>1%</code>. Under a normal model, the chance of exceeding <code>3%</code> is about <code>16%</code>. Without a distributional assumption, the one-sided Chebyshev / Cantelli bound gives <code>P(R ≤ -5%) ≤ 0.10</code>.
+            </div>
+            <details class="guide-details">
+              <summary>Which bound to use</summary>
+              <p>If returns are approximately normal, convert the target into a z-score using <code>z = (target - mean)/sigma</code> and then use the normal table. That is the cleanest route whenever the prompt explicitly says the return is approximately normal.</p>
+              <p>If the distribution is unknown, the safest sharp one-sided bound is Cantelli: <code>P(X - mu ≤ -a) ≤ sigma² / (sigma² + a²)</code> and likewise for the upper tail. Here <code>a</code> is the distance from the mean to the target. Plain Chebyshev is weaker because it only controls two-sided deviations, but it still works if that is all you remember.</p>
+              <p>Markov only applies directly to nonnegative quantities. So if the prompt is about a nonnegative loss variable, Markov can bound large losses from the mean loss. For signed returns, Cantelli or Chebyshev is usually the intended distribution-free move.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
             <h3>Moments, Covariance, and MGF</h3>
             <p>Second moments, variances, covariances, correlations, and mgfs are tightly connected. Use <code>E[X²] = Var(X) + (E[X])²</code> for quick second moments, add variances across independent pieces, and treat covariance as “what overlap is left after centering.” For mgf problems, either recognize the family or plug in a clever value of <code>t</code>.</p>
             <div class="guide-example">
@@ -1520,6 +1600,7 @@
             <details class="guide-details">
               <summary>What to look for</summary>
               <p>Before doing anything else, ask whether the problem is really a parity problem. If call and put share the same strike and expiry, <code>C - P</code> behaves like a forward, so missing prices, implied spot values, and synthetic positions often become one-line calculations.</p>
+              <p>Cash-flow discounting is the same idea with no optionality attached. Under a continuously compounded risk-free rate <code>r</code>, <code>K</code> dollars paid at time <code>T</code> is worth <code>K e^{-rT}</code> today, and <code>X</code> dollars today grows to <code>X e^{rT}</code> by time <code>T</code>. For small <code>rT</code>, the quick check is <code>e^{-rT} ≈ 1 - rT</code> and <code>e^{rT} ≈ 1 + rT</code>.</p>
               <p>For rough pricing, separate intrinsic value from time value. Near expiry, deep in-the-money calls are close to <code>S - K e^{-rT}</code>, deep out-of-the-money calls are near zero, and short-dated at-the-money options live on the scale <code>S σ sqrt(T)</code> with the constant about <code>0.4</code> for a call and about <code>0.8</code> for a straddle.</p>
               <p>In one-step trees, the fair option price is just the discounted risk-neutral expected payoff. With zero rates and a symmetric up/down tree around today’s price, that often collapses to a plain average of the terminal payoffs.</p>
               <p>Digital calls are closely tied to tight call spreads. A narrow call spread divided by its strike width behaves like a digital payoff, which is why a fast market estimate for a 1-dollar digital is often just <code>(C(K) - C(K + h)) / h</code>.</p>
@@ -1653,6 +1734,7 @@
             </div>
 
             <h2 id="prompt-text" class="prompt-text"></h2>
+            <div id="question-visual" class="question-visual is-hidden"></div>
 
             <div id="hint-panel" class="hint-panel is-hidden">
               <strong>Hint</strong>
@@ -1775,6 +1857,7 @@
         { id: "greeks", label: "Greeks", description: "Delta, hedge sizing, vega intuition, and option-position sensitivity questions.", meta: "delta / gamma / vega" },
         { id: "stopping", label: "Stopping and martingales", description: "Threshold rerolls, continuation values, and bounded optional-stopping classics.", meta: "stopping" },
         { id: "vol", label: "Vol and Sharpe scaling", description: "Sqrt-time scaling for volatility and Sharpe ratios.", meta: "sqrt(time)" },
+        { id: "sharpeGraph", label: "Sharpe ratio", description: "Estimate Sharpe from cumulative PnL charts, plus Sharpe-to-probability and Sharpe-bound drills.", meta: "PnL graph / Sharpe" },
         { id: "ev", label: "Expected value", description: "Quick payoff-weighting, conditioning, and indicator-count questions.", meta: "quick EV" },
         { id: "randomWalks", label: "Random walks on Z", description: "Gambler's ruin, exit time, hitting-time variance, and return-probability shortcuts.", meta: "1D walks / ruin" },
         { id: "polygons", label: "Symmetric polygons", description: "Cycle walks and regular-polygon geometry with closed-form anchors.", meta: "n-gons" },
@@ -1817,6 +1900,7 @@
         summaryClose: document.getElementById("summary-close"),
         categoryBadge: document.getElementById("category-badge"),
         promptText: document.getElementById("prompt-text"),
+        questionVisual: document.getElementById("question-visual"),
         hintPanel: document.getElementById("hint-panel"),
         hintText: document.getElementById("hint-text"),
         answerInput: document.getElementById("answer-input"),
@@ -2344,6 +2428,7 @@
         elements.progressLabel.textContent = isRevisit ? `Revisit ${currentEntry.originalCardNumber} / ${state.sessionLength}` : `${Math.min(seenCount + 1, state.sessionLength)} / ${state.sessionLength}`;
         elements.categoryBadge.textContent = isRevisit ? `${question.category} • revisit` : question.category;
         elements.promptText.textContent = question.prompt;
+        renderQuestionVisual(question);
         elements.progressFill.style.width = `${Math.min(100, (seenCount / state.sessionLength) * 100)}%`;
 
         if (state.showHints) {
@@ -2360,6 +2445,12 @@
         clearInputError();
         updateLiveScore();
         window.requestAnimationFrame(() => elements.answerInput.focus());
+      }
+
+      function renderQuestionVisual(question) {
+        const markup = renderQuestionVisualMarkup(question, { context: "session" });
+        elements.questionVisual.innerHTML = markup;
+        elements.questionVisual.classList.toggle("is-hidden", !markup);
       }
 
       function renderLiveReview() {
@@ -2492,6 +2583,7 @@
               </div>
               <p class="review-question">${escapeHtml(entry.question.prompt)}</p>
             </summary>
+            ${renderQuestionVisualMarkup(entry.question, { context: "review" })}
             <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
             ${getSessionNoteMarkup(entry)}
             <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
@@ -2512,6 +2604,7 @@
               <span class="review-pill">${escapeHtml(entry.question.category)}</span>
             </div>
             <h4 class="review-question">${escapeHtml(entry.question.prompt)}</h4>
+            ${renderQuestionVisualMarkup(entry.question, { context: "review" })}
             <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
             ${getSessionNoteMarkup(entry)}
             <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
@@ -2637,6 +2730,18 @@
 
         if (question.topicId === "vol") {
           return "Volatility scales with the square root of time because independent variances add. If daily variance is sigma^2, then T days gives variance T sigma^2 and standard deviation sqrt(T) sigma.\n\nSharpe ratios inherit the same sqrt-time scaling under the usual model where expected return grows linearly in time while volatility grows like sqrt(time).";
+        }
+
+        if (question.topicId === "sharpeGraph") {
+          if (question.category === "Sharpe probability bound") {
+            return "Start by recovering the period mean from Sharpe times volatility. Once you know the mean and the standard deviation, the distribution-free move is a one-sided Chebyshev / Cantelli bound.\n\nFor a downside event X <= target, set a = mean - target and use P(X - mu <= -a) <= sigma^2 / (sigma^2 + a^2). For an upside event X >= target, use the same formula on the upper tail.";
+          }
+
+          if (question.category === "Sharpe to return probability") {
+            return "Again recover mean from Sharpe times volatility. If the prompt says returns are approximately normal, convert the target return into a z-score and use the normal table.\n\nThese are really just normal-tail questions with one extra preliminary step: Sharpe tells you mean only after you multiply it by volatility.";
+          }
+
+          return "These cards start from cumulative PnL, not returns. So the first step is always to difference adjacent points on the graph and recover the period-by-period PnL sequence.\n\nOnce you have those period returns, Sharpe is just mean divided by standard deviation. If the prompt asks for annualized Sharpe, multiply the per-period Sharpe by the square root of the number of such periods in a year.";
         }
 
         if (question.topicId === "ev") {
@@ -3055,6 +3160,7 @@
           greeks: [...buildGreekQuestions(), ...buildMassiveGreekQuestions()],
           stopping: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "stopping"),
           vol: [...buildVolQuestions(), ...buildExpandedVolQuestions(), ...buildMassiveVolQuestions()],
+          sharpeGraph: buildSharpeGraphQuestions(),
           ev: [...buildEvQuestions(), ...buildExpandedEvQuestions(), ...supplementalQuestions.filter((question) => question.topicId === "ev"), ...expandedSupplementalQuestions.filter((question) => question.topicId === "ev"), ...buildMassiveEvQuestions(), ...massiveSupplementalQuestions.filter((question) => question.topicId === "ev")],
           randomWalks: [...buildRandomWalkQuestions(), ...buildExpandedRandomWalkQuestions(), ...buildMassiveRandomWalkQuestions(), ...buildUltraRandomWalkQuestions()],
           polygons: [...buildPolygonQuestions(), ...buildExpandedPolygonQuestions(), ...buildMassivePolygonQuestions()],
@@ -7028,6 +7134,153 @@
           difficulty: "hard",
         });
 
+        const discountingSpecs = [
+          {
+            prompt: "The continuously compounded risk-free rate is 5% per year. Estimate what 100 dollars received 1 year from now is worth today.",
+            answer: riskFreePresentValue(100, 0.05, 1),
+            mentalAnswer: 95,
+            absTolerance: 0.6,
+            explanation: "Use present value = 100 e^(-0.05), which is about 95.12. For a quick check, 5% over 1 year knocks about 5 dollars off.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 10% per year. Estimate what 120 dollars received 2 years from now is worth today.",
+            answer: riskFreePresentValue(120, 0.1, 2),
+            mentalAnswer: 98,
+            absTolerance: 0.8,
+            explanation: "Use present value = 120 e^(-0.2). Since e^(-0.2) is about 0.819, the value is about 98.25.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 20% per year. Estimate what 50 dollars received 6 months from now is worth today.",
+            answer: riskFreePresentValue(50, 0.2, 0.5),
+            mentalAnswer: 45,
+            absTolerance: 0.45,
+            explanation: "Use present value = 50 e^(-0.1). Since e^(-0.1) is about 0.905, the value is about 45.24.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 69.3% per year. Estimate what 200 dollars received 1 year from now is worth today.",
+            answer: riskFreePresentValue(200, Math.log(2), 1),
+            mentalAnswer: 100,
+            absTolerance: 0.25,
+            explanation: "A continuously compounded rate of 69.3% is about ln 2, so discounting 1 year divides by 2. The present value is about 100.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 30% per year. Estimate what 100 dollars received 2 years from now is worth today.",
+            answer: riskFreePresentValue(100, 0.3, 2),
+            mentalAnswer: 55,
+            absTolerance: 0.7,
+            explanation: "Use present value = 100 e^(-0.6). Since e^(-0.6) is about 0.549, the value is about 54.88.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 4% per year. Estimate what 500 dollars received 3 years from now is worth today.",
+            answer: riskFreePresentValue(500, 0.04, 3),
+            mentalAnswer: 444,
+            absTolerance: 1.6,
+            explanation: "Use present value = 500 e^(-0.12). Since e^(-0.12) is about 0.887, the value is about 443.46.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 8% per year. Estimate what 100 dollars received 5 years from now is worth today.",
+            answer: riskFreePresentValue(100, 0.08, 5),
+            mentalAnswer: 67,
+            absTolerance: 0.7,
+            explanation: "Use present value = 100 e^(-0.4). Since e^(-0.4) is about 0.670, the value is about 67.03.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 12% per year. Estimate what 80 dollars received 18 months from now is worth today.",
+            answer: riskFreePresentValue(80, 0.12, 1.5),
+            mentalAnswer: 67,
+            absTolerance: 0.7,
+            explanation: "Use present value = 80 e^(-0.18). Since e^(-0.18) is about 0.835, the value is about 66.82.",
+            difficulty: "hard",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 5% per year. Estimate what 100 dollars today is worth 1 year from now.",
+            answer: riskFreeFutureValue(100, 0.05, 1),
+            mentalAnswer: 105,
+            absTolerance: 0.6,
+            explanation: "Use future value = 100 e^(0.05), which is about 105.13.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 10% per year. Estimate what 80 dollars today is worth 2 years from now.",
+            answer: riskFreeFutureValue(80, 0.1, 2),
+            mentalAnswer: 98,
+            absTolerance: 0.7,
+            explanation: "Use future value = 80 e^(0.2). Since e^(0.2) is about 1.221, the value is about 97.71.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 20% per year. Estimate what 50 dollars today is worth 6 months from now.",
+            answer: riskFreeFutureValue(50, 0.2, 0.5),
+            mentalAnswer: 55,
+            absTolerance: 0.45,
+            explanation: "Use future value = 50 e^(0.1). Since e^(0.1) is about 1.105, the value is about 55.26.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 69.3% per year. Estimate what 100 dollars today is worth 1 year from now.",
+            answer: riskFreeFutureValue(100, Math.log(2), 1),
+            mentalAnswer: 200,
+            absTolerance: 0.25,
+            explanation: "A continuously compounded rate of 69.3% is about ln 2, so 1 year of growth doubles the cash. The future value is about 200.",
+            difficulty: "easy",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 30% per year. Estimate what 40 dollars today is worth 2 years from now.",
+            answer: riskFreeFutureValue(40, 0.3, 2),
+            mentalAnswer: 73,
+            absTolerance: 0.7,
+            explanation: "Use future value = 40 e^(0.6). Since e^(0.6) is about 1.822, the value is about 72.88.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 4% per year. Estimate what 200 dollars today is worth 3 years from now.",
+            answer: riskFreeFutureValue(200, 0.04, 3),
+            mentalAnswer: 225,
+            absTolerance: 1.2,
+            explanation: "Use future value = 200 e^(0.12). Since e^(0.12) is about 1.1275, the value is about 225.50.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 8% per year. Estimate what 150 dollars today is worth 5 years from now.",
+            answer: riskFreeFutureValue(150, 0.08, 5),
+            mentalAnswer: 224,
+            absTolerance: 1.3,
+            explanation: "Use future value = 150 e^(0.4). Since e^(0.4) is about 1.492, the value is about 223.77.",
+            difficulty: "medium",
+          },
+          {
+            prompt: "The continuously compounded risk-free rate is 12% per year. Estimate what 60 dollars today is worth 18 months from now.",
+            answer: riskFreeFutureValue(60, 0.12, 1.5),
+            mentalAnswer: 72,
+            absTolerance: 0.7,
+            explanation: "Use future value = 60 e^(0.18). Since e^(0.18) is about 1.197, the value is about 71.82.",
+            difficulty: "hard",
+          },
+        ];
+
+        const discountingQuestions = discountingSpecs.map(({ prompt, answer, mentalAnswer, absTolerance, explanation, difficulty }) =>
+          createQuestion({
+            topicId: "options",
+            category: "Risk-free discounting",
+            prompt,
+            hint: "Use PV = K e^(-rT) for future cash discounted to today, and FV = X e^(rT) for cash grown forward.",
+            inputMode: "number",
+            formatHint: "dollars",
+            answer,
+            mentalAnswer,
+            absTolerance,
+            explanation,
+            difficulty,
+          }),
+        );
+
         const atmHeuristics = [
           {
             prompt: "A non-dividend stock is at 100, strike is 100, annual volatility is 40%, expiry is 3 months, and rates are 0. Estimate the at-the-money European call price.",
@@ -7215,7 +7468,7 @@
           }),
         ];
 
-        return [...parityQuestions, rateParityQuestion, ...atmQuestions, ...binomialQuestions, ...structureQuestions, ...buildSourcedOptionQuestionVariations()];
+        return [...parityQuestions, rateParityQuestion, ...discountingQuestions, ...atmQuestions, ...binomialQuestions, ...structureQuestions, ...buildSourcedOptionQuestionVariations()];
       }
 
       function buildGreekQuestions() {
@@ -11795,7 +12048,7 @@
         return (lowerCallPrice - upperCallPrice) / strikeGap;
       }
 
-      function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty, source }) {
+      function createQuestion({ topicId, category, prompt, hint, inputMode, formatHint, answer, mentalAnswer, absTolerance, relTolerance, explanation, difficulty, source, ...extras }) {
         return {
           topicId,
           category,
@@ -11810,7 +12063,392 @@
           explanation,
           difficulty: difficulty || inferDifficulty(topicId, category, prompt),
           source: source || null,
+          ...extras,
         };
+      }
+
+      function buildSharpeGraphQuestions() {
+        const specs = [
+          { cadence: "monthly", periodsPerYear: 12, annualized: true, count: 72, mean: 0.28, sigma: 0.39, seed: 101, difficulty: "easy" },
+          { cadence: "monthly", periodsPerYear: 12, annualized: false, count: 84, mean: 0.18, sigma: 0.42, seed: 102, difficulty: "medium" },
+          { cadence: "monthly", periodsPerYear: 12, annualized: true, count: 96, mean: 0.14, sigma: 0.37, seed: 103, difficulty: "hard" },
+          { cadence: "monthly", periodsPerYear: 12, annualized: false, count: 90, mean: 0.13, sigma: 0.28, seed: 104, difficulty: "medium" },
+          { cadence: "weekly", periodsPerYear: 52, annualized: false, count: 104, mean: 0.08, sigma: 0.2, seed: 201, difficulty: "easy" },
+          { cadence: "weekly", periodsPerYear: 52, annualized: true, count: 156, mean: 0.05, sigma: 0.22, seed: 202, difficulty: "medium" },
+          { cadence: "weekly", periodsPerYear: 52, annualized: false, count: 208, mean: 0.04, sigma: 0.205, seed: 203, difficulty: "medium" },
+          { cadence: "weekly", periodsPerYear: 52, annualized: true, count: 208, mean: 0.045, sigma: 0.265, seed: 204, difficulty: "hard" },
+          { cadence: "daily", periodsPerYear: 252, annualized: true, count: 252, mean: 0.015, sigma: 0.07, seed: 301, difficulty: "easy" },
+          { cadence: "daily", periodsPerYear: 252, annualized: true, count: 336, mean: 0.008, sigma: 0.11, seed: 302, difficulty: "medium" },
+          { cadence: "daily", periodsPerYear: 252, annualized: false, count: 336, mean: 0.006, sigma: 0.095, seed: 303, difficulty: "hard" },
+          { cadence: "daily", periodsPerYear: 252, annualized: true, count: 504, mean: 0.008, sigma: 0.125, seed: 304, difficulty: "hard" },
+        ];
+
+        return specs.map(createSharpeGraphQuestion).concat(buildSharpeProbabilityQuestions());
+      }
+
+      function createSharpeGraphQuestion({ cadence, periodsPerYear, annualized, returns, count, mean, sigma, seed, difficulty }) {
+        const realizedReturns = Array.isArray(returns) ? returns.slice() : buildNoisySharpeReturns({ count, mean, sigma, seed });
+        const cumulative = [0];
+        for (const value of realizedReturns) {
+          cumulative.push(cumulative[cumulative.length - 1] + value);
+        }
+
+        const meanReturn = average(realizedReturns);
+        const stdReturn = populationStandardDeviation(realizedReturns);
+        const periodSharpe = meanReturn / stdReturn;
+        const answer = annualized ? periodSharpe * Math.sqrt(periodsPerYear) : periodSharpe;
+        const unitLabel = "% of capital";
+        const cadenceLabel = cadence.charAt(0).toUpperCase() + cadence.slice(1);
+        const labels = buildSparseCadenceLabels(cadence, realizedReturns.length);
+        const prompt = annualized
+          ? `The graph shows a cumulative ${cadence} PnL path, in ${unitLabel}, over ${realizedReturns.length} ${cadence} marks. Estimate the annualized Sharpe ratio from the graph. Assume zero risk-free rate.`
+          : `The graph shows a cumulative ${cadence} PnL path, in ${unitLabel}, over ${realizedReturns.length} ${cadence} marks. Estimate the Sharpe ratio over the shown ${cadence} returns from the graph. Do not annualize.`;
+        const explanation = buildSharpeExplanation({
+          returns: realizedReturns,
+          meanReturn,
+          stdReturn,
+          periodSharpe,
+          answer,
+          cadence,
+          periodsPerYear,
+          annualized,
+        });
+
+        return createQuestion({
+          topicId: "sharpeGraph",
+          category: annualized ? "Sharpe from PnL graph (annualized)" : "Sharpe from PnL graph",
+          prompt,
+          hint: annualized
+            ? `The hidden ${cadence} returns are the adjacent differences of the cumulative path. Estimate mean / standard deviation, then annualize with sqrt(${periodsPerYear}).`
+            : `The hidden ${cadence} returns are the adjacent differences of the cumulative path. Estimate mean / standard deviation.`,
+          inputMode: "number",
+          formatHint: "Sharpe ratio",
+          answer,
+          mentalAnswer: answer,
+          absTolerance: annualized ? 0.65 : 0.28,
+          relTolerance: 0.12,
+          explanation,
+          difficulty,
+          visual: {
+            type: "pnlChart",
+            title: `Cumulative ${cadenceLabel} PnL %`,
+            note: "",
+            xLabel: `${cadenceLabel} mark`,
+            yLabel: `Cumulative PnL (${unitLabel})`,
+            labels,
+            points: cumulative,
+            unitSuffix: "%",
+            showPointValues: false,
+            showMarkers: false,
+            showVerticalGrid: true,
+          },
+        });
+      }
+
+      function buildSharpeProbabilityQuestions() {
+        const specs = [
+          { cadence: "monthly", sharpe: 0.5, vol: 2, target: 3, mode: "normalUpper", difficulty: "medium" },
+          { cadence: "monthly", sharpe: 0.5, vol: 2, target: -5, mode: "boundLower", difficulty: "medium" },
+          { cadence: "monthly", sharpe: 0.75, vol: 4, target: -4, mode: "normalLower", difficulty: "medium" },
+          { cadence: "weekly", sharpe: 0.4, vol: 3, target: 6, mode: "normalUpper", difficulty: "medium" },
+          { cadence: "weekly", sharpe: 0.4, vol: 3, target: -6, mode: "boundLower", difficulty: "hard" },
+          { cadence: "daily", sharpe: 0.2, vol: 1, target: 2, mode: "normalUpper", difficulty: "easy" },
+          { cadence: "daily", sharpe: 0.2, vol: 1, target: -3, mode: "boundLower", difficulty: "hard" },
+          { cadence: "daily", sharpe: 0.3, vol: 1.5, target: 4, mode: "boundUpper", difficulty: "hard" },
+        ];
+
+        return specs.map(createSharpeProbabilityQuestion);
+      }
+
+      function createSharpeProbabilityQuestion({ cadence, sharpe, vol, target, mode, difficulty }) {
+        const mean = sharpe * vol;
+        const sigma = vol;
+        const targetGap = Math.abs(target - mean);
+        const bound = cantelliBound(targetGap, sigma);
+        const z = (target - mean) / sigma;
+        const cadenceLabel = cadence.charAt(0).toUpperCase() + cadence.slice(1);
+        const meanText = `${formatNumber(mean, 3)}%`;
+        const volText = `${formatNumber(vol, 3)}%`;
+        const sharpeText = formatNumber(sharpe, 3);
+        const targetText = `${formatSigned(target, 1)}%`;
+
+        if (mode === "normalUpper") {
+          const answer = standardNormalUpperTail(z);
+          return createQuestion({
+            topicId: "sharpeGraph",
+            category: "Sharpe to return probability",
+            prompt: `A strategy has ${cadence} Sharpe ${sharpeText} and ${cadence} volatility ${volText}. Assume ${cadence} returns are approximately normal. Estimate the probability the ${cadence} return exceeds ${targetText}.`,
+            hint: `First recover the mean return as Sharpe × vol = ${meanText}, then convert the target into a z-score.`,
+            inputMode: "probability",
+            formatHint: "probability",
+            answer,
+            mentalAnswer: answer,
+            absTolerance: 0.03,
+            relTolerance: 0.08,
+            explanation: `Mean ${cadence} return is ${sharpeText} × ${volText} = ${meanText}. The z-score for ${targetText} is (${formatNumber(target, 3)} - ${formatNumber(mean, 3)}) / ${formatNumber(vol, 3)} = ${formatNumber(z, 4)}, so the upper tail is about ${formatPercent(answer)}.`,
+            difficulty,
+          });
+        }
+
+        if (mode === "normalLower") {
+          const answer = standardNormalCDF(z);
+          return createQuestion({
+            topicId: "sharpeGraph",
+            category: "Sharpe to return probability",
+            prompt: `A strategy has ${cadence} Sharpe ${sharpeText} and ${cadence} volatility ${volText}. Assume ${cadence} returns are approximately normal. Estimate the probability the ${cadence} return is below ${targetText}.`,
+            hint: `First recover the mean return as Sharpe × vol = ${meanText}, then convert the target into a z-score.`,
+            inputMode: "probability",
+            formatHint: "probability",
+            answer,
+            mentalAnswer: answer,
+            absTolerance: 0.03,
+            relTolerance: 0.08,
+            explanation: `Mean ${cadence} return is ${sharpeText} × ${volText} = ${meanText}. The z-score for ${targetText} is (${formatNumber(target, 3)} - ${formatNumber(mean, 3)}) / ${formatNumber(vol, 3)} = ${formatNumber(z, 4)}, so the lower tail is about ${formatPercent(answer)}.`,
+            difficulty,
+          });
+        }
+
+        if (mode === "boundUpper") {
+          return createQuestion({
+            topicId: "sharpeGraph",
+            category: "Sharpe probability bound",
+            prompt: `A strategy has ${cadence} Sharpe ${sharpeText} and ${cadence} volatility ${volText}. Without assuming any return distribution, give a one-sided upper bound on the probability the ${cadence} return exceeds ${targetText}.`,
+            hint: `Recover the mean ${meanText}, then use the one-sided Chebyshev / Cantelli bound sigma^2 / (sigma^2 + a^2) with a = target - mean.`,
+            inputMode: "probability",
+            formatHint: "bound",
+            answer: bound,
+            mentalAnswer: bound,
+            absTolerance: 0.03,
+            relTolerance: 0.08,
+            explanation: `Mean ${cadence} return is ${meanText}. The target is ${formatNumber(targetGap, 3)}% above the mean. Cantelli gives P(X - mu >= a) <= sigma^2 / (sigma^2 + a^2) = ${formatNumber(vol ** 2, 4)} / (${formatNumber(vol ** 2, 4)} + ${formatNumber(targetGap ** 2, 4)}) ≈ ${formatPercent(bound)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "sharpeGraph",
+          category: "Sharpe probability bound",
+          prompt: `A strategy has ${cadence} Sharpe ${sharpeText} and ${cadence} volatility ${volText}. Without assuming any return distribution, give a one-sided upper bound on the probability the ${cadence} return is below ${targetText}.`,
+          hint: `Recover the mean ${meanText}, then use the one-sided Chebyshev / Cantelli bound sigma^2 / (sigma^2 + a^2) with a = mean - target.`,
+          inputMode: "probability",
+          formatHint: "bound",
+          answer: bound,
+          mentalAnswer: bound,
+          absTolerance: 0.03,
+          relTolerance: 0.08,
+          explanation: `Mean ${cadence} return is ${meanText}. The target is ${formatNumber(targetGap, 3)}% below the mean. Cantelli gives P(X - mu <= -a) <= sigma^2 / (sigma^2 + a^2) = ${formatNumber(vol ** 2, 4)} / (${formatNumber(vol ** 2, 4)} + ${formatNumber(targetGap ** 2, 4)}) ≈ ${formatPercent(bound)}.`,
+          difficulty,
+        });
+      }
+
+      function buildSharpeExplanation({ returns, meanReturn, stdReturn, periodSharpe, answer, cadence, periodsPerYear, annualized }) {
+        const cadenceText = annualized ? `${cadence} Sharpe is ${formatNumber(periodSharpe, 4)}, and annualizing gives ${formatNumber(periodSharpe, 4)} × sqrt(${periodsPerYear}) ≈ ${formatNumber(answer, 4)}.` : `${cadence.charAt(0).toUpperCase() + cadence.slice(1)} Sharpe is ${formatNumber(periodSharpe, 4)}.`;
+        const summary = returns.length <= 14
+          ? `The hidden ${cadence} changes are ${returns.map((value) => formatSigned(value, 2)).join(", ")}.`
+          : `Differencing adjacent points gives ${returns.length} hidden ${cadence} changes.`;
+        return `${summary} Their mean is ${formatNumber(meanReturn, 4)} and their standard deviation is ${formatNumber(stdReturn, 4)}.\n\nSo mean / standard deviation = ${formatNumber(meanReturn, 4)} / ${formatNumber(stdReturn, 4)} = ${formatNumber(periodSharpe, 4)}. ${cadenceText}`;
+      }
+
+      function cadenceLabelPrefix(cadence) {
+        if (cadence === "daily") {
+          return "D";
+        }
+        if (cadence === "weekly") {
+          return "W";
+        }
+        return "M";
+      }
+
+      function buildSparseCadenceLabels(cadence, count) {
+        const prefix = cadenceLabelPrefix(cadence);
+        const labels = Array(count + 1).fill("");
+        const anchorCount = count >= 60 ? 6 : count >= 36 ? 5 : 4;
+        for (let k = 1; k <= anchorCount; k += 1) {
+          const index = Math.round((k * count) / anchorCount);
+          labels[index] = `${prefix}${index}`;
+        }
+        return labels;
+      }
+
+      function buildNoisySharpeReturns({ count, mean, sigma, seed }) {
+        const random = createMulberry32(seed);
+        const raw = [];
+        let state = 0;
+        for (let index = 0; index < count; index += 1) {
+          const shock = sampleStandardNormal(random);
+          const regime = index > (count * 0.72) ? 0.28 : index < (count * 0.18) ? -0.08 : 0;
+          state = (0.42 * state) + shock + regime;
+          raw.push(state);
+        }
+        const standardized = standardize(raw);
+        return standardized.map((z) => mean + (sigma * z));
+      }
+
+      function standardize(values) {
+        const meanValue = average(values);
+        const stdValue = populationStandardDeviation(values) || 1;
+        return values.map((value) => (value - meanValue) / stdValue);
+      }
+
+      function createMulberry32(seed) {
+        let state = seed >>> 0;
+        return function next() {
+          state = (state + 0x6D2B79F5) >>> 0;
+          let t = Math.imul(state ^ (state >>> 15), 1 | state);
+          t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function sampleStandardNormal(random) {
+        const u1 = Math.max(random(), 1e-12);
+        const u2 = random();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      }
+
+      function average(values) {
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
+      }
+
+      function populationStandardDeviation(values) {
+        const mean = average(values);
+        return Math.sqrt(values.reduce((sum, value) => sum + ((value - mean) ** 2), 0) / values.length);
+      }
+
+      function cantelliBound(a, sigma) {
+        const variance = sigma * sigma;
+        return variance / (variance + (a * a));
+      }
+
+      function renderQuestionVisualMarkup(question, { context = "session" } = {}) {
+        if (!question.visual || question.visual.type !== "pnlChart") {
+          return "";
+        }
+        return buildPnlChartMarkup(question.visual, { review: context !== "session" });
+      }
+
+      function buildPnlChartMarkup(visual, { review = false } = {}) {
+        const width = review ? 560 : 680;
+        const height = review ? 250 : 300;
+        const margin = review
+          ? { top: 28, right: 18, bottom: 42, left: 44 }
+          : { top: 30, right: 24, bottom: 46, left: 52 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const values = visual.points || [];
+        const showPointValues = visual.showPointValues !== false;
+        const showMarkers = visual.showMarkers !== false;
+        const showVerticalGrid = visual.showVerticalGrid === true;
+        if (values.length < 2) {
+          return "";
+        }
+
+        const rawMin = Math.min(...values, 0);
+        const rawMax = Math.max(...values, 0);
+        const span = Math.max(2, rawMax - rawMin);
+        const pad = Math.max(1, Math.ceil(span * 0.18));
+        const tickStep = chooseNiceTickStep((span + (2 * pad)) / 4);
+        const yMin = Math.floor((rawMin - pad) / tickStep) * tickStep;
+        const yMax = Math.ceil((rawMax + pad) / tickStep) * tickStep;
+        const xStep = plotWidth / (values.length - 1);
+        const yScale = (value) => margin.top + ((yMax - value) / (yMax - yMin)) * plotHeight;
+        const xScale = (index) => margin.left + (index * xStep);
+
+        const ticks = [];
+        for (let tick = yMin; tick <= yMax + 1e-9; tick += tickStep) {
+          ticks.push(tick);
+        }
+
+        const path = values
+          .map((value, index) => `${index === 0 ? "M" : "L"} ${xScale(index).toFixed(2)} ${yScale(value).toFixed(2)}`)
+          .join(" ");
+
+        const labels = visual.labels || values.map((_, index) => String(index));
+        const markerMarkup = showMarkers ? values
+          .map((value, index) => {
+            const x = xScale(index);
+            const y = yScale(value);
+            return `
+              <circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${review ? 3 : 4}" fill="#c73333" stroke="#ffffff" stroke-width="1.2"></circle>
+            `;
+          })
+          .join("") : "";
+
+        const pointValueMarkup = showPointValues ? values
+          .map((value, index) => {
+            const x = xScale(index);
+            const y = yScale(value);
+            const labelY = y < margin.top + 18 ? y + 16 : y - 10;
+            return `<text x="${x.toFixed(2)}" y="${labelY.toFixed(2)}" font-size="${review ? 9 : 10}" fill="#333333" text-anchor="middle">${escapeHtml(formatNumber(value, 1))}${escapeHtml(visual.unitSuffix || "")}</text>`;
+          })
+          .join("") : "";
+
+        const xAxisLabelMarkup = labels
+          .map((label, index) => {
+            if (!label) {
+              return "";
+            }
+            const x = xScale(index);
+            return `<text x="${x.toFixed(2)}" y="${(margin.top + plotHeight + 18).toFixed(2)}" font-size="${review ? 9 : 10}" fill="#333333" text-anchor="middle">${escapeHtml(label)}</text>`;
+          })
+          .join("");
+
+        const gridMarkup = ticks
+          .map((tick) => {
+            const y = yScale(tick);
+            return `
+              <line x1="${margin.left}" y1="${y.toFixed(2)}" x2="${(margin.left + plotWidth).toFixed(2)}" y2="${y.toFixed(2)}" stroke="#d0d0d0" stroke-width="1"></line>
+              <text x="${(margin.left - 8).toFixed(2)}" y="${(y + 3).toFixed(2)}" font-size="${review ? 9 : 10}" fill="#333333" text-anchor="end">${escapeHtml(formatNumber(tick, 1))}${escapeHtml(visual.unitSuffix || "")}</text>
+            `;
+          })
+          .join("");
+
+        const verticalGridMarkup = showVerticalGrid
+          ? values.map((_, index) => {
+            const x = xScale(index);
+            return `<line x1="${x.toFixed(2)}" y1="${margin.top}" x2="${x.toFixed(2)}" y2="${(margin.top + plotHeight).toFixed(2)}" stroke="#d0d0d0" stroke-width="0.8" opacity="0.6"></line>`;
+          }).join("")
+          : "";
+
+        return `
+          <div class="pnl-chart-card ${review ? "review-chart" : ""}">
+            <div class="pnl-chart-head">
+              <strong>${escapeHtml(visual.title || "Cumulative PnL")}</strong>
+              <span>${escapeHtml(visual.note || "")}</span>
+            </div>
+            <svg class="pnl-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(visual.title || "PnL chart")}">
+              <rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"></rect>
+              ${verticalGridMarkup}
+              ${gridMarkup}
+              <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${(margin.top + plotHeight).toFixed(2)}" stroke="#000000" stroke-width="1.2"></line>
+              <line x1="${margin.left}" y1="${(margin.top + plotHeight).toFixed(2)}" x2="${(margin.left + plotWidth).toFixed(2)}" y2="${(margin.top + plotHeight).toFixed(2)}" stroke="#000000" stroke-width="1.2"></line>
+              <path d="${path}" fill="none" stroke="#1084d0" stroke-width="${review ? 2 : 2.5}"></path>
+              ${markerMarkup}
+              ${pointValueMarkup}
+              ${xAxisLabelMarkup}
+            </svg>
+            <div class="pnl-chart-foot">
+              <span>${escapeHtml(visual.xLabel || "")}</span>
+              <span>${escapeHtml(visual.yLabel || "")}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      function chooseNiceTickStep(roughStep) {
+        const safe = Math.max(roughStep, 0.1);
+        const magnitude = 10 ** Math.floor(Math.log10(safe));
+        const normalized = safe / magnitude;
+        if (normalized <= 1) {
+          return 1 * magnitude;
+        }
+        if (normalized <= 2) {
+          return 2 * magnitude;
+        }
+        if (normalized <= 5) {
+          return 5 * magnitude;
+        }
+        return 10 * magnitude;
       }
 
       function parseMathExpression(text) {
@@ -12179,6 +12817,10 @@
           return category === "Sharpe scaling" ? "medium" : "easy";
         }
 
+        if (topicId === "sharpeGraph") {
+          return prompt.includes("annualized") ? "medium" : "easy";
+        }
+
         if (topicId === "logs") {
           return prompt.includes("0.") || prompt.includes("1.0") || prompt.includes("1.1") ? "easy" : "medium";
         }
@@ -12484,6 +13126,14 @@
 
       function optionVegaPerVolPointHeuristic(spot, years) {
         return 0.4 * spot * Math.sqrt(years) * 0.01;
+      }
+
+      function riskFreePresentValue(amount, annualRate, years) {
+        return amount * Math.exp(-annualRate * years);
+      }
+
+      function riskFreeFutureValue(amount, annualRate, years) {
+        return amount * Math.exp(annualRate * years);
       }
 
       function oneStepRiskNeutralProbability(spotNow, spotUp, spotDown) {
