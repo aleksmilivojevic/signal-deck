@@ -223,6 +223,69 @@
         margin-top: 1.4rem;
       }
 
+      .user-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .user-list {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .user-card {
+        display: grid;
+        gap: 0.45rem;
+        padding: 0.95rem;
+        background: #d4d0c8;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
+      }
+
+      .user-row-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .user-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .user-score {
+        font-weight: 700;
+        color: #000080;
+      }
+
+      .user-score.positive {
+        color: var(--correct);
+      }
+
+      .user-score.negative {
+        color: var(--wrong);
+      }
+
+      .user-copy {
+        margin: 0;
+        color: #1f1f1f;
+      }
+
+      .user-copy--muted {
+        color: #444444;
+        font-size: 0.92rem;
+      }
+
+      .button--danger {
+        color: #7a0b0b;
+      }
+
       .panel-heading {
         display: flex;
         justify-content: space-between;
@@ -472,6 +535,7 @@
         font-weight: 400;
         letter-spacing: 0;
         text-transform: none;
+        text-decoration: none;
         cursor: pointer;
         transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, opacity 180ms ease;
       }
@@ -1228,8 +1292,9 @@
           and an on-demand solved-card summary.
         </p>
         <div class="hero-actions">
-          <a class="button button--primary" href="#setup-screen">Build quiz</a>
+          <button id="build-new-quiz-hero" class="button button--primary" type="button">Build new quiz</button>
           <button id="open-learning-guide-hero" class="button button--secondary" type="button">Open learning guide</button>
+          <button id="open-user-center-hero" class="button button--secondary" type="button">Open user center</button>
         </div>
       </section>
 
@@ -1247,7 +1312,6 @@
 
         <div class="setup-actions setup-actions--top setup-actions--compact">
           <button id="start-session" class="button button--primary" type="button">Start session</button>
-          <button id="open-learning-guide-setup" class="button button--secondary" type="button">Open learning guide</button>
           <p id="best-score" class="inline-note"></p>
           <p class="inline-note">Press <code>Enter</code> in setup to start with the current settings.</p>
           <p id="setup-error" class="inline-note inline-note--error" aria-live="polite"></p>
@@ -1311,6 +1375,37 @@
             </div>
             <div id="topic-grid" class="topic-grid"></div>
             <p id="topic-count" class="field-note"></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel user-panel is-hidden" id="user-center">
+        <div class="panel-heading">
+          <div>
+            <p class="section-tag">User Center</p>
+            <h2>Track previous runs</h2>
+          </div>
+          <p class="panel-copy">Saved sessions keep their topics, difficulty, question count, timer, elapsed time, and score breakdown so you can see what keeps hurting you.</p>
+        </div>
+
+        <div class="hero-actions">
+          <button id="close-user-center" class="button button--ghost" type="button">Hide user center</button>
+        </div>
+
+        <div class="user-grid">
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Topics That Need Work</span>
+            </div>
+            <div id="topic-work-list" class="user-list"></div>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Quiz History</span>
+              <button id="clear-user-memory" class="button button--ghost button--danger" type="button">Delete history</button>
+            </div>
+            <div id="history-list" class="user-list"></div>
           </article>
         </div>
       </section>
@@ -1503,6 +1598,37 @@
               <p>Variance questions usually ask whether you are in the independent-sum world or the without-replacement world. The finite-population correction is the main mental difference between binomial variance and hypergeometric variance.</p>
               <p>For covariance and correlation, first ask whether the variables share randomness, split a fixed total, or come from disjoint independent pieces. In multinomial count questions, different category counts have covariance <code>-n p_i p_j</code>. In overlap questions, covariance is often just the variance of the shared part. In Poisson splitting, the category counts become independent.</p>
               <p>For mgfs, first ask whether the form matches a standard template. A normal mgf <code>exp(μt + σ²t²/2)</code> lets you read off mean and variance directly, while a finite weighted sum of <code>e^{tx}</code> often lets you read off the underlying point masses.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Basic Review Distributions</h3>
+            <p>The basic-review cards are formula recall cards. For the classic families, you want a compact table in your head: mean, variance, and for the standard families maybe one or two higher raw moments. The goal is not to re-derive everything from scratch during the quiz, but to remember which formulas are structural and which moments only exist under parameter restrictions.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> for <code>U(0,1)</code>, <code>E[X^k] = 1/(k+1)</code>; for standard normal, odd moments are <code>0</code> and even moments are <code>(k-1)!!</code>; for <code>Poisson(λ)</code>, mean and variance are both <code>λ</code>; for <code>Lognormal(μ,σ²)</code>, <code>E[X] = e^{μ + σ²/2}</code>.
+            </div>
+            <details class="guide-details">
+              <summary>What to remember first</summary>
+              <p>For bounded algebraic families like uniform and beta, raw moments are usually just rational expressions in the parameters. For normal, chi-square, gamma, and lognormal, the best memory aid is the structural parent family: chi-square is gamma, exponential is gamma with shape 1, and lognormal is the exponential of a normal.</p>
+              <p>For higher moments, standard normal is the cleanest case because the odd ones vanish and the even ones follow the double-factorial pattern <code>1, 3, 15, 105, 945, ...</code>. Poisson and binomial higher raw moments are also manageable because they can be built from factorial moments or direct indicator expansions.</p>
+              <p>Moment existence matters for the heavy-tailed families. Cauchy has no finite mean or variance. Pareto only has a finite mean when <code>α &gt; 1</code> and a finite variance when <code>α &gt; 2</code>. Student <code>t_ν</code> has a finite variance only when <code>ν &gt; 2</code>, and <code>F_{d₁,d₂}</code> needs <code>d₂ &gt; 2</code> for the mean and <code>d₂ &gt; 4</code> for the variance.</p>
+            </details>
+          </article>
+
+          <article class="guide-card">
+            <h3>Distribution Relationships</h3>
+            <p>A lot of the families in this deck are really the same object seen from different angles. Knowing the conversion map is often better than memorizing isolated formulas, because one distribution can donate intuition or formulas to another.</p>
+            <div class="guide-example">
+              <strong>Examples:</strong> <code>Binomial(n,p)</code> becomes <code>Poisson(λ)</code> when <code>n</code> is large, <code>p</code> is small, and <code>np = λ</code>; exponential is the continuous analogue of geometric waiting time; the <code>k</code>-th order statistic of uniform draws is beta; and if <code>X</code> and <code>Y</code> are iid standard normal, then <code>X/Y</code> is standard Cauchy.
+            </div>
+            <details class="guide-details">
+              <summary>Connections worth remembering</summary>
+              <p><code>Binomial → Poisson</code>: many tiny independent success chances with fixed total intensity converge to Poisson. That is the classic “many chickens, each lays an egg with tiny probability, total eggs is approximately Poisson” connection.</p>
+              <p><code>Geometric ↔ Exponential</code>: both are memoryless waiting-time laws, one in discrete time and one in continuous time. Their means and tail forms line up exactly under a small-time-step limit.</p>
+              <p><code>Uniform → Beta</code>: the <code>r</code>-th order statistic from <code>n</code> iid uniforms has a beta law with parameters <code>r</code> and <code>n-r+1</code>. This is why expected uniform order statistics come out as <code>r/(n+1)</code>.</p>
+              <p><code>Beta ↔ Gamma</code>: if <code>G₁</code> and <code>G₂</code> are independent gamma variables with the same scale, then <code>G₁/(G₁+G₂)</code> is beta. The “bank-post-office” picture is that two independent gamma clocks race to contribute portions of a total amount.</p>
+              <p><code>Gamma ↔ Exponential</code>: exponential is just gamma with shape <code>1</code>, and gamma with integer shape is the sum of that many iid exponentials. On the Poisson-process side, the waiting time to the <code>k</code>-th arrival is gamma, while the count by time <code>t</code> is Poisson.</p>
+              <p><code>Poisson ↔ Exponential</code>: this is the count-versus-waiting-time duality of the same Poisson process. Counts in a fixed window are Poisson; waiting times between arrivals are exponential; waiting time to the <code>k</code>-th arrival is gamma.</p>
             </details>
           </article>
 
@@ -1850,6 +1976,7 @@
         { id: "discreteExtremes", label: "Discrete extremes", description: "Geometric and Poisson max/min questions plus full-set occupancy approximations.", meta: "geom / Pois / dice" },
         { id: "cardsSampling", label: "Cards and sampling", description: "Deck, urn, and without-replacement questions built on indicators and symmetry.", meta: "cards / urns" },
         { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variance, covariance, correlation, and mgf drills.", meta: "Var / Cov / Corr / MGF" },
+        { id: "basicReview", label: "Basic review", description: "Mean, variance, and selected higher moments for standard distribution families.", meta: "distribution facts" },
         { id: "regression", label: "Regression", description: "OLS, regression MLE, residual variance, prediction, and Bayesian coefficient updates.", meta: "OLS / MLE / Bayes" },
         { id: "orderStats", label: "Order statistics", description: "Uniform, dice, and exponential top-k / bottom-k estimate drills.", meta: "max / 2nd / min" },
         { id: "estimation", label: "Estimation and MLE", description: "Likelihood-based parameter recovery, sample summaries, and fast inference rules.", meta: "MLE / inference" },
@@ -1878,15 +2005,22 @@
         selectAllTopics: document.getElementById("select-all-topics"),
         clearTopics: document.getElementById("clear-topics"),
         learningGuide: document.getElementById("learning-guide"),
+        userCenter: document.getElementById("user-center"),
+        buildNewQuizHero: document.getElementById("build-new-quiz-hero"),
         openLearningGuideHero: document.getElementById("open-learning-guide-hero"),
+        openUserCenterHero: document.getElementById("open-user-center-hero"),
         openLearningGuideSetup: document.getElementById("open-learning-guide-setup"),
         closeLearningGuide: document.getElementById("close-learning-guide"),
+        closeUserCenter: document.getElementById("close-user-center"),
         startSession: document.getElementById("start-session"),
         restartSession: document.getElementById("restart-session"),
         backToSetup: document.getElementById("back-to-setup"),
         exitSession: document.getElementById("exit-session"),
         bestScore: document.getElementById("best-score"),
         setupError: document.getElementById("setup-error"),
+        topicWorkList: document.getElementById("topic-work-list"),
+        historyList: document.getElementById("history-list"),
+        clearUserMemory: document.getElementById("clear-user-memory"),
         progressLabel: document.getElementById("progress-label"),
         timerLabel: document.getElementById("timer-label"),
         liveScoreLabel: document.getElementById("live-score-label"),
@@ -1954,15 +2088,18 @@
       initialize();
 
       function initialize() {
+        positionLearningGuide();
         renderTopicGrid();
         loadPreferences();
         renderBestScore();
+        renderUserCenter();
         updateTopicCount();
         renderLiveReview();
         wireEvents();
       }
 
       function wireEvents() {
+        elements.buildNewQuizHero.addEventListener("click", goToNewQuizSetup);
         elements.startSession.addEventListener("click", startSession);
         elements.restartSession.addEventListener("click", startSession);
         elements.backToSetup.addEventListener("click", showSetupScreen);
@@ -1973,8 +2110,10 @@
         elements.summaryClose.addEventListener("click", () => setSessionSummaryOpen(false));
         elements.summaryBackdrop.addEventListener("click", () => setSessionSummaryOpen(false));
         elements.openLearningGuideHero.addEventListener("click", showLearningGuide);
-        elements.openLearningGuideSetup.addEventListener("click", showLearningGuide);
+        elements.openUserCenterHero.addEventListener("click", showUserCenter);
         elements.closeLearningGuide.addEventListener("click", hideLearningGuide);
+        elements.closeUserCenter.addEventListener("click", hideUserCenter);
+        elements.clearUserMemory.addEventListener("click", clearAllMemory);
         elements.selectAllTopics.addEventListener("click", () => setAllTopics(true));
         elements.clearTopics.addEventListener("click", () => setAllTopics(false));
         elements.questionCount.addEventListener("input", updateTopicCount);
@@ -2067,6 +2206,25 @@
         });
       }
 
+      function positionLearningGuide() {
+        const setupScreen = elements.setupScreen;
+        const learningGuide = elements.learningGuide;
+        const userCenter = document.getElementById("user-center");
+
+        if (!setupScreen || !learningGuide || !userCenter) {
+          return;
+        }
+
+        const parent = setupScreen.parentNode;
+        if (!parent) {
+          return;
+        }
+
+        if (learningGuide.previousElementSibling !== setupScreen || userCenter.previousElementSibling !== learningGuide) {
+          parent.insertBefore(learningGuide, userCenter);
+        }
+      }
+
       function renderTopicGrid() {
         elements.topicGrid.innerHTML = TOPICS.map(
           (topic) => `
@@ -2130,6 +2288,158 @@
         }
 
         elements.bestScore.textContent = `Best saved score: ${stored.bestScore}`;
+      }
+
+      function getStoredHistory() {
+        const stored = loadStoredData();
+        return Array.isArray(stored.history) ? stored.history : [];
+      }
+
+      function renderUserCenter() {
+        const history = getStoredHistory()
+          .filter((entry) => entry && typeof entry === "object")
+          .sort((left, right) => Date.parse(right.timestamp || 0) - Date.parse(left.timestamp || 0));
+
+        renderTopicWorkList(history);
+        renderHistoryList(history);
+      }
+
+      function renderTopicWorkList(history) {
+        const summaries = buildTopicWorkSummaries(history);
+        if (summaries.length === 0) {
+          elements.topicWorkList.innerHTML = '<p class="empty-state">No completed quizzes yet. Finish a run and this section will rank weak topics for you.</p>';
+          return;
+        }
+
+        elements.topicWorkList.innerHTML = summaries.slice(0, 8).map((summary) => `
+          <article class="user-card">
+            <div class="user-row-head">
+              <h3 class="user-title">${escapeHtml(summary.label)}</h3>
+              <span class="user-score ${summary.accuracy >= 0.7 ? "positive" : summary.accuracy >= 0.5 ? "" : "negative"}">${escapeHtml(String(Math.round(summary.accuracy * 100)))}%</span>
+            </div>
+            <p class="user-copy user-copy--muted">Sessions: ${summary.sessions} • Correct: ${summary.correct} • Wrong: ${summary.wrong} • Skipped: ${summary.skipped} • Score: ${summary.score}</p>
+          </article>
+        `).join("");
+      }
+
+      function renderHistoryList(history) {
+        if (history.length === 0) {
+          elements.historyList.innerHTML = '<p class="empty-state">No saved quiz history yet.</p>';
+          return;
+        }
+
+        elements.historyList.innerHTML = history.map((entry) => {
+          const topicNames = Array.isArray(entry.selectedTopicIds) ? entry.selectedTopicIds.map(topicLabel).join(", ") : "";
+          const scoreClass = entry.score >= 0 ? "positive" : "negative";
+          return `
+            <article class="user-card">
+              <div class="user-row-head">
+                <h3 class="user-title">${escapeHtml(formatHistoryTimestamp(entry.timestamp))}</h3>
+                <span class="user-score ${scoreClass}">Score ${escapeHtml(String(entry.score))}</span>
+              </div>
+              <p class="user-copy">${escapeHtml(`Topics: ${topicNames || "n/a"}`)}</p>
+              <p class="user-copy user-copy--muted">Difficulty: ${escapeHtml(formatDifficultyLabel(entry.difficulty))} • Questions: ${escapeHtml(String(entry.questionCount))} • Timer: ${escapeHtml(entry.timerMinutes === 0 ? "Untimed" : `${entry.timerMinutes}m`)} • Elapsed: ${escapeHtml(formatElapsed(entry.elapsedSeconds, entry.timerMinutes > 0))}</p>
+              <p class="user-copy user-copy--muted">Correct: ${escapeHtml(String(entry.correct))} • Wrong: ${escapeHtml(String(entry.wrong))} • Skipped: ${escapeHtml(String(entry.skipped))}</p>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function buildTopicWorkSummaries(history) {
+        const aggregate = new Map();
+
+        for (const entry of history) {
+          const topicStats = Array.isArray(entry.topicStats) ? entry.topicStats : [];
+          for (const stat of topicStats) {
+            const existing = aggregate.get(stat.id) || {
+              id: stat.id,
+              label: topicLabel(stat.id),
+              sessions: 0,
+              correct: 0,
+              wrong: 0,
+              skipped: 0,
+              score: 0,
+            };
+
+            existing.sessions += 1;
+            existing.correct += Number(stat.correct) || 0;
+            existing.wrong += Number(stat.wrong) || 0;
+            existing.skipped += Number(stat.skipped) || 0;
+            existing.score += Number(stat.score) || 0;
+            aggregate.set(stat.id, existing);
+          }
+        }
+
+        return [...aggregate.values()]
+          .map((summary) => ({
+            ...summary,
+            attempted: summary.correct + summary.wrong + summary.skipped,
+            accuracy: summary.correct + summary.wrong > 0 ? summary.correct / (summary.correct + summary.wrong) : 0,
+          }))
+          .sort((left, right) => {
+            if (Math.abs(left.accuracy - right.accuracy) > 0.0001) {
+              return left.accuracy - right.accuracy;
+            }
+            if (left.score !== right.score) {
+              return left.score - right.score;
+            }
+            return right.attempted - left.attempted;
+          });
+      }
+
+      function topicLabel(topicId) {
+        return TOPICS.find((topic) => topic.id === topicId)?.label || topicId;
+      }
+
+      function formatDifficultyLabel(rawValue) {
+        if (!rawValue || rawValue === "all") {
+          return "All mix";
+        }
+        return rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
+      }
+
+      function formatElapsed(elapsedSeconds, timed) {
+        if (!timed) {
+          return "n/a";
+        }
+
+        const safeSeconds = Math.max(0, Number(elapsedSeconds) || 0);
+        const minutes = Math.floor(safeSeconds / 60);
+        const seconds = safeSeconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function formatHistoryTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        if (Number.isNaN(date.getTime())) {
+          return "Saved run";
+        }
+        return date.toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        });
+      }
+
+      function clearAllMemory() {
+        if (!window.confirm("Delete all saved memory? This clears quiz history, saved settings, and performance memory.")) {
+          return;
+        }
+
+        window.localStorage.removeItem(STORAGE_KEY);
+        elements.timerMinutes.value = String(DEFAULT_TIMER_MINUTES);
+        elements.questionCount.value = String(DEFAULT_QUESTION_COUNT);
+        elements.difficultySelect.value = DEFAULT_DIFFICULTY;
+        elements.showHints.checked = false;
+        setSelectedTopics(getAllTopicIds());
+        resetSessionState();
+        clearInlineErrors();
+        renderBestScore();
+        renderUserCenter();
+        updateTopicCount();
+        renderLiveReview();
+        updateSummaryToggle();
+        setSessionSummaryOpen(false);
+        showSetupScreen();
       }
 
       function startSession() {
@@ -2232,6 +2542,18 @@
         showSetupScreen();
         renderLiveReview();
         updateSummaryToggle();
+      }
+
+      function goToNewQuizSetup() {
+        resetSessionState();
+        clearInlineErrors();
+        renderLiveReview();
+        updateSummaryToggle();
+        setSessionSummaryOpen(false);
+        showSetupScreen();
+        window.requestAnimationFrame(() => {
+          elements.setupScreen.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
       }
 
       function createSessionDeckEntry(question, cardNumber, revisitCount = 0) {
@@ -2401,6 +2723,45 @@
         }
       }
 
+      function appendHistoryEntry() {
+        const orderedResults = [...state.results].sort((left, right) => left.cardNumber - right.cardNumber);
+        const perTopic = new Map();
+
+        for (const entry of orderedResults) {
+          const key = entry.question.topicId;
+          const current = perTopic.get(key) || { id: key, correct: 0, wrong: 0, skipped: 0, score: 0 };
+          if (entry.status === "correct") {
+            current.correct += 1;
+          } else if (entry.status === "wrong") {
+            current.wrong += 1;
+          } else if (entry.status === "skipped") {
+            current.skipped += 1;
+          }
+          current.score += entry.score;
+          perTopic.set(key, current);
+        }
+
+        const history = getStoredHistory();
+        const elapsedSeconds = state.timerSeconds > 0 ? Math.max(0, state.timerSeconds - state.remainingSeconds) : 0;
+        history.unshift({
+          id: `history-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          timestamp: new Date().toISOString(),
+          selectedTopicIds: [...state.selectedTopics].sort(),
+          difficulty: state.difficulty,
+          questionCount: state.sessionLength,
+          timerMinutes: Math.round(state.timerSeconds / 60),
+          elapsedSeconds,
+          score: orderedResults.reduce((sum, entry) => sum + entry.score, 0),
+          correct: orderedResults.filter((entry) => entry.status === "correct").length,
+          wrong: orderedResults.filter((entry) => entry.status === "wrong").length,
+          skipped: orderedResults.filter((entry) => entry.status === "skipped").length,
+          topicStats: [...perTopic.values()].sort((left, right) => left.id.localeCompare(right.id)),
+        });
+
+        savePreferences({ history: history.slice(0, 200) });
+        renderUserCenter();
+      }
+
       function finishSession(timedOut) {
         if (state.timerId) {
           window.clearInterval(state.timerId);
@@ -2409,6 +2770,7 @@
 
         state.timedOut = timedOut;
         finalizeOutstandingResults();
+        appendHistoryEntry();
 
         renderResults();
         showResultsScreen();
@@ -2780,6 +3142,38 @@
           return "Moment generating functions package the distribution into one expression. If you recognize the family, you can plug in a convenient value of t or read off mean and variance from the standard form.\n\nFor finite weighted sums of e^(tx), the coefficients are often just the probabilities of the point masses.";
         }
 
+        if (question.topicId === "basicReview") {
+          if (question.category === "Normal moment") {
+            return "For a standard normal, symmetry kills every odd raw moment. That is why E[Z], E[Z^3], E[Z^5], and so on are all 0.\n\nFor even moments, the pattern is E[Z^(2m)] = (2m - 1)!!. So the sequence goes 1, 3, 15, 105, 945, and continuing that pattern is much faster than re-integrating the density each time.";
+          }
+
+          if (question.category === "Uniform moment") {
+            return "Uniform raw moments come straight from one antiderivative. For X ~ Uniform(a,b), E[X^k] is the average value of x^k on [a,b], so it equals (b^(k+1) - a^(k+1)) / ((k+1)(b-a)).\n\nThat is why these cards are usually about noticing whether symmetry makes the answer collapse. On Uniform(-1,1), every odd raw moment vanishes immediately because the integrand is odd on a symmetric interval.";
+          }
+
+          if (question.category === "Geometric moment") {
+            return "For the geometric law on {1,2,...}, the mean and variance are the headline formulas: E[X] = 1/p and Var(X) = (1-p)/p^2. Higher raw moments can be built either from power-series identities or from sums of x^k p(1-p)^(x-1).\n\nThe practical mental point is that small p makes all moments large, because waiting time scales like 1/p. So the third and fourth moments grow quickly once the success probability gets small.";
+          }
+
+          if (question.category === "Poisson moment") {
+            return "Poisson higher raw moments are easiest through factorial moments. For X ~ Poisson(lambda), E[X(X-1)...(X-r+1)] = lambda^r, and ordinary powers can be rewritten in terms of those falling-factorial pieces.\n\nThat is why the first few raw moments become short polynomials in lambda rather than ugly infinite sums. The mean and variance both equal lambda because the same intensity controls both location and fluctuation.";
+          }
+
+          if (question.category === "Binomial moment") {
+            return "Binomial moments come from indicator sums or factorial moments. If X = sum I_i, then E[X] = np and Var(X) = np(1-p). Higher raw moments can be expanded from X(X-1), X(X-1)(X-2), and so on.\n\nThe clean reason is that factorial moments only count distinct successful trial choices, so E[X(X-1)...(X-r+1)] = n(n-1)...(n-r+1)p^r. Converting those to ordinary powers gives the third and fourth moments quickly.";
+          }
+
+          if (question.category === "Moment existence") {
+            return "These cards are about tail heaviness, not formula memorization. The Cauchy tail is so heavy that even the first absolute moment diverges, so neither the mean nor the variance exists.\n\nPareto and Student t are similar in spirit: you only get a finite k-th moment once the tail parameter is large enough. So the first question is always existence, and only then computation.";
+          }
+
+          if (question.category === "Distribution mean" || question.category === "Distribution variance") {
+            return "The quickest route here is family recognition. Uniform, beta, gamma, chi-square, F, lognormal, Laplace, Pareto, and Student t each have a compact textbook mean/variance pair, often inherited from a simpler parent family.\n\nThe real pattern is structural: chi-square is gamma, exponential is gamma with shape 1, lognormal is e^Normal, beta is a gamma ratio, and t or F only have the requested moments when their degrees of freedom are large enough. The review cards are really training that recognition map.";
+          }
+
+          return "The basic-review topic is formula memory with structure underneath it. For the standard families, you want the mean and variance on immediate recall, then a few extra patterns: standard-normal even moments, geometric waiting-time scale, Poisson/binomial factorial moments, and heavy-tail existence thresholds.\n\nThe goal is to stop re-deriving these from zero during harder interview questions. Once the distribution family is familiar, many later EV, variance, regression, and asymptotic cards become one line instead of five.";
+        }
+
         if (question.topicId === "regression") {
           if (question.category === "Regression MLE") {
             if (question.prompt.includes("Laplace-error")) {
@@ -2959,6 +3353,8 @@
           state.timerId = null;
         }
 
+        hideLearningGuide();
+        hideUserCenter();
         setSessionSummaryOpen(false);
         elements.setupScreen.classList.remove("is-hidden");
         elements.sessionScreen.classList.add("is-hidden");
@@ -2967,6 +3363,7 @@
       }
 
       function showLearningGuide() {
+        hideUserCenter();
         elements.learningGuide.classList.remove("is-hidden");
         window.requestAnimationFrame(() => {
           elements.learningGuide.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2977,8 +3374,21 @@
         elements.learningGuide.classList.add("is-hidden");
       }
 
+      function showUserCenter() {
+        hideLearningGuide();
+        elements.userCenter.classList.remove("is-hidden");
+        window.requestAnimationFrame(() => {
+          elements.userCenter.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      function hideUserCenter() {
+        elements.userCenter.classList.add("is-hidden");
+      }
+
       function showSessionScreen() {
         hideLearningGuide();
+        hideUserCenter();
         elements.setupScreen.classList.add("is-hidden");
         elements.sessionScreen.classList.remove("is-hidden");
         elements.resultsScreen.classList.add("is-hidden");
@@ -2987,6 +3397,7 @@
 
       function showResultsScreen() {
         hideLearningGuide();
+        hideUserCenter();
         setSessionSummaryOpen(false);
         elements.setupScreen.classList.add("is-hidden");
         elements.sessionScreen.classList.add("is-hidden");
@@ -3153,6 +3564,7 @@
           discreteExtremes: [...buildDiscreteExtremeQuestions(), ...buildExpandedDiscreteExtremeQuestions(), ...buildMassiveDiscreteExtremeQuestions()],
           cardsSampling: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "cardsSampling"),
           momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf").concat(buildUltraMomentsQuestions()),
+          basicReview: buildBasicReviewQuestions(),
           regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions(), ...distributedNewQuestions.filter((question) => question.topicId === "regression")],
           orderStats: distributedNewQuestions.filter((question) => question.topicId === "orderStats"),
           estimation: distributedNewQuestions.filter((question) => question.topicId === "estimation"),
@@ -12065,6 +12477,636 @@
           source: source || null,
           ...extras,
         };
+      }
+
+      function buildBasicReviewQuestions() {
+        return [
+          ...buildUniformReviewQuestions(),
+          ...buildNormalReviewQuestions(),
+          ...buildGeometricReviewQuestions(),
+          ...buildPoissonReviewQuestions(),
+          ...buildBinomialReviewQuestions(),
+          ...buildBetaReviewQuestions(),
+          ...buildGammaReviewQuestions(),
+          ...buildCauchyReviewQuestions(),
+          ...buildLaplaceReviewQuestions(),
+          ...buildParetoReviewQuestions(),
+          ...buildLognormalReviewQuestions(),
+          ...buildStudentTReviewQuestions(),
+          ...buildChiSquareReviewQuestions(),
+          ...buildFReviewQuestions(),
+        ];
+      }
+
+      function buildUniformReviewQuestions() {
+        const specs = [
+          { a: 0, b: 1, k: 3, difficulty: "easy" },
+          { a: 0, b: 1, k: 4, difficulty: "medium" },
+          { a: -1, b: 1, k: 3, difficulty: "medium" },
+          { a: -1, b: 1, k: 4, difficulty: "hard" },
+          { a: 2, b: 5, k: 3, difficulty: "medium" },
+          { a: 2, b: 5, k: 4, difficulty: "hard" },
+        ];
+
+        const questions = [];
+        for (const { a, b, k, difficulty } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Uniform moment",
+            prompt: `If X ~ Uniform(${a}, ${b}), estimate E[X^${k}].`,
+            hint: "Integrate x^k over [a, b] and divide by b - a.",
+            inputMode: "number",
+            formatHint: "raw moment",
+            answer: uniformRawMoment(a, b, k),
+            absTolerance: 0.03,
+            explanation: `For Uniform(a,b), E[X^k] = (b^(k+1) - a^(k+1)) / ((k+1)(b-a)). Plug in a = ${a} and b = ${b}.`,
+            difficulty,
+          }));
+        }
+
+        for (const { a, b, difficulty } of [{ a: 0, b: 1, difficulty: "easy" }, { a: -1, b: 1, difficulty: "easy" }, { a: 2, b: 5, difficulty: "medium" }]) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Uniform(${a}, ${b}), estimate E[X].`,
+            hint: "The mean is the midpoint.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: (a + b) / 2,
+            absTolerance: 0.02,
+            explanation: `A uniform law is symmetric on its interval, so the mean is the midpoint ${(a + b) / 2}.`,
+            difficulty,
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Uniform(${a}, ${b}), estimate Var(X).`,
+            hint: "Use (b - a)^2 / 12.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: ((b - a) ** 2) / 12,
+            absTolerance: 0.03,
+            explanation: `For Uniform(a,b), Var(X) = (b-a)^2 / 12.`,
+            difficulty: difficulty === "easy" ? "medium" : difficulty,
+          }));
+        }
+        return questions;
+      }
+
+      function buildNormalReviewQuestions() {
+        const questions = [];
+        for (let k = 1; k <= 10; k += 1) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Normal moment",
+            prompt: `If Z ~ N(0,1), estimate E[Z^${k}].`,
+            hint: k % 2 === 1 ? "Odd moments vanish by symmetry." : "Even moments follow the double-factorial pattern.",
+            inputMode: "number",
+            formatHint: "raw moment",
+            answer: normalRawMoment(0, 1, k),
+            absTolerance: k <= 4 ? 0.03 : 0.3,
+            explanation: k % 2 === 1 ? "Standard normal odd moments are 0 by symmetry." : `For standard normal, E[Z^${k}] = (${k - 1})!! = ${formatNumber(normalRawMoment(0, 1, k), 4)}.`,
+            difficulty: k <= 3 ? "easy" : k <= 6 ? "medium" : "hard",
+          }));
+        }
+
+        for (const { mu, sigma, difficulty } of [{ mu: 2, sigma: 3, difficulty: "easy" }, { mu: -1, sigma: 2, difficulty: "medium" }]) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ N(${mu}, ${sigma}^2), estimate E[X].`,
+            hint: "The first parameter is the mean.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: mu,
+            absTolerance: 0.01,
+            explanation: `A normal N(mu, sigma^2) has mean mu, so E[X] = ${mu}.`,
+            difficulty,
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ N(${mu}, ${sigma}^2), estimate Var(X).`,
+            hint: "The variance is sigma^2.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: sigma ** 2,
+            absTolerance: 0.02,
+            explanation: `A normal N(mu, sigma^2) has variance sigma^2 = ${sigma ** 2}.`,
+            difficulty,
+          }));
+        }
+        return questions;
+      }
+
+      function buildGeometricReviewQuestions() {
+        const ps = [0.5, 1 / 3, 0.25];
+        const questions = [];
+        for (const p of ps) {
+          const pText = formatFractionLike(p);
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X is geometric with success probability ${pText} on {1,2,...}, estimate E[X].`,
+            hint: "Use 1/p.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: 1 / p,
+            absTolerance: 0.03,
+            explanation: "For the geometric law on {1,2,...}, the mean is 1/p.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X is geometric with success probability ${pText} on {1,2,...}, estimate Var(X).`,
+            hint: "Use (1-p)/p^2.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: (1 - p) / (p ** 2),
+            absTolerance: 0.05,
+            explanation: "For the geometric law on {1,2,...}, Var(X) = (1-p)/p^2.",
+            difficulty: "medium",
+          }));
+          for (const k of [3, 4]) {
+            questions.push(createQuestion({
+              topicId: "basicReview",
+              category: "Geometric moment",
+              prompt: `If X is geometric with success probability ${pText} on {1,2,...}, estimate E[X^${k}].`,
+              hint: "Use the raw-moment formula or sum x^k p (1-p)^(x-1).",
+              inputMode: "number",
+              formatHint: "raw moment",
+              answer: geometricRawMoment(p, k),
+              absTolerance: 0.2,
+              explanation: `This raw moment is computed from sum x^${k} p (1-p)^(x-1).`,
+              difficulty: k === 3 ? "medium" : "hard",
+            }));
+          }
+        }
+        return questions;
+      }
+
+      function buildPoissonReviewQuestions() {
+        const lambdas = [2, 3, 5];
+        const questions = [];
+        for (const lambda of lambdas) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Poisson(${lambda}), estimate E[X].`,
+            hint: "Poisson mean equals lambda.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: lambda,
+            absTolerance: 0.02,
+            explanation: `For Poisson(lambda), the mean is lambda = ${lambda}.`,
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Poisson(${lambda}), estimate Var(X).`,
+            hint: "Poisson variance also equals lambda.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: lambda,
+            absTolerance: 0.02,
+            explanation: `For Poisson(lambda), the variance is also lambda = ${lambda}.`,
+            difficulty: "easy",
+          }));
+          for (const k of [3, 4]) {
+            questions.push(createQuestion({
+              topicId: "basicReview",
+              category: "Poisson moment",
+              prompt: `If X ~ Poisson(${lambda}), estimate E[X^${k}].`,
+              hint: "Use Touchard-style raw moments or sum against the pmf.",
+              inputMode: "number",
+              formatHint: "raw moment",
+              answer: poissonRawMoment(lambda, k),
+              absTolerance: 0.08,
+              explanation: "Poisson raw moments can be recovered from factorial moments or summed directly from the pmf.",
+              difficulty: k === 3 ? "medium" : "hard",
+            }));
+          }
+        }
+        return questions;
+      }
+
+      function buildBinomialReviewQuestions() {
+        const specs = [
+          { n: 10, p: 0.5 },
+          { n: 12, p: 0.25 },
+          { n: 20, p: 0.2 },
+        ];
+        const questions = [];
+        for (const { n, p } of specs) {
+          const pText = formatFractionLike(p);
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Binomial(${n}, ${pText}), estimate E[X].`,
+            hint: "Use np.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: n * p,
+            absTolerance: 0.03,
+            explanation: "For Binomial(n,p), the mean is np.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Binomial(${n}, ${pText}), estimate Var(X).`,
+            hint: "Use np(1-p).",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: n * p * (1 - p),
+            absTolerance: 0.03,
+            explanation: "For Binomial(n,p), the variance is np(1-p).",
+            difficulty: "easy",
+          }));
+          for (const k of [3, 4]) {
+            questions.push(createQuestion({
+              topicId: "basicReview",
+              category: "Binomial moment",
+              prompt: `If X ~ Binomial(${n}, ${pText}), estimate E[X^${k}].`,
+              hint: "Expand from factorial moments or sum over x = 0,...,n.",
+              inputMode: "number",
+              formatHint: "raw moment",
+              answer: binomialRawMoment(n, p, k),
+              absTolerance: 0.12,
+              explanation: "Binomial raw moments are easiest from factorial moments or by direct finite summation.",
+              difficulty: k === 3 ? "medium" : "hard",
+            }));
+          }
+        }
+        return questions;
+      }
+
+      function buildBetaReviewQuestions() {
+        const specs = [{ a: 2, b: 5 }, { a: 3, b: 3 }, { a: 5, b: 2 }];
+        const questions = [];
+        for (const { a, b } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Beta(${a}, ${b}), estimate E[X].`,
+            hint: "Use a / (a + b).",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: a / (a + b),
+            absTolerance: 0.03,
+            explanation: "For Beta(a,b), the mean is a / (a + b).",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Beta(${a}, ${b}), estimate Var(X).`,
+            hint: "Use ab / ((a+b)^2 (a+b+1)).",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: (a * b) / (((a + b) ** 2) * (a + b + 1)),
+            absTolerance: 0.02,
+            explanation: "For Beta(a,b), Var(X) = ab / ((a+b)^2 (a+b+1)).",
+            difficulty: "medium",
+          }));
+        }
+        return questions;
+      }
+
+      function buildGammaReviewQuestions() {
+        const specs = [{ k: 2, theta: 3 }, { k: 4, theta: 0.5 }, { k: 3, theta: 2 }];
+        const questions = [];
+        for (const { k, theta } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Gamma(shape ${k}, scale ${theta}), estimate E[X].`,
+            hint: "Use shape × scale.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: k * theta,
+            absTolerance: 0.03,
+            explanation: "For Gamma(shape k, scale theta), the mean is k theta.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Gamma(shape ${k}, scale ${theta}), estimate Var(X).`,
+            hint: "Use shape × scale^2.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: k * (theta ** 2),
+            absTolerance: 0.04,
+            explanation: "For Gamma(shape k, scale theta), the variance is k theta^2.",
+            difficulty: "medium",
+          }));
+        }
+        return questions;
+      }
+
+      function buildCauchyReviewQuestions() {
+        return [
+          createQuestion({
+            topicId: "basicReview",
+            category: "Moment existence",
+            prompt: "How many of mean and variance exist for a standard Cauchy distribution: 0, 1, or 2?",
+            hint: "Cauchy is the classic heavy-tailed counterexample.",
+            inputMode: "number",
+            formatHint: "0, 1, or 2",
+            answer: 0,
+            absTolerance: 0.01,
+            explanation: "A standard Cauchy has neither a finite mean nor a finite variance.",
+            difficulty: "easy",
+          }),
+        ];
+      }
+
+      function buildLaplaceReviewQuestions() {
+        const specs = [{ mu: 0, b: 1 }, { mu: 2, b: 3 }];
+        const questions = [];
+        for (const { mu, b } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X has Laplace location ${mu} and scale ${b}, estimate E[X].`,
+            hint: "The mean is the location.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: mu,
+            absTolerance: 0.02,
+            explanation: "A Laplace(mu,b) law has mean mu.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X has Laplace location ${mu} and scale ${b}, estimate Var(X).`,
+            hint: "Use 2 b^2.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: 2 * (b ** 2),
+            absTolerance: 0.04,
+            explanation: "A Laplace(mu,b) law has variance 2b^2.",
+            difficulty: "medium",
+          }));
+        }
+        return questions;
+      }
+
+      function buildParetoReviewQuestions() {
+        const specs = [{ xm: 1, alpha: 4 }, { xm: 2, alpha: 5 }];
+        const questions = [];
+        for (const { xm, alpha } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ Pareto(scale ${xm}, tail ${alpha}), estimate E[X].`,
+            hint: "Use alpha xm / (alpha - 1).",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: (alpha * xm) / (alpha - 1),
+            absTolerance: 0.04,
+            explanation: "For Pareto(xm, alpha) with alpha > 1, the mean is alpha xm / (alpha - 1).",
+            difficulty: "medium",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ Pareto(scale ${xm}, tail ${alpha}), estimate Var(X).`,
+            hint: "Use alpha xm^2 / ((alpha - 1)^2 (alpha - 2)).",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: (alpha * (xm ** 2)) / (((alpha - 1) ** 2) * (alpha - 2)),
+            absTolerance: 0.08,
+            explanation: "For Pareto(xm, alpha) with alpha > 2, the variance is alpha xm^2 / ((alpha - 1)^2 (alpha - 2)).",
+            difficulty: "hard",
+          }));
+        }
+        return questions;
+      }
+
+      function buildLognormalReviewQuestions() {
+        const specs = [{ mu: 0, sigma: 1 }, { mu: 1, sigma: 0.5 }];
+        const questions = [];
+        for (const { mu, sigma } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X is lognormal with underlying normal N(${mu}, ${sigma}^2), estimate E[X].`,
+            hint: "Use exp(mu + sigma^2 / 2).",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: Math.exp(mu + ((sigma ** 2) / 2)),
+            absTolerance: 0.08,
+            explanation: "A lognormal with underlying N(mu, sigma^2) has mean exp(mu + sigma^2/2).",
+            difficulty: "medium",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X is lognormal with underlying normal N(${mu}, ${sigma}^2), estimate Var(X).`,
+            hint: "Use (e^{sigma^2} - 1)e^{2mu + sigma^2}.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: (Math.exp(sigma ** 2) - 1) * Math.exp((2 * mu) + (sigma ** 2)),
+            absTolerance: 0.12,
+            explanation: "The lognormal variance is (e^{sigma^2} - 1)e^{2mu + sigma^2}.",
+            difficulty: "hard",
+          }));
+        }
+        return questions;
+      }
+
+      function buildStudentTReviewQuestions() {
+        const nus = [5, 8];
+        const questions = [];
+        for (const nu of nus) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If T ~ t distribution with ${nu} degrees of freedom, estimate E[T].`,
+            hint: "Student t is symmetric when the mean exists.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: 0,
+            absTolerance: 0.02,
+            explanation: "A centered Student t with nu > 1 has mean 0 by symmetry.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If T ~ t distribution with ${nu} degrees of freedom, estimate Var(T).`,
+            hint: "Use nu / (nu - 2) when nu > 2.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: nu / (nu - 2),
+            absTolerance: 0.04,
+            explanation: "A Student t_nu law has variance nu / (nu - 2) when nu > 2.",
+            difficulty: "medium",
+          }));
+        }
+        return questions;
+      }
+
+      function buildChiSquareReviewQuestions() {
+        const dfs = [4, 10];
+        const questions = [];
+        for (const nu of dfs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ chi-square with ${nu} degrees of freedom, estimate E[X].`,
+            hint: "Mean equals the degrees of freedom.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: nu,
+            absTolerance: 0.02,
+            explanation: "A chi-square_nu law has mean nu.",
+            difficulty: "easy",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ chi-square with ${nu} degrees of freedom, estimate Var(X).`,
+            hint: "Variance equals twice the degrees of freedom.",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: 2 * nu,
+            absTolerance: 0.02,
+            explanation: "A chi-square_nu law has variance 2nu.",
+            difficulty: "easy",
+          }));
+        }
+        return questions;
+      }
+
+      function buildFReviewQuestions() {
+        const specs = [{ d1: 5, d2: 10 }, { d1: 8, d2: 12 }];
+        const questions = [];
+        for (const { d1, d2 } of specs) {
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution mean",
+            prompt: `If X ~ F(${d1}, ${d2}), estimate E[X].`,
+            hint: "Use d2 / (d2 - 2) when d2 > 2.",
+            inputMode: "number",
+            formatHint: "mean",
+            answer: d2 / (d2 - 2),
+            absTolerance: 0.04,
+            explanation: "An F(d1,d2) law has mean d2 / (d2 - 2) when d2 > 2.",
+            difficulty: "medium",
+          }));
+          questions.push(createQuestion({
+            topicId: "basicReview",
+            category: "Distribution variance",
+            prompt: `If X ~ F(${d1}, ${d2}), estimate Var(X).`,
+            hint: "Use 2 d2^2 (d1 + d2 - 2) / (d1 (d2 - 2)^2 (d2 - 4)).",
+            inputMode: "number",
+            formatHint: "variance",
+            answer: (2 * (d2 ** 2) * (d1 + d2 - 2)) / (d1 * ((d2 - 2) ** 2) * (d2 - 4)),
+            absTolerance: 0.08,
+            explanation: "An F(d1,d2) law has variance 2 d2^2 (d1 + d2 - 2) / (d1 (d2 - 2)^2 (d2 - 4)) when d2 > 4.",
+            difficulty: "hard",
+          }));
+        }
+        return questions;
+      }
+
+      function uniformRawMoment(a, b, k) {
+        return ((b ** (k + 1)) - (a ** (k + 1))) / ((k + 1) * (b - a));
+      }
+
+      function normalRawMoment(mu, sigma, k) {
+        let total = 0;
+        for (let j = 0; j <= k; j += 1) {
+          total += combination(k, j) * (mu ** (k - j)) * (sigma ** j) * standardNormalRawMoment(j);
+        }
+        return total;
+      }
+
+      function standardNormalRawMoment(k) {
+        if (k % 2 === 1) {
+          return 0;
+        }
+        return doubleFactorial(k - 1);
+      }
+
+      function geometricRawMoment(p, k) {
+        const q = 1 - p;
+        let probability = p;
+        let sum = 0;
+        for (let x = 1; x <= 100000; x += 1) {
+          sum += (x ** k) * probability;
+          probability *= q;
+          if (probability < 1e-14) {
+            break;
+          }
+        }
+        return sum;
+      }
+
+      function poissonRawMoment(lambda, k) {
+        let probability = Math.exp(-lambda);
+        let sum = 0;
+        for (let x = 0; x <= 200; x += 1) {
+          sum += (x ** k) * probability;
+          probability *= lambda / (x + 1);
+          if (x > lambda + (12 * Math.sqrt(lambda)) && probability < 1e-14) {
+            break;
+          }
+        }
+        return sum;
+      }
+
+      function binomialRawMoment(n, p, k) {
+        let sum = 0;
+        for (let x = 0; x <= n; x += 1) {
+          sum += (x ** k) * combination(n, x) * (p ** x) * ((1 - p) ** (n - x));
+        }
+        return sum;
+      }
+
+      function combination(n, k) {
+        if (k < 0 || k > n) {
+          return 0;
+        }
+        const m = Math.min(k, n - k);
+        let result = 1;
+        for (let i = 1; i <= m; i += 1) {
+          result = (result * (n - m + i)) / i;
+        }
+        return result;
+      }
+
+      function doubleFactorial(n) {
+        if (n <= 0) {
+          return 1;
+        }
+        let product = 1;
+        for (let value = n; value >= 1; value -= 2) {
+          product *= value;
+        }
+        return product;
+      }
+
+      function formatFractionLike(value) {
+        if (Math.abs(value - 0.5) < 1e-12) {
+          return "1/2";
+        }
+        if (Math.abs(value - (1 / 3)) < 1e-12) {
+          return "1/3";
+        }
+        if (Math.abs(value - 0.25) < 1e-12) {
+          return "1/4";
+        }
+        if (Math.abs(value - 0.2) < 1e-12) {
+          return "1/5";
+        }
+        return formatNumber(value, 3);
       }
 
       function buildSharpeGraphQuestions() {
