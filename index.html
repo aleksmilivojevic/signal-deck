@@ -196,6 +196,50 @@
         margin-top: 1.25rem;
       }
 
+      .appearance-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.45rem;
+        margin: 0 0 0.75rem;
+      }
+
+      .appearance-toggle {
+        display: inline-flex;
+        gap: 0.45rem;
+      }
+
+      .appearance-choice {
+        width: 1.95rem;
+        height: 1.95rem;
+        min-height: 1.95rem;
+        padding: 0;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        border-radius: 999px;
+        background: var(--paper);
+        color: inherit;
+        font: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
+      }
+
+      .appearance-choice.is-active {
+        border-top: 2px solid var(--win-dark);
+        border-left: 2px solid var(--win-dark);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        box-shadow: inset 1px 1px 0 var(--win-black), inset -1px -1px 0 var(--win-mid);
+        color: #000080;
+        font-weight: 700;
+      }
+
       .panel {
         position: relative;
         border-top: 2px solid var(--win-lite);
@@ -592,6 +636,362 @@
       .toggle-row:focus-within {
         outline: 2px solid rgba(214, 124, 45, 0.7);
         outline-offset: 2px;
+      }
+
+      body[data-theme="modern"] {
+        color: #1f2a33;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(14, 122, 109, 0.16), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(184, 92, 56, 0.13), transparent 32%),
+          linear-gradient(180deg, #efe7dc 0%, #f4efe7 100%);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body[data-theme="modern"]::before {
+        background: none;
+        opacity: 0;
+      }
+
+      body[data-theme="modern"] code,
+      body[data-theme="modern"] .eyebrow,
+      body[data-theme="modern"] .section-tag,
+      body[data-theme="modern"] .metric-label,
+      body[data-theme="modern"] .field-label,
+      body[data-theme="modern"] .summary-label,
+      body[data-theme="modern"] .badge,
+      body[data-theme="modern"] .pill,
+      body[data-theme="modern"] .keyboard-note,
+      body[data-theme="modern"] .topic-meta,
+      body[data-theme="modern"] .toggle-copy,
+      body[data-theme="modern"] .review-pill,
+      body[data-theme="modern"] .details-summary,
+      body[data-theme="modern"] .button,
+      body[data-theme="modern"] .appearance-choice {
+        font-family: "SFMono-Regular", Menlo, Consolas, Monaco, monospace;
+      }
+
+      body[data-theme="modern"] .hero {
+        color: #1f2a33;
+        background: rgba(255, 252, 247, 0.88);
+        border: 1px solid rgba(216, 206, 192, 0.9);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(54, 38, 25, 0.08);
+        padding: 1.1rem 12.4rem 1.7rem 1.3rem;
+        margin-bottom: 1.55rem;
+      }
+
+      body[data-theme="modern"] .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(14, 122, 109, 0.15), rgba(184, 92, 56, 0.16));
+        pointer-events: none;
+      }
+
+      body[data-theme="modern"] .eyebrow {
+        color: #0e7a6d;
+      }
+
+      body[data-theme="modern"] h1 {
+        color: #1f2a33;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: -0.04em;
+        line-height: 1.02;
+        max-width: none;
+        font-size: clamp(2.4rem, 5vw, 3.9rem);
+      }
+
+      body[data-theme="modern"] .dek {
+        color: #5c6a73;
+        border-left: 0;
+        padding-left: 0;
+        font-size: 1rem;
+        max-width: 50rem;
+      }
+
+      body[data-theme="modern"] .brand-mark {
+        opacity: 0.88;
+        filter: none;
+      }
+
+      body[data-theme="modern"] .brand-mark .globe-ring {
+        fill: rgba(255, 252, 247, 0.82);
+        stroke: rgba(14, 122, 109, 0.42);
+      }
+
+      body[data-theme="modern"] .brand-mark .globe-grid {
+        stroke: rgba(14, 122, 109, 0.74);
+      }
+
+      body[data-theme="modern"] .brand-mark .globe-axis {
+        stroke: rgba(31, 42, 51, 0.18);
+      }
+
+      body[data-theme="modern"] .panel {
+        border: 1px solid rgba(216, 206, 192, 0.9);
+        border-radius: 24px;
+        background: rgba(255, 252, 247, 0.88);
+        box-shadow: 0 20px 60px rgba(54, 38, 25, 0.08);
+      }
+
+      body[data-theme="modern"] .panel::before {
+        height: 0;
+        background: none;
+      }
+
+      body[data-theme="modern"] .panel-heading h2,
+      body[data-theme="modern"] .review-header h3,
+      body[data-theme="modern"] .live-review-head h3 {
+        font-size: clamp(1.35rem, 2.5vw, 1.95rem);
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body[data-theme="modern"] .section-tag {
+        color: #0e7a6d;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+      }
+
+      body[data-theme="modern"] .panel-copy,
+      body[data-theme="modern"] .field-note,
+      body[data-theme="modern"] .inline-note,
+      body[data-theme="modern"] .hint-copy,
+      body[data-theme="modern"] .review-copy,
+      body[data-theme="modern"] .review-meta,
+      body[data-theme="modern"] .feedback-copy,
+      body[data-theme="modern"] .empty-state,
+      body[data-theme="modern"] .toggle-copy,
+      body[data-theme="modern"] .topic-description,
+      body[data-theme="modern"] .live-review-head p {
+        color: #5f6d7a;
+      }
+
+      body[data-theme="modern"] .field-card,
+      body[data-theme="modern"] .summary-card,
+      body[data-theme="modern"] .metric-card,
+      body[data-theme="modern"] .flashcard,
+      body[data-theme="modern"] .review-row,
+      body[data-theme="modern"] .live-review-panel,
+      body[data-theme="modern"] .topic-card,
+      body[data-theme="modern"] .hint-panel,
+      body[data-theme="modern"] .feedback-panel,
+      body[data-theme="modern"] .user-card {
+        border: 1px solid #d8cec0;
+        border-radius: 18px;
+        background: rgba(255, 252, 247, 0.72);
+        box-shadow: none;
+      }
+
+      body[data-theme="modern"] .field-input,
+      body[data-theme="modern"] .answer-input {
+        border: 1px solid #d8cec0;
+        border-radius: 14px;
+        background: #fffdf8;
+        color: #1f2a33;
+        box-shadow: none;
+      }
+
+      body[data-theme="modern"] .button,
+      body[data-theme="modern"] .appearance-choice {
+        border: 1px solid #d8cec0;
+        border-radius: 999px;
+        background: rgba(31, 42, 51, 0.08);
+        box-shadow: none;
+        color: #1f2a33;
+      }
+
+      body[data-theme="modern"] .button--primary {
+        background: linear-gradient(135deg, #0e7a6d, #1b4e74);
+        border-color: transparent;
+        color: #fffdf8;
+      }
+
+      body[data-theme="modern"] .appearance-choice.is-active {
+        background: rgba(14, 122, 109, 0.12);
+        border-color: rgba(14, 122, 109, 0.2);
+        color: #0e7a6d;
+      }
+
+      body[data-theme="terminal"] {
+        color: #f4f7fb;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        background:
+          radial-gradient(circle at 88% 8%, rgba(122, 162, 247, 0.08), transparent 0 20%),
+          radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.04), transparent 0 18%),
+          linear-gradient(180deg, #0a0f18 0%, #101827 48%, #111c2d 100%);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body[data-theme="terminal"]::before {
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        background-size: 26px 26px;
+        opacity: 0.12;
+      }
+
+      body[data-theme="terminal"]::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.36) 100%);
+        pointer-events: none;
+      }
+
+      body[data-theme="terminal"] code,
+      body[data-theme="terminal"] .eyebrow,
+      body[data-theme="terminal"] .section-tag,
+      body[data-theme="terminal"] .metric-label,
+      body[data-theme="terminal"] .field-label,
+      body[data-theme="terminal"] .summary-label,
+      body[data-theme="terminal"] .badge,
+      body[data-theme="terminal"] .pill,
+      body[data-theme="terminal"] .keyboard-note,
+      body[data-theme="terminal"] .topic-meta,
+      body[data-theme="terminal"] .toggle-copy,
+      body[data-theme="terminal"] .review-pill,
+      body[data-theme="terminal"] .details-summary,
+      body[data-theme="terminal"] .button,
+      body[data-theme="terminal"] .appearance-choice {
+        font-family: "Courier New", "SFMono-Regular", Menlo, Consolas, Monaco, monospace;
+      }
+
+      body[data-theme="terminal"] .hero {
+        color: #f4f7fb;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        padding: 0.35rem 12rem 1.65rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      body[data-theme="terminal"] .hero::after {
+        display: none;
+      }
+
+      body[data-theme="terminal"] .hero::before {
+        display: block;
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 12rem;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.72), rgba(122, 162, 247, 0.22) 72%, transparent 100%);
+      }
+
+      body[data-theme="terminal"] .eyebrow {
+        color: rgba(255, 255, 255, 0.68);
+      }
+
+      body[data-theme="terminal"] h1 {
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-shadow: none;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      }
+
+      body[data-theme="terminal"] .dek {
+        color: rgba(228, 235, 245, 0.74);
+        padding-left: 1rem;
+        border-left: 1px solid rgba(122, 162, 247, 0.34);
+      }
+
+      body[data-theme="terminal"] .brand-mark {
+        opacity: 0.84;
+        filter: none;
+      }
+
+      body[data-theme="terminal"] .brand-mark .globe-ring {
+        fill: rgba(255, 255, 255, 0.05);
+        stroke: rgba(255, 255, 255, 0.72);
+      }
+
+      body[data-theme="terminal"] .brand-mark .globe-grid {
+        stroke: rgba(206, 220, 240, 0.78);
+      }
+
+      body[data-theme="terminal"] .brand-mark .globe-axis {
+        stroke: rgba(122, 162, 247, 0.34);
+      }
+
+      body[data-theme="terminal"] .panel {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 0;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 18%),
+          linear-gradient(180deg, rgba(15, 23, 37, 0.985) 0%, rgba(11, 17, 27, 0.96) 100%);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      }
+
+      body[data-theme="terminal"] .panel::before {
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0 2%, rgba(255, 255, 255, 0.88) 2% 20%, rgba(122, 162, 247, 0.58) 20% 54%, rgba(255, 255, 255, 0.08) 54% 70%, transparent 70% 100%);
+      }
+
+      body[data-theme="terminal"] .section-tag {
+        color: rgba(206, 220, 240, 0.86);
+      }
+
+      body[data-theme="terminal"] .panel-copy,
+      body[data-theme="terminal"] .field-note,
+      body[data-theme="terminal"] .inline-note,
+      body[data-theme="terminal"] .hint-copy,
+      body[data-theme="terminal"] .review-copy,
+      body[data-theme="terminal"] .review-meta,
+      body[data-theme="terminal"] .feedback-copy,
+      body[data-theme="terminal"] .empty-state,
+      body[data-theme="terminal"] .toggle-copy,
+      body[data-theme="terminal"] .topic-description,
+      body[data-theme="terminal"] .live-review-head p {
+        color: #5fad6e;
+      }
+
+      body[data-theme="terminal"] .field-card,
+      body[data-theme="terminal"] .summary-card,
+      body[data-theme="terminal"] .metric-card,
+      body[data-theme="terminal"] .flashcard,
+      body[data-theme="terminal"] .review-row,
+      body[data-theme="terminal"] .live-review-panel,
+      body[data-theme="terminal"] .topic-card,
+      body[data-theme="terminal"] .hint-panel,
+      body[data-theme="terminal"] .feedback-panel,
+      body[data-theme="terminal"] .user-card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0;
+        background: rgba(15, 23, 37, 0.72);
+        box-shadow: none;
+      }
+
+      body[data-theme="terminal"] .field-input,
+      body[data-theme="terminal"] .answer-input {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 0;
+        background: rgba(7, 12, 20, 0.92);
+        color: #ffffff;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      }
+
+      body[data-theme="terminal"] .button,
+      body[data-theme="terminal"] .appearance-choice {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        background: rgba(15, 23, 37, 0.96);
+        color: #eef2f7;
+        box-shadow: none;
+      }
+
+      body[data-theme="terminal"] .button--primary,
+      body[data-theme="terminal"] .appearance-choice.is-active {
+        color: #ffffff;
+        border-color: rgba(122, 162, 247, 0.44);
+        background: rgba(122, 162, 247, 0.14);
       }
 
       .is-hidden {
@@ -1291,6 +1691,13 @@
           A mental-math drill deck with custom-length sessions, upfront timer control, live right-or-wrong feedback,
           and an on-demand solved-card summary.
         </p>
+        <div class="appearance-toolbar" aria-label="Appearance toggle">
+          <div id="appearance-toggle" class="appearance-toggle">
+            <button class="appearance-choice" type="button" data-appearance-theme="90s" aria-label="90's style" title="90's">90</button>
+            <button class="appearance-choice" type="button" data-appearance-theme="modern" aria-label="Modern style" title="Modern">M</button>
+            <button class="appearance-choice" type="button" data-appearance-theme="terminal" aria-label="Terminal style" title="Terminal">T</button>
+          </div>
+        </div>
         <div class="hero-actions">
           <button id="build-new-quiz-hero" class="button button--primary" type="button">Build new quiz</button>
           <button id="open-learning-guide-hero" class="button button--secondary" type="button">Open learning guide</button>
@@ -1348,7 +1755,7 @@
               <span>-1 wrong</span>
               <span>0 skip</span>
             </div>
-            <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code>, fractions like <code>4/9</code>, or percents like <code>5%</code>.</p>
+            <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code>, fractions like <code>1/20</code>, or percents like <code>5%</code>.</p>
           </article>
 
           <article class="field-card">
@@ -1966,6 +2373,7 @@
       const DEFAULT_QUESTION_COUNT = 20;
       const DEFAULT_TIMER_MINUTES = 5;
       const DEFAULT_DIFFICULTY = "all";
+      const DEFAULT_APPEARANCE_THEME = "90s";
       const STORAGE_KEY = "signal-deck-standalone-preferences";
       const EULER_GAMMA = 0.5772156649;
 
@@ -2006,6 +2414,7 @@
         clearTopics: document.getElementById("clear-topics"),
         learningGuide: document.getElementById("learning-guide"),
         userCenter: document.getElementById("user-center"),
+        appearanceToggle: document.getElementById("appearance-toggle"),
         buildNewQuizHero: document.getElementById("build-new-quiz-hero"),
         openLearningGuideHero: document.getElementById("open-learning-guide-hero"),
         openUserCenterHero: document.getElementById("open-user-center-hero"),
@@ -2114,6 +2523,7 @@
         elements.closeLearningGuide.addEventListener("click", hideLearningGuide);
         elements.closeUserCenter.addEventListener("click", hideUserCenter);
         elements.clearUserMemory.addEventListener("click", clearAllMemory);
+        elements.appearanceToggle.addEventListener("click", handleAppearanceToggle);
         elements.selectAllTopics.addEventListener("click", () => setAllTopics(true));
         elements.clearTopics.addEventListener("click", () => setAllTopics(false));
         elements.questionCount.addEventListener("input", updateTopicCount);
@@ -2275,6 +2685,7 @@
         elements.questionCount.value = stored.questionCount !== undefined ? String(stored.questionCount) : String(DEFAULT_QUESTION_COUNT);
         elements.difficultySelect.value = stored.difficulty || DEFAULT_DIFFICULTY;
         elements.showHints.checked = stored.showHints === true;
+        applyAppearanceTheme(stored.appearanceTheme || DEFAULT_APPEARANCE_THEME, false);
 
         const storedTopics = normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds());
         setSelectedTopics(storedTopics.length > 0 ? storedTopics : getAllTopicIds());
@@ -2426,6 +2837,7 @@
         }
 
         window.localStorage.removeItem(STORAGE_KEY);
+        applyAppearanceTheme(DEFAULT_APPEARANCE_THEME, false);
         elements.timerMinutes.value = String(DEFAULT_TIMER_MINUTES);
         elements.questionCount.value = String(DEFAULT_QUESTION_COUNT);
         elements.difficultySelect.value = DEFAULT_DIFFICULTY;
@@ -2440,6 +2852,37 @@
         updateSummaryToggle();
         setSessionSummaryOpen(false);
         showSetupScreen();
+      }
+
+      function handleAppearanceToggle(event) {
+        if (!(event.target instanceof HTMLElement)) {
+          return;
+        }
+
+        const button = event.target.closest("[data-appearance-theme]");
+        if (!button) {
+          return;
+        }
+
+        applyAppearanceTheme(button.dataset.appearanceTheme || DEFAULT_APPEARANCE_THEME, true);
+      }
+
+      function applyAppearanceTheme(themeName, persist = true) {
+        const nextTheme = ["90s", "modern", "terminal"].includes(themeName) ? themeName : DEFAULT_APPEARANCE_THEME;
+
+        if (nextTheme === DEFAULT_APPEARANCE_THEME) {
+          document.body.removeAttribute("data-theme");
+        } else {
+          document.body.setAttribute("data-theme", nextTheme);
+        }
+
+        elements.appearanceToggle.querySelectorAll("[data-appearance-theme]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.appearanceTheme === nextTheme);
+        });
+
+        if (persist) {
+          savePreferences({ appearanceTheme: nextTheme });
+        }
       }
 
       function startSession() {
