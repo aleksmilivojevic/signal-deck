@@ -1765,6 +1765,15 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .learning-panel,
+      .learning-panel * {
+        box-sizing: border-box;
+      }
+
+      .learning-panel {
+        overflow-x: clip;
+      }
+
       .guide-card {
         padding: 1rem;
         border-top: 2px solid var(--win-lite);
@@ -1784,10 +1793,24 @@
         font-size: 1.2rem;
       }
 
+      .guide-card,
+      .guide-example,
+      .guide-details,
+      .guide-topic-body,
+      .guide-table-wrap,
+      .guide-fact-grid,
+      .guide-fact-card,
+      .guide-fact-row,
+      .guide-fact-value {
+        min-width: 0;
+        max-width: 100%;
+      }
+
       .guide-card p {
         margin: 0.6rem 0 0;
         color: var(--muted);
         line-height: 1.65;
+        overflow-wrap: anywhere;
       }
 
       .guide-example {
@@ -1859,6 +1882,7 @@
         margin: 0.65rem 0 0;
         color: var(--muted);
         line-height: 1.65;
+        overflow-wrap: anywhere;
       }
 
       .guide-topic-card {
@@ -1912,8 +1936,9 @@
 
       .guide-table {
         width: 100%;
-        min-width: 720px;
+        min-width: 0;
         border-collapse: collapse;
+        table-layout: fixed;
         font-size: 0.85rem;
         color: #1b1b1b;
       }
@@ -1924,6 +1949,8 @@
         border: 1px solid #b7b7b7;
         vertical-align: top;
         text-align: left;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       .guide-table th {
@@ -1933,7 +1960,9 @@
       }
 
       .guide-table code {
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       .shape-grid {
@@ -2011,6 +2040,16 @@
         font-size: 0.84rem;
         line-height: 1.5;
         overflow-wrap: anywhere;
+      }
+
+      .learning-panel code,
+      .guide-card code,
+      .guide-example code,
+      .guide-details code,
+      .guide-fact-value code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       .shape-card svg {
@@ -2324,6 +2363,40 @@
           font-size: 2rem;
         }
 
+        .guide-card,
+        .guide-topic-card {
+          padding: 0.82rem 0.82rem 0.9rem;
+        }
+
+        .guide-example,
+        .guide-details,
+        .guide-table-wrap,
+        .guide-fact-card {
+          padding-left: 0.7rem;
+          padding-right: 0.7rem;
+        }
+
+        .guide-topic-title {
+          font-size: 0.96rem;
+        }
+
+        .guide-card p,
+        .guide-example,
+        .guide-details p,
+        .guide-fact-value {
+          font-size: 0.82rem;
+          line-height: 1.5;
+        }
+
+        .guide-table {
+          font-size: 0.73rem;
+        }
+
+        .guide-table th,
+        .guide-table td {
+          padding: 0.42rem 0.42rem;
+        }
+
         .brand-mark {
           width: min(28vw, 6.2rem);
           top: 0.75rem;
@@ -2432,7 +2505,7 @@
               <span>-1 wrong</span>
               <span>0 skip</span>
             </div>
-            <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code>, fractions like <code>1/20</code>, or percents like <code>5%</code>.</p>
+            <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code>, fractions like <code>1/20</code>, or percentages like <code>5%</code>.</p>
           </article>
 
           <article class="field-card">
@@ -2584,6 +2657,19 @@
 <summary>Exact workflow</summary>
 <p>Indicators are especially strong when the objects are exchangeable. That is why fixed points, expected aces, color changes, and occupied faces all collapse quickly.</p>
 <p>For order questions such as the first ace position, think of the special cards as a uniformly random subset of positions. Then symmetry or order-statistic formulas often replace any heavy combinatorics.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Conditional Probability and Bayes Updates</span></summary><div class="guide-topic-body">
+<p>These cards usually have two layers. First there is a hidden state, such as which coin was chosen, which urn you are drawing from, or whether a patient really has a disease. Then there is observed data, such as a toss sequence, a draw sequence, or a test result. The correct update is always the same: for each possible hidden state <code>h</code>, compute <code>P(h) P(data | h)</code>, then renormalize across all states. In words: posterior is proportional to prior times likelihood.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if one of three coins with head probabilities <code>1/4</code>, <code>1/2</code>, and <code>3/4</code> is chosen uniformly and you observe <code>HH</code>, then the posterior weights are proportional to <code>(1/4)^2</code>, <code>(1/2)^2</code>, and <code>(3/4)^2</code>, namely <code>1 : 4 : 9</code>. So the probability the next toss is heads is the posterior weighted average
+              <code>(1/4)(1/14) + (1/2)(4/14) + (3/4)(9/14) = 9/14</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Step 1: list the hidden states. Step 2: for each state, compute the likelihood of the observed data under that state. If tosses are conditionally iid given the chosen coin, the likelihood is just <code>p^{#H}(1-p)^{#T}</code>. If draws are without replacement from a chosen urn, the likelihood uses the changing remaining composition. Step 3: multiply prior by likelihood. Step 4: divide by the total to get posterior probabilities.</p>
+<p>If the prompt then asks for a future event, do one more averaging step. For example, if a coin with head probability <code>p_i</code> has posterior weight <code>w_i</code>, then the posterior predictive probability of heads next is <code>Σ w_i p_i</code>. If the prompt instead asks which hidden state is most likely, stop after the posterior calculation.</p>
+<p>Some “classic” conditional-probability questions are really sample-space questions rather than Bayes updates. The two-child puzzle is the standard warning sign: “the older child is a boy” leaves two equally likely families <code>{BB, BG}</code>, so <code>P(BB)=1/2</code>; “at least one child is a boy” leaves three equally likely families <code>{BB, BG, GB}</code>, so <code>P(BB)=1/3</code>. The conditioning statement matters because it changes which outcomes remain and how they are weighted.</p>
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Expected Value by Conditioning</span></summary><div class="guide-topic-body">
@@ -3337,6 +3423,7 @@
         { id: "maxNormals", label: "Expected max", description: "Use the 1/n tail quantile as an anchor, then remember the mean sits a bit above it.", meta: "E[max Z_i]" },
         { id: "discreteExtremes", label: "Discrete extremes", description: "Geometric and Poisson max/min questions plus full-set occupancy approximations.", meta: "geom / Pois / dice" },
         { id: "cardsSampling", label: "Cards and sampling", description: "Deck, urn, and without-replacement questions built on indicators and symmetry.", meta: "cards / urns" },
+        { id: "conditionalProb", label: "Conditional probability", description: "Posterior updates, Bayes questions, hidden-state inference, and conditional sample-space drills.", meta: "Bayes / posterior" },
         { id: "momentsMgf", label: "Moments and mgf", description: "Second moments, variance, covariance, correlation, and mgf drills.", meta: "Var / Cov / Corr / MGF" },
         { id: "basicReview", label: "Basic review", description: "Mean, variance, and selected higher moments for standard distribution families.", meta: "distribution facts" },
         { id: "regression", label: "Regression", description: "OLS, regression MLE, residual variance, prediction, and Bayesian coefficient updates.", meta: "OLS / MLE / Bayes" },
@@ -4973,6 +5060,30 @@
           return "Most deck questions here are indicator or symmetry problems. Fixed points, color changes, and expected aces all become one-line calculations once you define the right yes-or-no variable.\n\nFor position questions like the first ace, the trick is to think of the special cards as a random subset of positions and use symmetry rather than summing many cases.";
         }
 
+        if (question.topicId === "conditionalProb") {
+          if (question.category === "Conditional probability classic") {
+            return "These cards are warnings that the conditioning statement changes the sample space. The correct move is not to memorize slogans like “at least one” or “switching helps,” but to write down exactly which outcomes still survive after conditioning.\n\nSometimes that is a Bayes update with prior times likelihood. Other times, such as the two-child puzzle or Monty Hall, it is better viewed as a sample-space reweighting question.";
+          }
+
+          if (question.category === "Card posterior") {
+            return "These are Bayes questions with finite populations. The hidden state is which deck was chosen. The observation likelihood is computed without replacement, so each additional observed card changes the remaining composition inside each candidate deck.\n\nAfter you update the posterior over the decks, any next-card question is just one more weighted average of the remaining-deck probabilities.";
+          }
+
+          if (question.category === "Binomial posterior" || question.category === "Geometric posterior" || question.category === "Poisson posterior") {
+            return "These cards are the same Bayes template in different distributional clothing. First write the likelihood of the observed statistic under each candidate parameter value. Then multiply by the prior weight and normalize.\n\nOnce you have the posterior over the candidate models, any future-event question becomes a posterior predictive average under that updated distribution over parameters.";
+          }
+
+          if (question.category === "Urn posterior") {
+            return "The hidden state is which urn was chosen. For each urn, compute the exact without-replacement likelihood of the observed color sequence. Then multiply by the prior weight and normalize.\n\nIf the prompt asks about the next draw, update the remaining composition inside each urn first, compute that next-draw probability inside each urn, and only then average across urns using the posterior weights.";
+          }
+
+          if (question.category === "Test Bayes") {
+            return "The hidden state is disease or no disease. The prior weights are prevalence and 1 minus prevalence. The likelihood of the observed test sequence under disease uses sensitivity for each positive result and 1 minus sensitivity for each negative result. Under no disease, it uses false-positive rate for each positive and specificity for each negative.\n\nOnce you have posterior disease probability, any future test question is just one more weighted average: posterior times sensitivity plus 1 minus posterior times false-positive rate.";
+          }
+
+          return "These cards are hidden-state inference problems. First list the candidate hidden states. Second compute the likelihood of the observed data under each state. Third multiply prior by likelihood and normalize to get the posterior.\n\nIf the prompt then asks about a future toss, roll, or sequence, do one more averaging step under that posterior. So the whole template is: posterior first, prediction second.";
+        }
+
         if (question.topicId === "momentsMgf") {
           if (question.category === "Second moment" || question.category === "Variance") {
             return "Second moments and variances usually boil down to two templates: E[X^2] = Var(X) + (E[X])^2, or variance additivity across independent pieces.\n\nWhen the sampling is without replacement, the main adjustment is the finite-population correction, which shrinks the variance compared with the binomial model.";
@@ -5907,6 +6018,7 @@
           maxNormals: [...buildMaxNormalQuestions(), ...buildExpandedMaxNormalQuestions(), ...buildMassiveMaxNormalQuestions(), ...buildAdditionalMaxNormalQuestions()],
           discreteExtremes: [...buildDiscreteExtremeQuestions(), ...buildExpandedDiscreteExtremeQuestions(), ...buildMassiveDiscreteExtremeQuestions()],
           cardsSampling: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "cardsSampling"),
+          conditionalProb: [...buildConditionalProbabilityQuestions(), ...buildGeneratedConditionalProbabilityQuestions()],
           momentsMgf: [...supplementalQuestions, ...expandedSupplementalQuestions, ...massiveSupplementalQuestions].filter((question) => question.topicId === "momentsMgf").concat(buildUltraMomentsQuestions(), buildAdditionalMomentsQuestions(), buildGeneratedHedgeQuestions()),
           basicReview: buildBasicReviewQuestions(),
           regression: [...buildRegressionQuestions(), ...buildMassiveRegressionQuestions(), ...distributedNewQuestions.filter((question) => question.topicId === "regression")],
@@ -5926,6 +6038,910 @@
           eigenvalues: [...buildEigenvalueQuestions(), ...buildExpandedEigenvalueQuestions(), ...buildMassiveEigenvalueQuestions()],
           greenBook: [...buildGreenBookQuestions(), ...buildExpandedGreenBookQuestions(), ...buildMassiveGreenBookQuestions(), ...buildAdditionalGreenBookQuestions()],
         };
+      }
+
+      function buildConditionalProbabilityQuestions() {
+        return [
+          ...buildConditionalCoinPosteriorQuestions(),
+          ...buildConditionalDiePosteriorQuestions(),
+          ...buildConditionalUrnQuestions(),
+          ...buildConditionalCardPosteriorQuestions(),
+          ...buildConditionalDistributionPosteriorQuestions(),
+          ...buildConditionalTestQuestions(),
+          ...buildConditionalClassicQuestions(),
+        ];
+      }
+
+      function buildConditionalCoinPosteriorQuestions() {
+        const specs = [
+          { probs: [0, 0.5, 1], priors: [1, 1, 1], observed: "H", ask: "future", future: "H", difficulty: "easy" },
+          { probs: [0.25, 0.5, 0.75], priors: [1, 1, 1], observed: "HH", ask: "future", future: "H", difficulty: "easy" },
+          { probs: [0.25, 0.5, 0.75], priors: [1, 1, 1], observed: "HT", ask: "state", targetIndex: 1, difficulty: "medium" },
+          { probs: [0.25, 0.5, 0.75], priors: [1, 2, 1], observed: "H", ask: "future", future: "HH", difficulty: "medium" },
+          { probs: [1 / 3, 2 / 3], priors: [1, 1], observed: "HHT", ask: "future", future: "H", difficulty: "medium" },
+          { probs: [1 / 3, 2 / 3], priors: [1, 1], observed: "TT", ask: "state", targetIndex: 0, difficulty: "easy" },
+          { probs: [0.25, 0.75], priors: [3, 1], observed: "H", ask: "state", targetIndex: 1, difficulty: "medium" },
+          { probs: [0.25, 0.75], priors: [1, 3], observed: "T", ask: "future", future: "H", difficulty: "medium" },
+          { probs: [0, 0.5, 1], priors: [1, 1, 1], observed: "HT", ask: "state", targetIndex: 1, difficulty: "easy" },
+          { probs: [0.25, 0.5, 0.75], priors: [1, 1, 2], observed: "HTH", ask: "future", future: "T", difficulty: "hard" },
+        ];
+
+        return specs.map((spec) => makeCoinPosteriorQuestion(spec));
+      }
+
+      function buildConditionalDiePosteriorQuestions() {
+        const specs = [
+          { probs: [1 / 6, 0.5], priors: [1, 1], observed: "S", ask: "future", future: "S", difficulty: "easy" },
+          { probs: [1 / 6, 0.5], priors: [1, 1], observed: "SS", ask: "state", targetIndex: 1, difficulty: "easy" },
+          { probs: [1 / 6, 1 / 3, 0.5], priors: [1, 1, 1], observed: "SF", ask: "future", future: "S", difficulty: "medium" },
+          { probs: [1 / 6, 0.5], priors: [2, 1], observed: "S", ask: "state", targetIndex: 1, difficulty: "medium" },
+          { probs: [1 / 6, 1 / 3, 0.5], priors: [1, 2, 1], observed: "FF", ask: "state", targetIndex: 0, difficulty: "medium" },
+          { probs: [1 / 6, 1 / 3, 0.5], priors: [1, 1, 1], observed: "SS", ask: "future", future: "SS", difficulty: "hard" },
+          { probs: [1 / 6, 1 / 3], priors: [3, 1], observed: "S", ask: "future", future: "S", difficulty: "medium" },
+          { probs: [1 / 6, 0.5], priors: [1, 3], observed: "F", ask: "future", future: "S", difficulty: "medium" },
+        ];
+
+        return specs.map((spec) => makeDiePosteriorQuestion(spec));
+      }
+
+      function buildConditionalUrnQuestions() {
+        const specs = [
+          { bags: [{ red: 2, blue: 1 }, { red: 1, blue: 2 }], priors: [1, 1], observed: "RB", ask: "future", futureColor: "R", difficulty: "easy" },
+          { bags: [{ red: 3, blue: 1 }, { red: 1, blue: 3 }], priors: [1, 1], observed: "RR", ask: "state", targetIndex: 0, difficulty: "easy" },
+          { bags: [{ red: 3, blue: 1 }, { red: 2, blue: 2 }, { red: 1, blue: 3 }], priors: [1, 1, 1], observed: "RB", ask: "state", targetIndex: 1, difficulty: "medium" },
+          { bags: [{ red: 3, blue: 1 }, { red: 2, blue: 2 }], priors: [2, 1], observed: "R", ask: "future", futureColor: "R", difficulty: "easy" },
+          { bags: [{ red: 4, blue: 1 }, { red: 2, blue: 3 }], priors: [1, 1], observed: "BR", ask: "state", targetIndex: 1, difficulty: "medium" },
+          { bags: [{ red: 2, blue: 2 }, { red: 1, blue: 3 }], priors: [1, 2], observed: "B", ask: "future", futureColor: "B", difficulty: "easy" },
+          { bags: [{ red: 3, blue: 2 }, { red: 2, blue: 3 }], priors: [1, 1], observed: "RBB", ask: "future", futureColor: "R", difficulty: "hard" },
+          { bags: [{ red: 4, blue: 1 }, { red: 3, blue: 2 }, { red: 2, blue: 3 }], priors: [1, 1, 1], observed: "RR", ask: "future", futureColor: "R", difficulty: "medium" },
+        ];
+
+        return specs.map((spec) => makeUrnPosteriorQuestion(spec));
+      }
+
+      function buildConditionalCardPosteriorQuestions() {
+        const specs = [
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { A: 4, O: 48 } },
+              { label: "a short 32-card deck with 4 aces", counts: { A: 4, O: 28 } },
+            ],
+            priors: [1, 1],
+            observed: "A",
+            ask: "state",
+            targetIndex: 1,
+            symbolText: { A: "an ace", O: "a non-ace" },
+            difficulty: "easy",
+          },
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { A: 4, O: 48 } },
+              { label: "a 20-card deck with 4 aces and 16 non-aces", counts: { A: 4, O: 16 } },
+            ],
+            priors: [1, 1],
+            observed: "A",
+            ask: "future",
+            futureSymbol: "A",
+            symbolText: { A: "an ace", O: "a non-ace" },
+            difficulty: "easy",
+          },
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { K: 4, O: 48 } },
+              { label: "a king-rich 52-card deck with 8 kings and 44 other cards", counts: { K: 8, O: 44 } },
+            ],
+            priors: [1, 1],
+            observed: "K",
+            ask: "state",
+            targetIndex: 1,
+            symbolText: { K: "a king", O: "a non-king" },
+            difficulty: "easy",
+          },
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { R: 26, B: 26 } },
+              { label: "a red-heavy 52-card deck with 40 red cards and 12 black cards", counts: { R: 40, B: 12 } },
+            ],
+            priors: [1, 1],
+            observed: "R",
+            ask: "future",
+            futureSymbol: "R",
+            symbolText: { R: "a red card", B: "a black card" },
+            difficulty: "easy",
+          },
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { R: 26, B: 26 } },
+              { label: "a red-heavy 52-card deck with 40 red cards and 12 black cards", counts: { R: 40, B: 12 } },
+            ],
+            priors: [1, 1],
+            observed: "RR",
+            ask: "state",
+            targetIndex: 1,
+            symbolText: { R: "a red card", B: "a black card" },
+            difficulty: "medium",
+          },
+          {
+            decks: [
+              { label: "a standard 52-card deck", counts: { F: 12, O: 40 } },
+              { label: "a face-heavy 52-card deck with 20 face cards and 32 other cards", counts: { F: 20, O: 32 } },
+            ],
+            priors: [2, 1],
+            observed: "F",
+            ask: "future",
+            futureSymbol: "F",
+            symbolText: { F: "a face card", O: "a non-face card" },
+            difficulty: "medium",
+          },
+        ];
+
+        return specs.map((spec) => makeCardPosteriorQuestion(spec));
+      }
+
+      function buildConditionalDistributionPosteriorQuestions() {
+        return [
+          makeBinomialPosteriorQuestion({ probs: [0.25, 0.75], priors: [1, 1], trials: 4, successes: 3, ask: "state", targetIndex: 1, difficulty: "easy" }),
+          makeBinomialPosteriorQuestion({ probs: [0.25, 0.75], priors: [1, 1], trials: 4, successes: 3, ask: "future", difficulty: "easy" }),
+          makeBinomialPosteriorQuestion({ probs: [0.25, 0.5], priors: [2, 1], trials: 2, successes: 2, ask: "state", targetIndex: 1, difficulty: "medium" }),
+          makeBinomialPosteriorQuestion({ probs: [0.2, 0.4, 0.6], priors: [1, 1, 1], trials: 3, successes: 2, ask: "future", difficulty: "medium" }),
+          makeGeometricPosteriorQuestion({ probs: [1 / 3, 2 / 3], priors: [1, 1], waitingTime: 3, ask: "state", targetIndex: 0, difficulty: "easy" }),
+          makeGeometricPosteriorQuestion({ probs: [0.25, 0.5, 0.75], priors: [1, 1, 1], waitingTime: 2, ask: "future", difficulty: "medium" }),
+          makePoissonPosteriorQuestion({ rates: [1, 2], priors: [1, 1], horizon: Math.log(2), horizonLabel: "ln 2", observedCount: 0, ask: "state", targetIndex: 0, difficulty: "medium" }),
+          makePoissonPosteriorQuestion({ rates: [1, 2], priors: [1, 1], horizon: Math.log(2), horizonLabel: "ln 2", observedCount: 0, ask: "futureZeroSameWindow", difficulty: "medium" }),
+          makePoissonPosteriorQuestion({ rates: [1, 3], priors: [1, 1], horizon: Math.log(2), horizonLabel: "ln 2", observedCount: 0, ask: "state", targetIndex: 0, difficulty: "medium" }),
+          makePoissonPosteriorQuestion({ rates: [2, 4], priors: [1, 1], horizon: Math.log(2) / 2, horizonLabel: "(ln 2) / 2", observedCount: 0, ask: "futurePositiveSameWindow", difficulty: "hard" }),
+        ];
+      }
+
+      function buildConditionalTestQuestions() {
+        const specs = [
+          { prevalence: 0.1, sensitivity: 0.8, falsePositive: 0.2, observations: "+", ask: "disease", difficulty: "easy" },
+          { prevalence: 0.05, sensitivity: 0.9, falsePositive: 0.1, observations: "++", ask: "disease", difficulty: "medium" },
+          { prevalence: 0.02, sensitivity: 0.95, falsePositive: 0.05, observations: "+", ask: "disease", difficulty: "medium" },
+          { prevalence: 0.1, sensitivity: 0.8, falsePositive: 0.2, observations: "+-", ask: "disease", difficulty: "medium" },
+          { prevalence: 0.2, sensitivity: 0.9, falsePositive: 0.1, observations: "+", ask: "nextPositive", difficulty: "easy" },
+          { prevalence: 0.05, sensitivity: 0.95, falsePositive: 0.05, observations: "++", ask: "nextPositive", difficulty: "medium" },
+          { prevalence: 0.01, sensitivity: 0.99, falsePositive: 0.01, observations: "+", ask: "disease", difficulty: "hard" },
+          { prevalence: 0.15, sensitivity: 0.85, falsePositive: 0.15, observations: "--", ask: "disease", difficulty: "medium" },
+        ];
+
+        return specs.map((spec) => makeTestPosteriorQuestion(spec));
+      }
+
+      function buildConditionalClassicQuestions() {
+        return [
+          createQuestion({
+            topicId: "conditionalProb",
+            category: "Conditional probability classic",
+            prompt: "A family has two children, each equally likely to be a boy or girl. Given that the older child is a boy, estimate the probability both children are boys.",
+            hint: "Conditioning on the older child being a boy leaves only BB and BG.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 0.5,
+            mentalAnswer: 0.5,
+            absTolerance: 0.02,
+            explanation: "The four equally likely families are BB, BG, GB, and GG. Conditioning on the older child being a boy leaves only BB and BG. Exactly one of those two outcomes has both children boys, so the conditional probability is 1/2 = 0.5.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "conditionalProb",
+            category: "Conditional probability classic",
+            prompt: "A family has two children, each equally likely to be a boy or girl. Given that at least one child is a boy, estimate the probability both children are boys.",
+            hint: "Conditioning on at least one boy removes only GG.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 1 / 3,
+            mentalAnswer: 1 / 3,
+            absTolerance: 0.02,
+            explanation: "The equally likely families are BB, BG, GB, and GG. Conditioning on at least one boy removes only GG, leaving BB, BG, and GB. Only one of those three surviving outcomes is BB, so the probability is 1/3 ≈ 0.3333.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "conditionalProb",
+            category: "Conditional probability classic",
+            prompt: "Three cards are equally likely: GG, GS, and SS, where G means a gold side and S means a silver side. You draw one card uniformly, place it on the table, and look at one random side. Given that the visible side is gold, estimate the probability the hidden side is also gold.",
+            hint: "Count gold faces, not cards.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 2 / 3,
+            mentalAnswer: 2 / 3,
+            absTolerance: 0.02,
+            explanation: "The GG card contributes two gold faces, the GS card contributes one gold face, and the SS card contributes none. Conditional on seeing a gold face, the possible viewed faces are therefore GG-front, GG-back, and GS-gold. Two of those three cases come from GG, which means the hidden side is also gold with probability 2/3 ≈ 0.6667.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "conditionalProb",
+            category: "Conditional probability classic",
+            prompt: "In the standard 3-door Monty Hall problem, you choose one door uniformly, the host opens one different goat door, and you then switch to the other unopened door. Estimate the probability switching wins the car.",
+            hint: "Your initial choice is right with probability 1/3 and wrong with probability 2/3.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 2 / 3,
+            mentalAnswer: 2 / 3,
+            absTolerance: 0.02,
+            explanation: "Your first pick is correct with probability 1/3 and wrong with probability 2/3. The host's action never transfers probability mass onto your first choice; it only concentrates the 2/3 wrong-initial-pick mass onto the one remaining unopened door. So switching wins with probability 2/3 ≈ 0.6667.",
+            difficulty: "easy",
+          }),
+          createQuestion({
+            topicId: "conditionalProb",
+            category: "Conditional probability classic",
+            prompt: "There are 4 doors. One hides a prize and three hide goats. You choose one door uniformly, the host opens two different goat doors among the others, and you switch to the only other unopened door. Estimate the probability switching wins.",
+            hint: "Your initial pick is right with probability 1/4 and wrong with probability 3/4.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: 3 / 4,
+            mentalAnswer: 3 / 4,
+            absTolerance: 0.02,
+            explanation: "Your initial choice is correct with probability 1/4 and wrong with probability 3/4. If your initial choice is wrong, the only other unopened door after the host reveals two goats must be the prize door. So switching wins exactly when your first choice was wrong, which happens with probability 3/4 = 0.75.",
+            difficulty: "easy",
+          }),
+        ];
+      }
+
+      function buildGeneratedConditionalProbabilityQuestions() {
+        const rng = createSeededGenerator(271828);
+        const questions = [];
+        const coinProbSets = [
+          [0, 0.5, 1],
+          [0.25, 0.5, 0.75],
+          [1 / 3, 2 / 3],
+          [0.25, 0.75],
+          [1 / 6, 0.5, 5 / 6],
+        ];
+        const priorSets = [
+          [1, 1],
+          [1, 1, 1],
+          [1, 2],
+          [2, 1],
+          [1, 2, 1],
+          [1, 1, 2],
+        ];
+        const observedSequences = ["H", "T", "HH", "HT", "TH", "TT", "HHT", "HTH"];
+        const futureSequences = ["H", "T", "HH", "HT"];
+        const dieProbSets = [
+          [1 / 6, 0.5],
+          [1 / 6, 1 / 3],
+          [1 / 6, 1 / 3, 0.5],
+        ];
+        const dieObserved = ["S", "F", "SS", "SF", "FS", "FF"];
+        const urnBagSets = [
+          [{ red: 2, blue: 1 }, { red: 1, blue: 2 }],
+          [{ red: 3, blue: 1 }, { red: 1, blue: 3 }],
+          [{ red: 3, blue: 2 }, { red: 2, blue: 3 }],
+          [{ red: 4, blue: 1 }, { red: 3, blue: 2 }, { red: 2, blue: 3 }],
+          [{ red: 3, blue: 1 }, { red: 2, blue: 2 }, { red: 1, blue: 3 }],
+        ];
+        const urnObserved = ["R", "B", "RR", "RB", "BR", "BB", "RBB"];
+        const testSpecs = [
+          { prevalence: 0.01, sensitivity: 0.95, falsePositive: 0.05 },
+          { prevalence: 0.02, sensitivity: 0.9, falsePositive: 0.1 },
+          { prevalence: 0.05, sensitivity: 0.9, falsePositive: 0.1 },
+          { prevalence: 0.1, sensitivity: 0.8, falsePositive: 0.2 },
+          { prevalence: 0.15, sensitivity: 0.85, falsePositive: 0.15 },
+          { prevalence: 0.2, sensitivity: 0.9, falsePositive: 0.1 },
+        ];
+        const testObserved = ["+", "-", "++", "+-", "--"];
+
+        for (let index = 0; index < 14; index += 1) {
+          const probs = randomChoice(coinProbSets, rng);
+          const priors = randomChoice(priorSets.filter((entry) => entry.length === probs.length), rng);
+          const observed = randomChoice(observedSequences, rng);
+          const weights = buildPosteriorWeights(probs, priors, observed, binarySequenceLikelihood);
+          if (sum(weights) === 0) {
+            continue;
+          }
+          const askFuture = rng() < 0.6;
+          questions.push(makeCoinPosteriorQuestion({
+            probs,
+            priors,
+            observed,
+            ask: askFuture ? "future" : "state",
+            future: askFuture ? randomChoice(futureSequences, rng) : undefined,
+            targetIndex: askFuture ? undefined : randomIntBetween(0, probs.length - 1, rng),
+            difficulty: observed.length <= 2 ? "medium" : "hard",
+          }));
+        }
+
+        for (let index = 0; index < 10; index += 1) {
+          const probs = randomChoice(dieProbSets, rng);
+          const priors = randomChoice(priorSets.filter((entry) => entry.length === probs.length), rng);
+          const observed = randomChoice(dieObserved, rng);
+          const weights = buildPosteriorWeights(probs, priors, observed, binarySequenceLikelihood);
+          if (sum(weights) === 0) {
+            continue;
+          }
+          const askFuture = rng() < 0.6;
+          questions.push(makeDiePosteriorQuestion({
+            probs,
+            priors,
+            observed,
+            ask: askFuture ? "future" : "state",
+            future: askFuture ? randomChoice(["S", "F", "SS"], rng) : undefined,
+            targetIndex: askFuture ? undefined : randomIntBetween(0, probs.length - 1, rng),
+            difficulty: observed.length <= 2 ? "medium" : "hard",
+          }));
+        }
+
+        for (let index = 0; index < 10; index += 1) {
+          const bags = randomChoice(urnBagSets, rng);
+          const priors = randomChoice(priorSets.filter((entry) => entry.length === bags.length), rng);
+          const observed = randomChoice(urnObserved, rng);
+          const weights = bags.map((bag, bagIndex) => priors[bagIndex] * urnSequenceLikelihood(bag.red, bag.blue, observed));
+          if (sum(weights) === 0) {
+            continue;
+          }
+          const askFuture = rng() < 0.55;
+          questions.push(makeUrnPosteriorQuestion({
+            bags,
+            priors,
+            observed,
+            ask: askFuture ? "future" : "state",
+            futureColor: askFuture ? randomChoice(["R", "B"], rng) : undefined,
+            targetIndex: askFuture ? undefined : randomIntBetween(0, bags.length - 1, rng),
+            difficulty: observed.length <= 2 ? "medium" : "hard",
+          }));
+        }
+
+        for (let index = 0; index < 8; index += 1) {
+          const spec = randomChoice(testSpecs, rng);
+          const observations = randomChoice(testObserved, rng);
+          questions.push(makeTestPosteriorQuestion({
+            prevalence: spec.prevalence,
+            sensitivity: spec.sensitivity,
+            falsePositive: spec.falsePositive,
+            observations,
+            ask: rng() < 0.5 ? "disease" : "nextPositive",
+            difficulty: observations.length === 1 ? "medium" : "hard",
+          }));
+        }
+
+        return questions;
+      }
+
+      function makeCoinPosteriorQuestion({ probs, priors, observed, ask, future = "H", targetIndex = 0, difficulty }) {
+        const labels = probs.map(describeCoin);
+        const weights = buildPosteriorWeights(probs, priors, observed, binarySequenceLikelihood);
+        const posterior = normalizeWeights(weights);
+        const futureProbability = mixtureFutureProbability(probs, posterior, future, binarySequenceLikelihood);
+        const stateProbability = posterior[targetIndex];
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A coin is chosen ${priorText} from ${naturalLanguageList(labels)}. You then observe the toss sequence ${observed}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, probs.map((prob) => binarySequenceLikelihood(prob, observed)), weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Coin posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen coin was ${labels[targetIndex]}.`,
+            hint: "For each coin, compute prior × likelihood of the observed tosses, then normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `The posterior weights are proportional to prior × likelihood. ${weightDetails} Normalizing gives ${posteriorDetails} Therefore the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Coin posterior",
+          prompt: `${promptBase} Estimate the probability the next ${future.length === 1 ? "toss is" : `${future.length} tosses are`} ${future}.`,
+          hint: "Update the posterior over the coins, then average the future-sequence probability under that posterior.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `First update the posterior over the coins. ${weightDetails} After normalization, ${posteriorDetails} Then average the probability of future sequence ${future} under that posterior. That gives ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeDiePosteriorQuestion({ probs, priors, observed, ask, future = "S", targetIndex = 0, difficulty }) {
+        const labels = probs.map(describeDie);
+        const weights = buildPosteriorWeights(probs, priors, observed, binarySequenceLikelihood);
+        const posterior = normalizeWeights(weights);
+        const futureProbability = mixtureFutureProbability(probs, posterior, future, binarySequenceLikelihood);
+        const stateProbability = posterior[targetIndex];
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A die is chosen ${priorText} from ${naturalLanguageList(labels)}. You roll the chosen die and observe ${formatBinaryObservationSequence(observed, "a 6", "not 6")}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, probs.map((prob) => binarySequenceLikelihood(prob, observed)), weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Die posterior",
+            prompt: `${promptBase} Estimate the posterior probability the die was ${labels[targetIndex]}.`,
+            hint: "Treat “6” versus “not 6” exactly like heads versus tails: prior × likelihood, then normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `The observation sequence only depends on each die through its probability of rolling a 6. So the posterior weights are prior × likelihood. ${weightDetails} Normalizing gives ${posteriorDetails} Hence the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Die posterior",
+          prompt: `${promptBase} Estimate the probability the next ${future.length === 1 ? "roll is a 6" : `${future.length} rolls are ${formatBinaryObservationSequence(future, "6", "not 6")}`}.`,
+          hint: "First form the posterior over the dice, then average the future 6-probability under that posterior.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `Update the posterior over the candidate dice using prior × likelihood. ${weightDetails} After normalization, ${posteriorDetails} Averaging the probability of future sequence ${formatBinaryObservationSequence(future, "6", "not 6")} under that posterior gives ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeUrnPosteriorQuestion({ bags, priors, observed, ask, futureColor = "R", targetIndex = 0, difficulty }) {
+        const labels = bags.map((bag, index) => `bag ${String.fromCharCode(65 + index)} (${bag.red} red, ${bag.blue} blue)`);
+        const likelihoods = bags.map((bag) => urnSequenceLikelihood(bag.red, bag.blue, observed));
+        const weights = bags.map((bag, index) => priors[index] * likelihoods[index]);
+        const posterior = normalizeWeights(weights);
+        const stateProbability = posterior[targetIndex];
+        const futureProbability = bags.reduce((total, bag, index) => total + (posterior[index] * urnNextColorProbability(bag.red, bag.blue, observed, futureColor)), 0);
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `An urn is chosen ${priorText} from ${naturalLanguageList(labels)}. You then draw without replacement and observe ${formatUrnObservationSequence(observed)}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, likelihoods, weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Urn posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen urn was ${labels[targetIndex]}.`,
+            hint: "Because draws are without replacement, the likelihood is a product of changing fractions.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `For each urn, compute the exact without-replacement likelihood of the observed color sequence, then multiply by the prior weight. ${weightDetails} Normalizing gives ${posteriorDetails} Therefore the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Urn posterior",
+          prompt: `${promptBase} Estimate the probability the next draw is ${futureColor === "R" ? "red" : "blue"}.`,
+          hint: "Update the posterior over the urns, then average the next-draw color probability across the remaining urn compositions.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `First update the posterior using prior × exact without-replacement likelihood. ${weightDetails} After normalization, ${posteriorDetails} In each urn, update the remaining composition after the observed draws and compute the next-draw ${futureColor === "R" ? "red" : "blue"} probability. Averaging those probabilities under the posterior gives ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeCardPosteriorQuestion({ decks, priors, observed, ask, futureSymbol = observed[observed.length - 1], targetIndex = 0, symbolText, difficulty }) {
+        const labels = decks.map((deck) => deck.label);
+        const likelihoods = decks.map((deck) => finitePopulationSequenceLikelihood(deck.counts, observed));
+        const weights = decks.map((deck, index) => priors[index] * likelihoods[index]);
+        const posterior = normalizeWeights(weights);
+        const stateProbability = posterior[targetIndex];
+        const futureProbability = decks.reduce((total, deck, index) => total + (posterior[index] * finitePopulationNextSymbolProbability(deck.counts, observed, futureSymbol)), 0);
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A deck is chosen ${priorText} from ${naturalLanguageList(labels)}. You draw without replacement and observe ${formatObservationSequence(observed, symbolText)}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, likelihoods, weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Card posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen deck was ${labels[targetIndex]}.`,
+            hint: "For each deck, compute prior × exact without-replacement likelihood of the observed card pattern, then normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `For each possible deck, compute the exact without-replacement likelihood of the observed pattern, then multiply by the prior weight. ${weightDetails} Normalizing gives ${posteriorDetails} So the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Card posterior",
+          prompt: `${promptBase} Estimate the probability the next card is ${symbolText[futureSymbol]}.`,
+          hint: "First update the posterior over the possible decks, then average the next-card probability under the remaining composition of each deck.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `Update the posterior over the decks using prior × exact without-replacement likelihood. ${weightDetails} After normalization, ${posteriorDetails} Then compute the next-card probability of ${symbolText[futureSymbol]} in each remaining deck composition and average using the posterior weights. That gives ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeBinomialPosteriorQuestion({ probs, priors, trials, successes, ask, targetIndex = 0, difficulty }) {
+        const labels = probs.map((probability) => `a source with defect probability ${formatSimpleProbability(probability)}`);
+        const likelihoods = probs.map((probability) => binomialObservationLikelihood(trials, successes, probability));
+        const weights = probs.map((probability, index) => priors[index] * likelihoods[index]);
+        const posterior = normalizeWeights(weights);
+        const stateProbability = posterior[targetIndex];
+        const futureProbability = probs.reduce((total, probability, index) => total + (posterior[index] * probability), 0);
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A machine is chosen ${priorText} from ${naturalLanguageList(labels)}. You inspect ${trials} independent items and see ${successes} defect${successes === 1 ? "" : "s"}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, likelihoods, weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Binomial posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen machine was ${labels[targetIndex]}.`,
+            hint: "For each machine, use the binomial likelihood of the observed defect count, multiply by the prior weight, then normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `The posterior weights are prior × binomial likelihood. ${weightDetails} Normalizing gives ${posteriorDetails} Therefore the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Binomial posterior",
+          prompt: `${promptBase} Estimate the probability the next inspected item is defective.`,
+          hint: "First update the posterior over the defect rates, then average the next-item defect probability under that posterior.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `First update the posterior over the candidate defect rates. ${weightDetails} After normalization, ${posteriorDetails} Then average the defect probability of the next item under that posterior. That gives ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeGeometricPosteriorQuestion({ probs, priors, waitingTime, ask, targetIndex = 0, difficulty }) {
+        const labels = probs.map((probability) => `a success probability ${formatSimpleProbability(probability)} model`);
+        const likelihoods = probs.map((probability) => geometricWaitingTimeLikelihood(probability, waitingTime));
+        const weights = probs.map((probability, index) => priors[index] * likelihoods[index]);
+        const posterior = normalizeWeights(weights);
+        const stateProbability = posterior[targetIndex];
+        const futureProbability = probs.reduce((total, probability, index) => total + (posterior[index] * probability), 0);
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A model is chosen ${priorText} from ${naturalLanguageList(labels)}. In one experiment, the first success occurs on trial ${waitingTime}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, likelihoods, weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Geometric posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen model was ${labels[targetIndex]}.`,
+            hint: "For waiting time n, the geometric likelihood is p(1-p)^(n-1). Multiply by the prior and normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `For waiting time ${waitingTime}, the likelihood under success probability p is p(1-p)^${waitingTime - 1}. ${weightDetails} Normalizing gives ${posteriorDetails} Therefore the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Geometric posterior",
+          prompt: `${promptBase} Estimate the probability that a fresh new trial from the same chosen model succeeds immediately.`,
+          hint: "Update the posterior over the success probabilities, then average p under that posterior.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureProbability,
+          mentalAnswer: futureProbability,
+          absTolerance: 0.025,
+          explanation: `First update the posterior over the candidate success probabilities. ${weightDetails} After normalization, ${posteriorDetails} A fresh new trial succeeds immediately with probability p under each model, so the posterior predictive probability is the weighted average ${formatNumber(futureProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makePoissonPosteriorQuestion({ rates, priors, horizon, horizonLabel, observedCount, ask, targetIndex = 0, difficulty }) {
+        const labels = rates.map((rate) => `a Poisson process with rate ${formatNumber(rate, 3)}`);
+        const likelihoods = rates.map((rate) => poissonCountLikelihood(rate * horizon, observedCount));
+        const weights = rates.map((rate, index) => priors[index] * likelihoods[index]);
+        const posterior = normalizeWeights(weights);
+        const stateProbability = posterior[targetIndex];
+        const futureZeroProbability = rates.reduce((total, rate, index) => total + (posterior[index] * Math.exp(-rate * horizon)), 0);
+        const futurePositiveProbability = 1 - futureZeroProbability;
+        const priorText = uniformPriorText(priors) ? "uniformly" : `with prior weights ${priors.join(":")}`;
+        const promptBase = `A process is chosen ${priorText} from ${naturalLanguageList(labels)}. Over a time window of length ${horizonLabel}, you observe ${observedCount} arrival${observedCount === 1 ? "" : "s"}.`;
+        const weightDetails = buildMixtureWeightExplanation(labels, priors, likelihoods, weights);
+        const posteriorDetails = buildPosteriorProbabilityExplanation(labels, posterior);
+
+        if (ask === "state") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Poisson posterior",
+            prompt: `${promptBase} Estimate the posterior probability the chosen process was ${labels[targetIndex]}.`,
+            hint: "Use the Poisson likelihood for the observed count in that window, multiply by the prior, and normalize.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: stateProbability,
+            mentalAnswer: stateProbability,
+            absTolerance: 0.025,
+            explanation: `For count ${observedCount} over horizon ${horizonLabel}, the Poisson likelihood under rate λ is e^{-λt}(λt)^${observedCount} / ${factorial(observedCount)}. ${weightDetails} Normalizing gives ${posteriorDetails} So the posterior probability of ${labels[targetIndex]} is ${formatNumber(stateProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        if (ask === "futurePositiveSameWindow") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Poisson posterior",
+            prompt: `${promptBase} Estimate the probability that a fresh new time window of the same length contains at least one arrival.`,
+            hint: "Update the posterior over the rates, then average 1 - e^{-λt} across the candidate rates.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: futurePositiveProbability,
+            mentalAnswer: futurePositiveProbability,
+            absTolerance: 0.025,
+            explanation: `First update the posterior over the candidate rates. ${weightDetails} After normalization, ${posteriorDetails} In a fresh window of length ${horizonLabel}, a Poisson process with rate λ has probability 1 - e^{-λt} of at least one arrival. Averaging under the posterior gives ${formatNumber(futurePositiveProbability, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Poisson posterior",
+          prompt: `${promptBase} Estimate the probability that a fresh new time window of the same length contains zero arrivals.`,
+          hint: "Update the posterior over the rates, then average e^{-λt} across the candidate rates.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: futureZeroProbability,
+          mentalAnswer: futureZeroProbability,
+          absTolerance: 0.025,
+          explanation: `First update the posterior over the candidate rates. ${weightDetails} After normalization, ${posteriorDetails} In a fresh window of length ${horizonLabel}, a Poisson process with rate λ has probability e^{-λt} of zero arrivals. Averaging under the posterior gives ${formatNumber(futureZeroProbability, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function makeTestPosteriorQuestion({ prevalence, sensitivity, falsePositive, observations, ask, difficulty }) {
+        const positiveCount = [...observations].filter((char) => char === "+").length;
+        const negativeCount = observations.length - positiveCount;
+        const diseasedWeight = prevalence * (sensitivity ** positiveCount) * ((1 - sensitivity) ** negativeCount);
+        const healthyWeight = (1 - prevalence) * (falsePositive ** positiveCount) * ((1 - falsePositive) ** negativeCount);
+        const posteriorDisease = diseasedWeight / (diseasedWeight + healthyWeight);
+        const predictivePositive = (posteriorDisease * sensitivity) + ((1 - posteriorDisease) * falsePositive);
+        const obsText = formatTestObservationSequence(observations);
+
+        if (ask === "disease") {
+          return createQuestion({
+            topicId: "conditionalProb",
+            category: "Test Bayes",
+            prompt: `A disease has prevalence ${formatPercent(prevalence)}. A test has sensitivity ${formatPercent(sensitivity)} and false-positive rate ${formatPercent(falsePositive)}. A person gets test results ${obsText}. Estimate the posterior probability the person has the disease.`,
+            hint: "Posterior disease weight is prevalence × likelihood under disease. Posterior healthy weight is (1-prevalence) × likelihood under no disease.",
+            inputMode: "probability",
+            formatHint: "probability",
+            answer: posteriorDisease,
+            mentalAnswer: posteriorDisease,
+            absTolerance: 0.03,
+            explanation: `Under the disease state, the likelihood of results ${obsText} is ${formatNumber(sensitivity, 4)}^${positiveCount} × ${formatNumber(1 - sensitivity, 4)}^${negativeCount}, so the posterior disease weight is ${formatNumber(diseasedWeight, 6)}. Under the healthy state, the likelihood uses false positives for '+' and specificity for '-', giving posterior healthy weight ${formatNumber(healthyWeight, 6)}. Normalizing yields posterior disease probability ${formatNumber(posteriorDisease, 4)}.`,
+            difficulty,
+          });
+        }
+
+        return createQuestion({
+          topicId: "conditionalProb",
+          category: "Test Bayes",
+          prompt: `A disease has prevalence ${formatPercent(prevalence)}. A test has sensitivity ${formatPercent(sensitivity)} and false-positive rate ${formatPercent(falsePositive)}. A person gets test results ${obsText}. Estimate the probability a further independent test is positive.`,
+          hint: "First update the posterior disease probability from the observed tests, then average the positive-test probability under disease and no disease.",
+          inputMode: "probability",
+          formatHint: "probability",
+          answer: predictivePositive,
+          mentalAnswer: predictivePositive,
+          absTolerance: 0.03,
+          explanation: `The observed tests imply posterior disease weight ${formatNumber(diseasedWeight, 6)} and posterior healthy weight ${formatNumber(healthyWeight, 6)}, so the posterior disease probability is ${formatNumber(posteriorDisease, 4)}. A further positive test then has probability posterior × sensitivity + (1 - posterior) × false-positive rate = ${formatNumber(predictivePositive, 4)}.`,
+          difficulty,
+        });
+      }
+
+      function buildPosteriorWeights(probabilities, priors, observedSequence, likelihoodFunction) {
+        return probabilities.map((probability, index) => priors[index] * likelihoodFunction(probability, observedSequence));
+      }
+
+      function mixtureFutureProbability(probabilities, posteriorWeights, futureSequence, likelihoodFunction) {
+        return probabilities.reduce((total, probability, index) => total + (posteriorWeights[index] * likelihoodFunction(probability, futureSequence)), 0);
+      }
+
+      function binarySequenceLikelihood(successProbability, sequence) {
+        let probability = 1;
+        for (const char of sequence) {
+          probability *= char === "H" || char === "S" ? successProbability : (1 - successProbability);
+        }
+        return probability;
+      }
+
+      function urnSequenceLikelihood(redCount, blueCount, sequence) {
+        let red = redCount;
+        let blue = blueCount;
+        let probability = 1;
+        for (const char of sequence) {
+          const total = red + blue;
+          if (char === "R") {
+            if (red <= 0) {
+              return 0;
+            }
+            probability *= red / total;
+            red -= 1;
+          } else {
+            if (blue <= 0) {
+              return 0;
+            }
+            probability *= blue / total;
+            blue -= 1;
+          }
+        }
+        return probability;
+      }
+
+      function urnNextColorProbability(redCount, blueCount, observedSequence, targetColor) {
+        let red = redCount;
+        let blue = blueCount;
+        for (const char of observedSequence) {
+          if (char === "R") {
+            red -= 1;
+          } else {
+            blue -= 1;
+          }
+        }
+        const total = red + blue;
+        if (total <= 0) {
+          return 0;
+        }
+        return targetColor === "R" ? red / total : blue / total;
+      }
+
+      function finitePopulationSequenceLikelihood(counts, sequence) {
+        const remaining = { ...counts };
+        let probability = 1;
+        for (const symbol of sequence) {
+          const total = sum(Object.values(remaining));
+          if (!Number.isFinite(remaining[symbol]) || remaining[symbol] <= 0 || total <= 0) {
+            return 0;
+          }
+          probability *= remaining[symbol] / total;
+          remaining[symbol] -= 1;
+        }
+        return probability;
+      }
+
+      function finitePopulationNextSymbolProbability(counts, observedSequence, targetSymbol) {
+        const remaining = { ...counts };
+        for (const symbol of observedSequence) {
+          remaining[symbol] -= 1;
+        }
+        const total = sum(Object.values(remaining));
+        if (total <= 0 || !Number.isFinite(remaining[targetSymbol]) || remaining[targetSymbol] <= 0) {
+          return 0;
+        }
+        return remaining[targetSymbol] / total;
+      }
+
+      function normalizeWeights(weights) {
+        const total = sum(weights);
+        if (total === 0) {
+          return weights.map(() => 0);
+        }
+        return weights.map((weight) => weight / total);
+      }
+
+      function sum(values) {
+        return values.reduce((total, value) => total + value, 0);
+      }
+
+      function uniformPriorText(priors) {
+        return priors.every((value) => Math.abs(value - priors[0]) < 1e-12);
+      }
+
+      function naturalLanguageList(parts) {
+        if (parts.length === 1) {
+          return parts[0];
+        }
+        if (parts.length === 2) {
+          return `${parts[0]} and ${parts[1]}`;
+        }
+        return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;
+      }
+
+      function formatSimpleProbability(value) {
+        const known = new Map([
+          [0, "0"],
+          [1 / 6, "1/6"],
+          [0.2, "1/5"],
+          [0.25, "1/4"],
+          [1 / 3, "1/3"],
+          [0.5, "1/2"],
+          [2 / 3, "2/3"],
+          [0.75, "3/4"],
+          [0.8, "4/5"],
+          [5 / 6, "5/6"],
+          [1, "1"],
+        ]);
+        for (const [key, label] of known.entries()) {
+          if (Math.abs(value - key) < 1e-12) {
+            return label;
+          }
+        }
+        return formatNumber(value, 4);
+      }
+
+      function describeCoin(probability) {
+        if (probability === 0) {
+          return "an always-tail coin";
+        }
+        if (probability === 1) {
+          return "an always-heads coin";
+        }
+        if (Math.abs(probability - 0.5) < 1e-12) {
+          return "a fair coin";
+        }
+        return `a coin with P(H) = ${formatSimpleProbability(probability)}`;
+      }
+
+      function describeDie(probability) {
+        if (Math.abs(probability - (1 / 6)) < 1e-12) {
+          return "a fair die";
+        }
+        return `a die with P(6) = ${formatSimpleProbability(probability)}`;
+      }
+
+      function buildMixtureWeightExplanation(labels, priors, likelihoods, weights) {
+        return labels.map((label, index) => `${label}: ${priors[index]} × ${formatNumber(likelihoods[index], 6)} = ${formatNumber(weights[index], 6)}`).join("; ");
+      }
+
+      function buildPosteriorProbabilityExplanation(labels, posterior) {
+        return labels.map((label, index) => `${label} has posterior ${formatNumber(posterior[index], 4)}`).join("; ");
+      }
+
+      function formatBinaryObservationSequence(sequence, successText, failureText) {
+        const parts = [...sequence].map((char) => (char === "H" || char === "S" ? successText : failureText));
+        return naturalLanguageList(parts);
+      }
+
+      function formatUrnObservationSequence(sequence) {
+        const parts = [...sequence].map((char) => (char === "R" ? "red" : "blue"));
+        return naturalLanguageList(parts);
+      }
+
+      function formatObservationSequence(sequence, symbolText) {
+        const parts = [...sequence].map((symbol) => symbolText[symbol]);
+        return naturalLanguageList(parts);
+      }
+
+      function formatTestObservationSequence(sequence) {
+        const parts = [...sequence].map((char) => (char === "+" ? "positive" : "negative"));
+        return naturalLanguageList(parts);
+      }
+
+      function binomialObservationLikelihood(trials, successes, probability) {
+        return combination(trials, successes) * (probability ** successes) * ((1 - probability) ** (trials - successes));
+      }
+
+      function geometricWaitingTimeLikelihood(probability, waitingTime) {
+        return probability * ((1 - probability) ** (waitingTime - 1));
+      }
+
+      function poissonCountLikelihood(mean, count) {
+        return Math.exp(-mean) * (mean ** count) / factorial(count);
       }
 
       function retagQuestions(questions, topicId) {
