@@ -475,6 +475,11 @@
         font-size: 0.98rem;
       }
 
+      textarea.field-input {
+        min-height: 7.25rem;
+        resize: vertical;
+      }
+
       .answer-input {
         padding: 1rem 1.05rem;
         font-size: clamp(1.1rem, 2.4vw, 1.45rem);
@@ -2488,7 +2493,7 @@
           </article>
 
           <article class="field-card">
-            <label class="field-label" for="difficulty-select">Difficulty</label>
+            <label id="difficulty-label" class="field-label" for="difficulty-select">Difficulty</label>
             <select id="difficulty-select" class="field-input">
               <option value="all">All mix</option>
               <option value="easy">Easy</option>
@@ -2525,8 +2530,15 @@
                   <p class="toggle-copy">Split the session timer across the questions. If a card runs out of time, it is marked wrong and the deck moves on automatically.</p>
                 </div>
               </label>
+              <label class="toggle-row" for="personal-deck-only">
+                <input id="personal-deck-only" type="checkbox" />
+                <div>
+                  <p class="toggle-title">Draw only from personal deck</p>
+                  <p class="toggle-copy">Use only saved cards. Topic filters, difficulty, hints, and intense timing still apply to that subset.</p>
+                </div>
+              </label>
             </div>
-            <p class="field-note setup-footnote">The review rail and end-of-session analysis always show the full solution notes.</p>
+            <p id="personal-deck-note" class="field-note setup-footnote">The review rail and end-of-session analysis always show the full solution notes.</p>
           </article>
 
           <article class="field-card field-card--wide">
@@ -2557,6 +2569,37 @@
         </div>
 
         <div class="user-grid">
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Profile and recovery</span>
+              <span id="personal-deck-count" class="pill"></span>
+            </div>
+            <div class="setup-grid">
+              <div class="field-card">
+                <label class="field-label" for="display-name-input">Your name</label>
+                <input id="display-name-input" class="field-input" type="text" maxlength="80" placeholder="Enter your name" />
+                <p class="field-note">Stored locally and included in your recovery code.</p>
+              </div>
+              <div class="field-card">
+                <span class="field-label">Recovery code</span>
+                <div class="score-rules">
+                  <button id="generate-recovery-code" class="button button--ghost" type="button">Generate code</button>
+                  <button id="restore-recovery-code" class="button button--ghost" type="button">Recover from code</button>
+                </div>
+                <p class="field-note">The code stores your personal deck, name, saved setup, best score, and quiz history.</p>
+              </div>
+              <div class="field-card field-card--wide">
+                <label class="field-label" for="recovery-code-output">Generated code</label>
+                <textarea id="recovery-code-output" class="field-input" readonly spellcheck="false"></textarea>
+              </div>
+              <div class="field-card field-card--wide">
+                <label class="field-label" for="recovery-code-input">Paste code to recover</label>
+                <textarea id="recovery-code-input" class="field-input" spellcheck="false"></textarea>
+                <p id="recovery-status" class="field-note" aria-live="polite"></p>
+              </div>
+            </div>
+          </article>
+
           <article class="field-card field-card--wide">
             <div class="topic-toolbar">
               <span class="field-label">Topics That Need Work</span>
@@ -3337,6 +3380,7 @@
             <div class="card-actions">
               <button id="primary-action" class="button button--primary" type="button">Submit</button>
               <button id="secondary-action" class="button button--secondary" type="button">Skip</button>
+              <button id="add-to-personal-deck" class="button button--ghost" type="button">Add to personal deck</button>
               <button id="exit-session" class="button button--ghost" type="button">New quiz</button>
             </div>
 
@@ -3414,6 +3458,8 @@
       const DEFAULT_TIMER_MINUTES = 5;
       const DEFAULT_DIFFICULTY = "all";
       const DEFAULT_APPEARANCE_THEME = "modern";
+      const DEFAULT_DISPLAY_NAME = "K-man";
+      const RECOVERY_CODE_PREFIX = "SD1.";
       const STORAGE_KEY = "signal-deck-standalone-preferences";
       const EULER_GAMMA = 0.5772156649;
 
@@ -3450,9 +3496,12 @@
         resultsScreen: document.getElementById("results-screen"),
         timerMinutes: document.getElementById("timer-minutes"),
         questionCount: document.getElementById("question-count"),
+        difficultyLabel: document.getElementById("difficulty-label"),
         difficultySelect: document.getElementById("difficulty-select"),
         showHints: document.getElementById("show-hints"),
         intenseTimer: document.getElementById("intense-timer"),
+        personalDeckOnly: document.getElementById("personal-deck-only"),
+        personalDeckNote: document.getElementById("personal-deck-note"),
         topicGrid: document.getElementById("topic-grid"),
         topicCount: document.getElementById("topic-count"),
         selectAllTopics: document.getElementById("select-all-topics"),
@@ -3468,6 +3517,13 @@
         closeUserCenter: document.getElementById("close-user-center"),
         secretToggleTarget: document.getElementById("secret-toggle-target"),
         secretRuntimeNote: document.getElementById("secret-runtime-note"),
+        displayNameInput: document.getElementById("display-name-input"),
+        personalDeckCount: document.getElementById("personal-deck-count"),
+        generateRecoveryCode: document.getElementById("generate-recovery-code"),
+        restoreRecoveryCode: document.getElementById("restore-recovery-code"),
+        recoveryCodeOutput: document.getElementById("recovery-code-output"),
+        recoveryCodeInput: document.getElementById("recovery-code-input"),
+        recoveryStatus: document.getElementById("recovery-status"),
         startSession: document.getElementById("start-session"),
         restartSession: document.getElementById("restart-session"),
         backToSetup: document.getElementById("back-to-setup"),
@@ -3497,6 +3553,7 @@
         answerPad: document.getElementById("answer-pad"),
         primaryAction: document.getElementById("primary-action"),
         secondaryAction: document.getElementById("secondary-action"),
+        addToPersonalDeck: document.getElementById("add-to-personal-deck"),
         inputError: document.getElementById("input-error"),
         liveReviewList: document.getElementById("live-review-list"),
         scoreValue: document.getElementById("score-value"),
@@ -3535,17 +3592,22 @@
         timedOut: false,
         showHints: false,
         intenseTimer: false,
+        personalDeckOnly: false,
         perQuestionBaseSeconds: 0,
         perQuestionBonusQuestions: 0,
         sessionLength: DEFAULT_QUESTION_COUNT,
         difficulty: DEFAULT_DIFFICULTY,
+        freddybeanUnlocked: false,
         selectedTopics: getAllTopicIds(),
         liveGenerationEnabled: false,
+        displayName: DEFAULT_DISPLAY_NAME,
         lastResultStatus: null,
         summaryOpen: false,
         updateSequence: 0,
         secretTapCount: 0,
         secretTapTimerId: null,
+        difficultyTapCount: 0,
+        difficultyTapTimerId: null,
         secretNoteTimerId: null,
       };
 
@@ -3555,6 +3617,7 @@
         positionLearningGuide();
         renderTopicGrid();
         loadPreferences();
+        updateDeckIdentity();
         renderBestScore();
         renderUserCenter();
         updateTopicCount();
@@ -3580,10 +3643,16 @@
         elements.clearUserMemory.addEventListener("click", clearAllMemory);
         elements.appearanceToggle.addEventListener("click", handleAppearanceToggle);
         elements.secretToggleTarget.addEventListener("click", handleSecretToggleTap);
+        elements.difficultyLabel.addEventListener("click", handleDifficultySecretTap);
         elements.selectAllTopics.addEventListener("click", () => setAllTopics(true));
         elements.clearTopics.addEventListener("click", () => setAllTopics(false));
         elements.questionCount.addEventListener("input", updateTopicCount);
         elements.difficultySelect.addEventListener("change", updateTopicCount);
+        elements.personalDeckOnly.addEventListener("change", handlePersonalDeckOnlyChange);
+        elements.displayNameInput.addEventListener("input", handleDisplayNameInput);
+        elements.generateRecoveryCode.addEventListener("click", generateRecoveryCode);
+        elements.restoreRecoveryCode.addEventListener("click", restoreRecoveryCode);
+        elements.addToPersonalDeck.addEventListener("click", addCurrentQuestionToPersonalDeck);
         window.addEventListener("resize", syncSummaryPresentation);
 
         elements.answerInput.addEventListener("keydown", (event) => {
@@ -3742,11 +3811,60 @@
         elements.difficultySelect.value = stored.difficulty || DEFAULT_DIFFICULTY;
         elements.showHints.checked = stored.showHints === true;
         elements.intenseTimer.checked = stored.intenseTimer === true;
+        elements.personalDeckOnly.checked = stored.personalDeckOnly === true;
         state.liveGenerationEnabled = stored.liveGenerationEnabled === true;
+        state.personalDeckOnly = stored.personalDeckOnly === true;
+        state.freddybeanUnlocked = stored.freddybeanUnlocked === true || stored.difficulty === "freddybean";
+        ensureFreddybeanOption();
+        setDisplayName(stored.displayName || DEFAULT_DISPLAY_NAME, false);
+        elements.displayNameInput.value = state.displayName === DEFAULT_DISPLAY_NAME ? "" : state.displayName;
         applyAppearanceTheme(stored.appearanceTheme || DEFAULT_APPEARANCE_THEME, false);
+        elements.difficultySelect.value = state.freddybeanUnlocked && stored.difficulty === "freddybean"
+          ? "freddybean"
+          : (stored.difficulty || DEFAULT_DIFFICULTY);
 
         const storedTopics = normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds());
         setSelectedTopics(storedTopics.length > 0 ? storedTopics : getAllTopicIds());
+        updatePersonalDeckStatus();
+      }
+
+      function sanitizeDisplayName(name) {
+        const cleaned = String(name || "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .replace(/'s$/i, "")
+          .replace(/'$/i, "");
+        return cleaned || DEFAULT_DISPLAY_NAME;
+      }
+
+      function formatPossessiveDisplayName(baseName) {
+        const cleaned = sanitizeDisplayName(baseName);
+        return cleaned.endsWith("'s") ? cleaned : `${cleaned}'s`;
+      }
+
+      function setDisplayName(name, persist = true) {
+        state.displayName = sanitizeDisplayName(name);
+        elements.secretToggleTarget.textContent = formatPossessiveDisplayName(state.displayName);
+        if (persist) {
+          savePreferences({ displayName: state.displayName });
+        }
+      }
+
+      function updateDeckIdentity() {
+        elements.secretToggleTarget.textContent = formatPossessiveDisplayName(state.displayName || DEFAULT_DISPLAY_NAME);
+      }
+
+      function handleDisplayNameInput() {
+        const nextName = sanitizeDisplayName(elements.displayNameInput.value);
+        setDisplayName(nextName, true);
+        clearRecoveryStatus();
+      }
+
+      function handlePersonalDeckOnlyChange() {
+        state.personalDeckOnly = elements.personalDeckOnly.checked;
+        savePreferences({ personalDeckOnly: state.personalDeckOnly });
+        updateTopicCount();
+        updatePersonalDeckStatus();
       }
 
       function renderBestScore() {
@@ -3764,13 +3882,86 @@
         return Array.isArray(stored.history) ? stored.history : [];
       }
 
+      function getStoredPersonalDeck() {
+        const stored = loadStoredData();
+        return Array.isArray(stored.personalDeck)
+          ? stored.personalDeck.filter((question) => question && typeof question === "object" && typeof question.prompt === "string")
+          : [];
+      }
+
+      function questionFingerprint(question) {
+        const visualKey = question.visual ? JSON.stringify({
+          type: question.visual.type,
+          title: question.visual.title || "",
+          points: Array.isArray(question.visual.points) ? question.visual.points : [],
+        }) : "";
+        return JSON.stringify([
+          question.topicId || "",
+          question.category || "",
+          question.prompt || "",
+          question.inputMode || "",
+          Number(question.answer || 0).toFixed(12),
+          Number(question.mentalAnswer || 0).toFixed(12),
+          visualKey,
+        ]);
+      }
+
+      function cloneQuestionSnapshot(question) {
+        return JSON.parse(JSON.stringify(question));
+      }
+
+      function currentPersonalDeckContains(question) {
+        const fingerprint = questionFingerprint(question);
+        return getStoredPersonalDeck().some((entry) => questionFingerprint(entry) === fingerprint);
+      }
+
+      function updatePersonalDeckStatus() {
+        const personalDeck = getStoredPersonalDeck();
+        const count = personalDeck.length;
+        const matchingCount = personalDeck.filter((question) => {
+          if (state.selectedTopics.length > 0 && !state.selectedTopics.includes(question.topicId)) {
+            return false;
+          }
+          if (state.difficulty !== "all" && question.difficulty !== state.difficulty) {
+            return false;
+          }
+          return true;
+        }).length;
+
+        if (elements.personalDeckCount) {
+          elements.personalDeckCount.textContent = `${count} saved card${count === 1 ? "" : "s"}`;
+        }
+
+        if (elements.personalDeckNote) {
+          const subsetCopy = state.personalDeckOnly
+            ? ` Personal-deck-only mode is on and currently has ${matchingCount} matching card${matchingCount === 1 ? "" : "s"} under the active topic and difficulty filters.`
+            : "";
+          elements.personalDeckNote.textContent = `The review rail and end-of-session analysis always show the full solution notes.${subsetCopy}`;
+        }
+
+        if (elements.addToPersonalDeck && !elements.sessionScreen.classList.contains("is-hidden")) {
+          const currentEntry = getCurrentDeckEntry();
+          if (currentEntry) {
+            const alreadySaved = currentPersonalDeckContains(currentEntry.question);
+            elements.addToPersonalDeck.disabled = alreadySaved;
+            elements.addToPersonalDeck.textContent = alreadySaved ? "Saved to personal deck" : "Add to personal deck";
+          }
+        }
+      }
+
       function renderUserCenter() {
         const history = getStoredHistory()
           .filter((entry) => entry && typeof entry === "object")
           .sort((left, right) => Date.parse(right.timestamp || 0) - Date.parse(left.timestamp || 0));
 
+        renderProfileAndRecovery();
         renderTopicWorkList(history);
         renderHistoryList(history);
+      }
+
+      function renderProfileAndRecovery() {
+        elements.displayNameInput.value = state.displayName === DEFAULT_DISPLAY_NAME ? "" : state.displayName;
+        updatePersonalDeckStatus();
       }
 
       function renderTopicWorkList(history) {
@@ -3812,6 +4003,324 @@
             </article>
           `;
         }).join("");
+      }
+
+      function clearRecoveryStatus() {
+        if (elements.recoveryStatus) {
+          elements.recoveryStatus.textContent = "";
+        }
+      }
+
+      function setRecoveryStatus(text) {
+        if (elements.recoveryStatus) {
+          elements.recoveryStatus.textContent = text;
+        }
+      }
+
+      function addCurrentQuestionToPersonalDeck() {
+        const currentEntry = getCurrentDeckEntry();
+        if (!currentEntry) {
+          return;
+        }
+
+        const personalDeck = getStoredPersonalDeck();
+        const fingerprint = questionFingerprint(currentEntry.question);
+        if (personalDeck.some((entry) => questionFingerprint(entry) === fingerprint)) {
+          updatePersonalDeckStatus();
+          return;
+        }
+
+        personalDeck.unshift(cloneQuestionSnapshot(currentEntry.question));
+        savePreferences({ personalDeck: personalDeck.slice(0, 1000) });
+        updatePersonalDeckStatus();
+        renderUserCenter();
+        flashSecretRuntimeNote("Added to personal deck");
+      }
+
+      function serializeVisualForRecovery(visual) {
+        if (!visual || typeof visual !== "object") {
+          return null;
+        }
+        return [
+          visual.type || "",
+          visual.title || "",
+          visual.note || "",
+          visual.xLabel || "",
+          visual.yLabel || "",
+          Array.isArray(visual.labels) ? visual.labels : [],
+          Array.isArray(visual.points) ? visual.points : [],
+          visual.unitSuffix || "",
+          visual.showPointValues ? 1 : 0,
+          visual.showMarkers ? 1 : 0,
+          visual.showVerticalGrid ? 1 : 0,
+        ];
+      }
+
+      function deserializeVisualFromRecovery(payload) {
+        if (!Array.isArray(payload)) {
+          return null;
+        }
+        return {
+          type: payload[0] || "",
+          title: payload[1] || null,
+          note: payload[2] || null,
+          xLabel: payload[3] || null,
+          yLabel: payload[4] || null,
+          labels: Array.isArray(payload[5]) ? payload[5] : null,
+          points: Array.isArray(payload[6]) ? payload[6] : null,
+          unitSuffix: payload[7] || null,
+          showPointValues: Boolean(payload[8]),
+          showMarkers: Boolean(payload[9]),
+          showVerticalGrid: Boolean(payload[10]),
+        };
+      }
+
+      function serializeQuestionForRecovery(question) {
+        return [
+          question.topicId || "",
+          question.category || "",
+          question.prompt || "",
+          question.hint || "",
+          question.inputMode || "",
+          question.formatHint || "",
+          Number(question.answer) || 0,
+          Number(question.mentalAnswer) || 0,
+          Number(question.absTolerance) || 0,
+          Number(question.relTolerance) || 0,
+          question.explanation || "",
+          question.workedSolution || "",
+          question.methodExplanation || "",
+          question.difficulty || "",
+          question.source || "",
+          serializeVisualForRecovery(question.visual),
+        ];
+      }
+
+      function deserializeQuestionFromRecovery(payload) {
+        if (!Array.isArray(payload) || typeof payload[2] !== "string") {
+          return null;
+        }
+        return {
+          topicId: payload[0] || "",
+          category: payload[1] || "",
+          prompt: payload[2] || "",
+          hint: payload[3] || "",
+          inputMode: payload[4] || "number",
+          formatHint: payload[5] || "",
+          answer: Number(payload[6]) || 0,
+          mentalAnswer: Number(payload[7]) || 0,
+          absTolerance: Number(payload[8]) || 0,
+          relTolerance: Number(payload[9]) || 0,
+          explanation: payload[10] || "",
+          workedSolution: payload[11] || "",
+          methodExplanation: payload[12] || "",
+          difficulty: payload[13] || "easy",
+          source: payload[14] || null,
+          visual: deserializeVisualFromRecovery(payload[15]),
+        };
+      }
+
+      function serializeTopicStatsForRecovery(topicStats) {
+        return (Array.isArray(topicStats) ? topicStats : []).map((stat) => [
+          stat.id || "",
+          Number(stat.correct) || 0,
+          Number(stat.wrong) || 0,
+          Number(stat.skipped) || 0,
+          Number(stat.score) || 0,
+        ]);
+      }
+
+      function deserializeTopicStatsFromRecovery(payload) {
+        return (Array.isArray(payload) ? payload : [])
+          .map((stat) => {
+            if (!Array.isArray(stat)) {
+              return null;
+            }
+            return {
+              id: stat[0] || "",
+              correct: Number(stat[1]) || 0,
+              wrong: Number(stat[2]) || 0,
+              skipped: Number(stat[3]) || 0,
+              score: Number(stat[4]) || 0,
+            };
+          })
+          .filter(Boolean);
+      }
+
+      function serializeHistoryEntryForRecovery(entry) {
+        return [
+          entry.id || "",
+          Date.parse(entry.timestamp) || 0,
+          Array.isArray(entry.selectedTopicIds) ? entry.selectedTopicIds : [],
+          entry.difficulty || DEFAULT_DIFFICULTY,
+          Number(entry.questionCount) || DEFAULT_QUESTION_COUNT,
+          Number(entry.timerMinutes) || 0,
+          entry.intenseTimer ? 1 : 0,
+          Number(entry.elapsedSeconds) || 0,
+          Number(entry.score) || 0,
+          Number(entry.correct) || 0,
+          Number(entry.wrong) || 0,
+          Number(entry.skipped) || 0,
+          serializeTopicStatsForRecovery(entry.topicStats),
+        ];
+      }
+
+      function deserializeHistoryEntryFromRecovery(entry) {
+        if (!Array.isArray(entry)) {
+          return null;
+        }
+        return {
+          id: entry[0] || `history-${Math.random().toString(36).slice(2, 9)}`,
+          timestamp: new Date(Number(entry[1]) || Date.now()).toISOString(),
+          selectedTopicIds: normalizeSelectedTopicIds(Array.isArray(entry[2]) ? entry[2] : []),
+          difficulty: typeof entry[3] === "string" ? entry[3] : DEFAULT_DIFFICULTY,
+          questionCount: clampInt(entry[4], 5, 100, DEFAULT_QUESTION_COUNT),
+          timerMinutes: clampNumber(entry[5], 0, 90, DEFAULT_TIMER_MINUTES),
+          intenseTimer: Boolean(entry[6]),
+          elapsedSeconds: Number(entry[7]) || 0,
+          score: Number(entry[8]) || 0,
+          correct: Number(entry[9]) || 0,
+          wrong: Number(entry[10]) || 0,
+          skipped: Number(entry[11]) || 0,
+          topicStats: deserializeTopicStatsFromRecovery(entry[12]),
+        };
+      }
+
+      function buildRecoveryPayload() {
+        const stored = loadStoredData();
+        return {
+          v: 2,
+          n: sanitizeDisplayName(stored.displayName || state.displayName || DEFAULT_DISPLAY_NAME),
+          p: [
+            stored.questionCount ?? DEFAULT_QUESTION_COUNT,
+            stored.timerMinutes ?? DEFAULT_TIMER_MINUTES,
+            stored.difficulty || DEFAULT_DIFFICULTY,
+            stored.showHints === true ? 1 : 0,
+            stored.intenseTimer === true ? 1 : 0,
+            stored.personalDeckOnly === true ? 1 : 0,
+            normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds()),
+            Number.isFinite(stored.bestScore) ? stored.bestScore : null,
+            stored.freddybeanUnlocked === true ? 1 : 0,
+          ],
+          h: getStoredHistory().map(serializeHistoryEntryForRecovery),
+          d: getStoredPersonalDeck().map(serializeQuestionForRecovery),
+        };
+      }
+
+      function encodeRecoveryPayload(payload) {
+        const text = JSON.stringify(payload);
+        const bytes = new TextEncoder().encode(text);
+        let binary = "";
+        const chunkSize = 0x8000;
+
+        for (let index = 0; index < bytes.length; index += chunkSize) {
+          const chunk = bytes.subarray(index, Math.min(index + chunkSize, bytes.length));
+          binary += String.fromCharCode(...chunk);
+        }
+
+        return `${RECOVERY_CODE_PREFIX}${window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "")}`;
+      }
+
+      function decodeRecoveryPayload(code) {
+        const trimmed = String(code || "").trim();
+        if (!trimmed.startsWith(RECOVERY_CODE_PREFIX)) {
+          throw new Error("That recovery code is not a Signal Deck code.");
+        }
+
+        const body = trimmed.slice(RECOVERY_CODE_PREFIX.length).replace(/-/g, "+").replace(/_/g, "/");
+        const padded = `${body}${"=".repeat((4 - (body.length % 4 || 4)) % 4)}`;
+        const binary = window.atob(padded);
+        const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+        const text = new TextDecoder().decode(bytes);
+        const payload = JSON.parse(text);
+
+        if (!payload || typeof payload !== "object") {
+          throw new Error("The recovery code payload is invalid.");
+        }
+
+        return payload;
+      }
+
+      function generateRecoveryCode() {
+        try {
+          const code = encodeRecoveryPayload(buildRecoveryPayload());
+          elements.recoveryCodeOutput.value = code;
+          setRecoveryStatus("Recovery code generated from your current local data.");
+        } catch (_error) {
+          setRecoveryStatus("Could not generate a recovery code from the current data.");
+        }
+      }
+
+      function restoreRecoveryCode() {
+        try {
+          const payload = decodeRecoveryPayload(elements.recoveryCodeInput.value);
+          applyRecoveryPayload(payload);
+          setRecoveryStatus("Recovery code loaded. Personal deck, history, and saved setup have been restored.");
+        } catch (error) {
+          setRecoveryStatus(error instanceof Error ? error.message : "Could not read that recovery code.");
+        }
+      }
+
+      function applyRecoveryPayload(payload) {
+        const currentTheme = document.body.getAttribute("data-theme") || DEFAULT_APPEARANCE_THEME;
+        let preferences;
+        let history;
+        let personalDeck;
+        let restoredName;
+        let freddybeanUnlocked = false;
+
+        if (payload.v === 2 && Array.isArray(payload.p)) {
+          preferences = {
+            questionCount: payload.p[0],
+            timerMinutes: payload.p[1],
+            difficulty: payload.p[2],
+            showHints: Boolean(payload.p[3]),
+            intenseTimer: Boolean(payload.p[4]),
+            personalDeckOnly: Boolean(payload.p[5]),
+            selectedTopics: Array.isArray(payload.p[6]) ? payload.p[6] : getAllTopicIds(),
+            bestScore: payload.p[7],
+          };
+          freddybeanUnlocked = Boolean(payload.p[8]) || payload.p[2] === "freddybean";
+          history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
+          personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializeQuestionFromRecovery).filter(Boolean);
+          restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
+        } else {
+          preferences = payload.preferences && typeof payload.preferences === "object" ? payload.preferences : {};
+          freddybeanUnlocked = preferences.difficulty === "freddybean";
+          history = Array.isArray(payload.history) ? payload.history.slice(0, 200) : [];
+          personalDeck = Array.isArray(payload.personalDeck)
+            ? payload.personalDeck.filter((question) => question && typeof question === "object" && typeof question.prompt === "string").slice(0, 1000)
+            : [];
+          restoredName = sanitizeDisplayName(payload.displayName || DEFAULT_DISPLAY_NAME);
+        }
+
+        const restoredTopics = normalizeSelectedTopicIds(Array.isArray(preferences.selectedTopics) ? preferences.selectedTopics : getAllTopicIds());
+        const restored = {
+          appearanceTheme: currentTheme,
+          questionCount: clampInt(preferences.questionCount, 5, 100, DEFAULT_QUESTION_COUNT),
+          timerMinutes: clampNumber(preferences.timerMinutes, 0, 90, DEFAULT_TIMER_MINUTES),
+          difficulty: typeof preferences.difficulty === "string" ? preferences.difficulty : DEFAULT_DIFFICULTY,
+          showHints: preferences.showHints === true,
+          intenseTimer: preferences.intenseTimer === true,
+          personalDeckOnly: preferences.personalDeckOnly === true,
+          selectedTopics: restoredTopics.length > 0 ? restoredTopics : getAllTopicIds(),
+          bestScore: Number.isFinite(preferences.bestScore) ? preferences.bestScore : undefined,
+          history: history.slice(0, 200),
+          personalDeck: personalDeck.slice(0, 1000),
+          displayName: restoredName,
+          freddybeanUnlocked,
+          liveGenerationEnabled: state.liveGenerationEnabled,
+        };
+
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
+        loadPreferences();
+        renderBestScore();
+        renderUserCenter();
+        updateTopicCount();
+        renderLiveReview();
+        updateSummaryToggle();
+        setSessionSummaryOpen(false);
+        showSetupScreen();
       }
 
       function buildTopicWorkSummaries(history) {
@@ -3864,6 +4373,9 @@
         if (!rawValue || rawValue === "all") {
           return "All mix";
         }
+        if (rawValue === "freddybean") {
+          return "Freddybean";
+        }
         return rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
       }
 
@@ -3902,13 +4414,24 @@
         elements.difficultySelect.value = DEFAULT_DIFFICULTY;
         elements.showHints.checked = false;
         elements.intenseTimer.checked = false;
+        elements.personalDeckOnly.checked = false;
+        elements.displayNameInput.value = "";
+        elements.recoveryCodeOutput.value = "";
+        elements.recoveryCodeInput.value = "";
+        clearRecoveryStatus();
         state.liveGenerationEnabled = false;
+        state.personalDeckOnly = false;
+        state.freddybeanUnlocked = false;
+        setDisplayName(DEFAULT_DISPLAY_NAME, false);
+        ensureFreddybeanOption();
+        elements.difficultySelect.value = DEFAULT_DIFFICULTY;
         setSelectedTopics(getAllTopicIds());
         resetSessionState();
         clearInlineErrors();
         renderBestScore();
         renderUserCenter();
         updateTopicCount();
+        updatePersonalDeckStatus();
         renderLiveReview();
         updateSummaryToggle();
         setSessionSummaryOpen(false);
@@ -3938,6 +4461,50 @@
         state.liveGenerationEnabled = !state.liveGenerationEnabled;
         savePreferences({ liveGenerationEnabled: state.liveGenerationEnabled });
         flashSecretRuntimeNote(state.liveGenerationEnabled ? "Live generation enabled" : "Live generation disabled");
+      }
+
+      function handleDifficultySecretTap() {
+        state.difficultyTapCount += 1;
+
+        if (state.difficultyTapTimerId) {
+          window.clearTimeout(state.difficultyTapTimerId);
+        }
+
+        state.difficultyTapTimerId = window.setTimeout(() => {
+          state.difficultyTapCount = 0;
+          state.difficultyTapTimerId = null;
+        }, 1600);
+
+        if (state.difficultyTapCount < 5) {
+          return;
+        }
+
+        state.difficultyTapCount = 0;
+        window.clearTimeout(state.difficultyTapTimerId);
+        state.difficultyTapTimerId = null;
+        state.freddybeanUnlocked = true;
+        ensureFreddybeanOption();
+        elements.difficultySelect.value = "freddybean";
+        savePreferences({ freddybeanUnlocked: true, difficulty: "freddybean" });
+        updateTopicCount();
+        flashSecretRuntimeNote("Freddybean difficulty unlocked");
+      }
+
+      function ensureFreddybeanOption() {
+        let option = elements.difficultySelect.querySelector('option[value="freddybean"]');
+        if (!state.freddybeanUnlocked) {
+          if (option) {
+            option.remove();
+          }
+          return;
+        }
+
+        if (!option) {
+          option = document.createElement("option");
+          option.value = "freddybean";
+          option.textContent = "Freddybean";
+          elements.difficultySelect.appendChild(option);
+        }
       }
 
       function flashSecretRuntimeNote(text) {
@@ -4029,13 +4596,18 @@
 
         state.showHints = elements.showHints.checked;
         state.intenseTimer = intenseTimer;
+        state.personalDeckOnly = elements.personalDeckOnly.checked;
         state.selectedTopics = selectedTopics;
         state.sessionLength = questionCount;
         state.difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
 
-        const questionDeck = buildSessionDeck(selectedTopics, questionCount, state.difficulty);
+        const questionDeck = buildSessionDeck(selectedTopics, questionCount, state.difficulty, {
+          personalDeckOnly: state.personalDeckOnly,
+        });
         if (questionDeck.length === 0) {
-          elements.setupError.textContent = "No questions match that topic and difficulty combination.";
+          elements.setupError.textContent = state.personalDeckOnly
+            ? "No saved personal-deck cards match that topic and difficulty combination."
+            : "No questions match that topic and difficulty combination.";
           return;
         }
 
@@ -4068,6 +4640,7 @@
           difficulty: state.difficulty,
           showHints: state.showHints,
           intenseTimer: state.intenseTimer,
+          personalDeckOnly: state.personalDeckOnly,
           selectedTopics,
         });
 
@@ -4429,6 +5002,7 @@
         clearInputError();
         updateLiveScore();
         updateTimerLabel();
+        updatePersonalDeckStatus();
         window.requestAnimationFrame(() => elements.answerInput.focus());
       }
 
@@ -5540,11 +6114,57 @@
         const requestedCount = Number.parseInt(elements.questionCount.value, 10);
         const safeCount = Number.isFinite(requestedCount) && requestedCount >= 5 ? requestedCount : DEFAULT_QUESTION_COUNT;
         const difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
-        const difficultyCopy = difficulty === "all" ? "a mixed difficulty" : `${formatDifficultyLabel(difficulty).toLowerCase()} difficulty`;
-        elements.topicCount.textContent = `${selected.length} topic${selected.length === 1 ? "" : "s"} selected. The session will draw ${safeCount} card${safeCount === 1 ? "" : "s"} at ${difficultyCopy} and rebalance across the topics you keep checked.`;
+        const difficultyCopy = difficulty === "all" ? "a mixed difficulty" : difficulty === "freddybean" ? "Freddybean difficulty" : `${formatDifficultyLabel(difficulty).toLowerCase()} difficulty`;
+        const personalDeckOnly = elements.personalDeckOnly.checked;
+        const sourceCopy = personalDeckOnly ? "from your personal deck" : "from the full deck";
+        state.selectedTopics = selected;
+        state.difficulty = difficulty;
+        elements.topicCount.textContent = `${selected.length} topic${selected.length === 1 ? "" : "s"} selected. The session will draw ${safeCount} card${safeCount === 1 ? "" : "s"} at ${difficultyCopy} ${sourceCopy} and rebalance across the topics you keep checked.`;
+        updatePersonalDeckStatus();
       }
 
-      function buildSessionDeck(selectedTopicIds, sessionLength, difficulty) {
+      function isFreddybeanQuestion(question) {
+        const easyTopics = new Set([
+          "mentalMath",
+          "normal",
+          "cardsSampling",
+          "conditionalProb",
+          "basicReview",
+          "fixedIncome",
+          "ev",
+          "vol",
+          "sharpeGraph",
+        ]);
+
+        return question.difficulty === "easy" && easyTopics.has(question.topicId);
+      }
+
+      function buildSessionDeck(selectedTopicIds, sessionLength, difficulty, options = {}) {
+        if (options.personalDeckOnly) {
+          const pool = getStoredPersonalDeck().filter((question) => {
+            if (!selectedTopicIds.includes(question.topicId)) {
+              return false;
+            }
+            if (difficulty === "freddybean") {
+              return isFreddybeanQuestion(question);
+            }
+            if (difficulty !== "all" && question.difficulty !== difficulty) {
+              return false;
+            }
+            return true;
+          });
+
+          if (pool.length === 0) {
+            return [];
+          }
+
+          const deck = [];
+          while (deck.length < sessionLength) {
+            deck.push(cloneQuestionSnapshot(pool[Math.floor(Math.random() * pool.length)]));
+          }
+          return shuffle(deck);
+        }
+
         const eligiblePools = {};
         const runtimePools = state.liveGenerationEnabled
           ? buildRuntimeGeneratedQuestionsByTopic(selectedTopicIds, sessionLength, difficulty)
@@ -5552,7 +6172,11 @@
 
         for (const topicId of selectedTopicIds) {
           const basePool = questionBank[topicId] || [];
-          const filteredPool = difficulty === "all" ? basePool : basePool.filter((question) => question.difficulty === difficulty);
+          const filteredPool = difficulty === "all"
+            ? basePool
+            : difficulty === "freddybean"
+              ? basePool.filter(isFreddybeanQuestion)
+              : basePool.filter((question) => question.difficulty === difficulty);
           const generatedPool = runtimePools[topicId] || [];
           if (filteredPool.length > 0 || generatedPool.length > 0) {
             eligiblePools[topicId] = {
@@ -5614,7 +6238,9 @@
           }
 
           if (difficulty !== "all") {
-            questions = questions.filter((question) => question.difficulty === difficulty);
+            questions = difficulty === "freddybean"
+              ? questions.filter(isFreddybeanQuestion)
+              : questions.filter((question) => question.difficulty === difficulty);
           }
 
           if (questions.length > 0) {
@@ -18749,6 +19375,9 @@
         if (difficulty === "all") {
           return "All mix";
         }
+        if (difficulty === "freddybean") {
+          return "Freddybean";
+        }
 
         return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
       }
@@ -19534,6 +20163,22 @@
           [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
         }
         return copy;
+      }
+
+      function clampNumber(value, min, max, fallback) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) {
+          return fallback;
+        }
+        return Math.min(max, Math.max(min, numeric));
+      }
+
+      function clampInt(value, min, max, fallback) {
+        const numeric = Number.parseInt(value, 10);
+        if (!Number.isFinite(numeric)) {
+          return fallback;
+        }
+        return Math.min(max, Math.max(min, numeric));
       }
 
       function savePreferences(nextValues) {
