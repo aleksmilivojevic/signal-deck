@@ -2358,12 +2358,19 @@
         border-bottom: 2px solid var(--win-dark);
         border-radius: 0;
         background: var(--paper-strong);
+        -webkit-tap-highlight-color: transparent;
+        transition: none;
+      }
+
+      .toggle-row:active {
+        background: var(--paper-strong);
       }
 
       .toggle-row input {
         margin-top: 0.2rem;
         width: 1.05rem;
         height: 1.05rem;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .toggle-title {
@@ -2433,6 +2440,23 @@
       }
 
       @media (max-width: 640px) {
+        .hero {
+          padding: 2.4rem 7.15rem 1.35rem 0.95rem;
+        }
+
+        body[data-theme="modern"] .hero {
+          padding: 2.5rem 7.35rem 1.45rem 1rem;
+        }
+
+        h1,
+        body[data-theme="modern"] h1 {
+          max-width: none;
+        }
+
+        .dek {
+          max-width: none;
+        }
+
         .answer-pad {
           display: flex;
           flex-wrap: wrap;
@@ -2514,9 +2538,9 @@
         }
 
         .brand-mark {
-          width: min(28vw, 6.2rem);
-          top: 0.75rem;
-          right: 0.65rem;
+          width: min(25vw, 5.75rem);
+          top: 0.82rem;
+          right: 0.55rem;
         }
       }
 
@@ -2686,8 +2710,7 @@
               <span id="personal-deck-count" class="pill"></span>
             </div>
             <label class="field-label" for="display-name-input">Enter your name</label>
-            <input id="display-name-input" class="field-input" type="text" maxlength="80" placeholder="Enter your name" />
-            <p class="field-note">Stored locally and used at the top of the deck.</p>
+            <input id="display-name-input" class="field-input" type="text" maxlength="80" placeholder="Enter your name" enterkeyhint="done" />
           </article>
 
           <article class="field-card field-card--wide">
@@ -2727,11 +2750,11 @@
               </div>
               <div class="field-card field-card--wide">
                 <label class="field-label" for="recovery-code-output">Generated code</label>
-                <textarea id="recovery-code-output" class="field-input" readonly spellcheck="false"></textarea>
+                <textarea id="recovery-code-output" class="field-input" readonly spellcheck="false" enterkeyhint="done"></textarea>
               </div>
               <div class="field-card field-card--wide">
                 <label class="field-label" for="recovery-code-input">Paste code to recover</label>
-                <textarea id="recovery-code-input" class="field-input" spellcheck="false"></textarea>
+                <textarea id="recovery-code-input" class="field-input" spellcheck="false" enterkeyhint="done"></textarea>
                 <p id="recovery-status" class="field-note" aria-live="polite"></p>
               </div>
             </div>
@@ -3783,6 +3806,10 @@
         elements.addToPersonalDeck.addEventListener("click", addCurrentQuestionToPersonalDeck);
         window.addEventListener("resize", syncSummaryPresentation);
 
+        bindDismissOnEnter(elements.displayNameInput);
+        bindDismissOnEnter(elements.recoveryCodeInput);
+        bindDismissOnEnter(elements.recoveryCodeOutput);
+
         elements.answerInput.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
             event.preventDefault();
@@ -3866,6 +3893,19 @@
             syncTopicCardState();
             updateTopicCount();
           }
+        });
+      }
+
+      function bindDismissOnEnter(element) {
+        if (!element) {
+          return;
+        }
+        element.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" || event.shiftKey) {
+            return;
+          }
+          event.preventDefault();
+          element.blur();
         });
       }
 
