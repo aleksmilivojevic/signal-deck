@@ -345,6 +345,86 @@
         font-size: 0.92rem;
       }
 
+      .trophy-room {
+        display: grid;
+        gap: 0.85rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-auto-rows: 1fr;
+        align-items: stretch;
+      }
+
+      .trophy-card {
+        display: grid;
+        gap: 0.55rem;
+        align-content: start;
+        justify-items: stretch;
+        min-height: 16.5rem;
+        height: 100%;
+      }
+
+      .trophy-stars {
+        min-height: 1rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: #9b7a13;
+        text-align: center;
+      }
+
+      .trophy-badge {
+        width: 3.25rem;
+        height: 3.25rem;
+        display: grid;
+        place-items: center;
+        font-size: 1.7rem;
+        border-radius: 999px;
+        background: #c7c2b8;
+        color: #6e6a64;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
+        filter: grayscale(1) saturate(0.25);
+        opacity: 0.6;
+      }
+
+      .trophy-card.is-earned .trophy-badge {
+        background: linear-gradient(180deg, #fff0a8 0%, #dfb84a 100%);
+        color: #5e4300;
+        filter: none;
+        opacity: 1;
+      }
+
+      .trophy-badge.icon-imperial {
+        width: 3.75rem;
+        height: 3.75rem;
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      .trophy-name {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .trophy-card.is-earned .trophy-name {
+        color: #4f3700;
+      }
+
+      .trophy-copy {
+        margin: 0;
+        color: #3f3f3f;
+        font-size: 0.93rem;
+        line-height: 1.45;
+      }
+
       .button--danger {
         color: #7a0b0b;
       }
@@ -876,6 +956,15 @@
         color: #1f2a33;
       }
 
+      body[data-theme="modern"] .prompt-text {
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: clamp(1.02rem, 2.2vw, 1.28rem);
+        line-height: 1.42;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #22303a;
+      }
+
       body[data-theme="modern"] .guide-card p,
       body[data-theme="modern"] .guide-example,
       body[data-theme="modern"] .guide-example span {
@@ -1324,6 +1413,28 @@
         box-shadow: var(--modern-shadow);
       }
 
+      body[data-theme="modern"] .trophy-badge {
+        background: linear-gradient(180deg, rgba(224, 231, 245, 0.95) 0%, rgba(202, 210, 226, 0.92) 100%);
+        color: #6a7385;
+        border: 1px solid rgba(154, 167, 191, 0.28);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      body[data-theme="modern"] .trophy-card.is-earned .trophy-badge {
+        background: linear-gradient(180deg, #ffe9a3 0%, #f0b94a 100%);
+        color: #674200;
+        border-color: rgba(184, 132, 36, 0.3);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 14px 28px rgba(133, 93, 15, 0.22);
+      }
+
+      body[data-theme="modern"] .trophy-card.is-earned .trophy-name {
+        color: #5f4200;
+      }
+
+      body[data-theme="modern"] .trophy-stars {
+        color: #b78322;
+      }
+
       body[data-theme="modern"] .panel::before {
         display: none;
       }
@@ -1631,8 +1742,8 @@
 
       .prompt-text {
         margin: 0;
-        font-size: clamp(1.45rem, 4vw, 2.1rem);
-        line-height: 1.15;
+        font-size: clamp(1.12rem, 2.7vw, 1.5rem);
+        line-height: 1.28;
         letter-spacing: 0;
         color: #000080;
         font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
@@ -2365,7 +2476,7 @@
         }
 
         .prompt-text {
-          font-size: 2rem;
+          font-size: 1.3rem;
         }
 
         .guide-card,
@@ -2482,7 +2593,7 @@
         <div class="setup-grid">
           <article class="field-card">
             <label class="field-label" for="timer-minutes">Session timer (minutes)</label>
-            <input id="timer-minutes" class="field-input" type="number" min="0" step="0.5" value="5" />
+            <input id="timer-minutes" class="field-input" type="number" min="0" max="100" step="0.5" value="5" />
             <p class="field-note">Use <code>0</code> for untimed practice.</p>
           </article>
 
@@ -2571,33 +2682,12 @@
         <div class="user-grid">
           <article class="field-card field-card--wide">
             <div class="topic-toolbar">
-              <span class="field-label">Profile and recovery</span>
+              <span class="field-label">Your name</span>
               <span id="personal-deck-count" class="pill"></span>
             </div>
-            <div class="setup-grid">
-              <div class="field-card">
-                <label class="field-label" for="display-name-input">Your name</label>
-                <input id="display-name-input" class="field-input" type="text" maxlength="80" placeholder="Enter your name" />
-                <p class="field-note">Stored locally and included in your recovery code.</p>
-              </div>
-              <div class="field-card">
-                <span class="field-label">Recovery code</span>
-                <div class="score-rules">
-                  <button id="generate-recovery-code" class="button button--ghost" type="button">Generate code</button>
-                  <button id="restore-recovery-code" class="button button--ghost" type="button">Recover from code</button>
-                </div>
-                <p class="field-note">The code stores your personal deck, name, saved setup, best score, and quiz history.</p>
-              </div>
-              <div class="field-card field-card--wide">
-                <label class="field-label" for="recovery-code-output">Generated code</label>
-                <textarea id="recovery-code-output" class="field-input" readonly spellcheck="false"></textarea>
-              </div>
-              <div class="field-card field-card--wide">
-                <label class="field-label" for="recovery-code-input">Paste code to recover</label>
-                <textarea id="recovery-code-input" class="field-input" spellcheck="false"></textarea>
-                <p id="recovery-status" class="field-note" aria-live="polite"></p>
-              </div>
-            </div>
+            <label class="field-label" for="display-name-input">Enter your name</label>
+            <input id="display-name-input" class="field-input" type="text" maxlength="80" placeholder="Enter your name" />
+            <p class="field-note">Stored locally and used at the top of the deck.</p>
           </article>
 
           <article class="field-card field-card--wide">
@@ -2609,10 +2699,42 @@
 
           <article class="field-card field-card--wide">
             <div class="topic-toolbar">
+              <span class="field-label">Trophy Room</span>
+            </div>
+            <div id="trophy-room" class="trophy-room"></div>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
               <span class="field-label">Quiz History</span>
               <button id="clear-user-memory" class="button button--ghost button--danger" type="button">Delete history</button>
             </div>
             <div id="history-list" class="user-list"></div>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Recovery</span>
+            </div>
+            <div class="setup-grid">
+              <div class="field-card">
+                <span class="field-label">Recovery code</span>
+                <div class="score-rules">
+                  <button id="generate-recovery-code" class="button button--ghost" type="button">Generate code</button>
+                  <button id="restore-recovery-code" class="button button--ghost" type="button">Recover from code</button>
+                </div>
+                <p class="field-note">Generated codes are short local restore keys for this browser. They bring back your personal deck, history, and saved setup from local storage.</p>
+              </div>
+              <div class="field-card field-card--wide">
+                <label class="field-label" for="recovery-code-output">Generated code</label>
+                <textarea id="recovery-code-output" class="field-input" readonly spellcheck="false"></textarea>
+              </div>
+              <div class="field-card field-card--wide">
+                <label class="field-label" for="recovery-code-input">Paste code to recover</label>
+                <textarea id="recovery-code-input" class="field-input" spellcheck="false"></textarea>
+                <p id="recovery-status" class="field-note" aria-live="polite"></p>
+              </div>
+            </div>
           </article>
         </div>
       </section>
@@ -3460,6 +3582,10 @@
       const DEFAULT_APPEARANCE_THEME = "modern";
       const DEFAULT_DISPLAY_NAME = "K-man";
       const RECOVERY_CODE_PREFIX = "SD1.";
+      const SHORT_RECOVERY_CODE_PREFIX = "SD";
+      const SHORT_RECOVERY_CODE_LENGTH = 16;
+      const SHORT_RECOVERY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      const RECOVERY_SNAPSHOTS_KEY = "recoverySnapshots";
       const STORAGE_KEY = "signal-deck-standalone-preferences";
       const EULER_GAMMA = 0.5772156649;
 
@@ -3531,6 +3657,7 @@
         bestScore: document.getElementById("best-score"),
         setupError: document.getElementById("setup-error"),
         topicWorkList: document.getElementById("topic-work-list"),
+        trophyRoom: document.getElementById("trophy-room"),
         historyList: document.getElementById("history-list"),
         clearUserMemory: document.getElementById("clear-user-memory"),
         progressLabel: document.getElementById("progress-label"),
@@ -3579,6 +3706,7 @@
       const optimalGuessRewardCache = new Map();
 
       const questionBank = enrichQuestionBank(buildQuestionBank());
+      const builtInQuestionLookup = buildBuiltInQuestionLookup(questionBank);
 
       const state = {
         baseDeck: [],
@@ -3956,7 +4084,84 @@
 
         renderProfileAndRecovery();
         renderTopicWorkList(history);
+        renderTrophyRoom(history);
         renderHistoryList(history);
+      }
+
+      function getTrophyDefinitions() {
+        return [
+          {
+            id: "half-century",
+            icon: "🏆",
+            name: "Half-Century Finisher",
+            description: "Finish an all-topics quiz with at least 10 questions and at least 50% correct.",
+            earned(entry) {
+              return Number(entry.questionCount) >= 10 && trophyAccuracy(entry) >= 0.5;
+            },
+          },
+          {
+            id: "half-century-hard",
+            icon: "🏆",
+            name: "Hard Half-Century",
+            description: "Finish an all-topics Hard-only quiz with at least 10 questions and at least 50% correct.",
+            earned(entry) {
+              return Number(entry.questionCount) >= 10 && entry.difficulty === "hard" && trophyAccuracy(entry) >= 0.5;
+            },
+          },
+          {
+            id: "century-run",
+            icon: "🏆",
+            name: "Century Run",
+            description: "Finish an all-topics quiz with 100 questions and at least 35% correct.",
+            earned(entry) {
+              return Number(entry.questionCount) === 100 && trophyAccuracy(entry) >= 0.35;
+            },
+          },
+          {
+            id: "pressure-crown",
+            icon: "👑",
+            name: "Pressure Crown",
+            description: "Finish an all-topics intense-mode quiz with at least 50% correct and at most 5 minutes per question.",
+            earned(entry) {
+              return entry.intenseTimer === true && trophyAccuracy(entry) >= 0.5 && trophyMinutesPerQuestion(entry) <= 5;
+            },
+          },
+          {
+            id: "perfect-crown",
+            icon: "👑",
+            name: "Perfect Crown",
+            description: "Finish an all-topics intense-mode quiz with at least 20 questions, 100% correct, and at most 5 minutes per question.",
+            earned(entry) {
+              return entry.intenseTimer === true && Number(entry.questionCount) >= 20 && trophyAccuracy(entry) >= 1 && trophyMinutesPerQuestion(entry) <= 5;
+            },
+          },
+          {
+            id: "imperial-crown",
+            icon: "♛",
+            name: "Signal Deck Crown",
+            description: "Finish an all-topics intense-mode quiz with at least 20 questions, 100% correct, and at most 2 minutes per question.",
+            earned(entry) {
+              return entry.intenseTimer === true && Number(entry.questionCount) >= 20 && trophyAccuracy(entry) >= 1 && trophyMinutesPerQuestion(entry) <= 2;
+            },
+          },
+        ];
+      }
+
+      function trophyAccuracy(entry) {
+        return Number(entry.correct) / Math.max(1, Number(entry.questionCount));
+      }
+
+      function trophyMinutesPerQuestion(entry) {
+        return Number(entry.timerMinutes) / Math.max(1, Number(entry.questionCount));
+      }
+
+      function isGlobalTrophyEligible(entry) {
+        const allTopics = getAllTopicIds();
+        const selected = normalizeSelectedTopicIds(Array.isArray(entry.selectedTopicIds) ? entry.selectedTopicIds : []);
+        return allTopics.length > 0
+          && selected.length === allTopics.length
+          && selected.every((topicId, index) => topicId === allTopics[index])
+          && entry.personalDeckOnly !== true;
       }
 
       function renderProfileAndRecovery() {
@@ -3978,6 +4183,27 @@
               <span class="user-score ${summary.accuracy >= 0.7 ? "positive" : summary.accuracy >= 0.5 ? "" : "negative"}">${escapeHtml(String(Math.round(summary.accuracy * 100)))}%</span>
             </div>
             <p class="user-copy user-copy--muted">Sessions: ${summary.sessions} • Correct: ${summary.correct} • Wrong: ${summary.wrong} • Skipped: ${summary.skipped} • Score: ${summary.score}</p>
+          </article>
+        `).join("");
+      }
+
+      function renderTrophyRoom(history) {
+        const trophies = getTrophyDefinitions().map((trophy) => ({
+          ...trophy,
+          qualifyingEntries: history.filter((entry) => entry && isGlobalTrophyEligible(entry) && trophy.earned(entry)),
+        })).map((trophy) => ({
+          ...trophy,
+          unlocked: trophy.qualifyingEntries.length > 0,
+          hasStarRing: trophy.qualifyingEntries.some((entry) => entry.showHints === false),
+        }));
+
+        elements.trophyRoom.innerHTML = trophies.map((trophy) => `
+          <article class="user-card trophy-card ${trophy.unlocked ? "is-earned" : ""}">
+            <div class="trophy-stars">${trophy.unlocked && trophy.hasStarRing ? "✦ ✦ ✦" : ""}</div>
+            <div class="trophy-badge ${trophy.id === "imperial-crown" ? "icon-imperial" : ""}" aria-hidden="true">${escapeHtml(trophy.icon)}</div>
+            <h3 class="trophy-name">${escapeHtml(trophy.name)}</h3>
+            <p class="trophy-copy">${escapeHtml(trophy.description)}</p>
+            <p class="user-copy user-copy--muted">${trophy.unlocked ? (trophy.hasStarRing ? "Unlocked • no-hints ring earned" : "Unlocked") : "Locked"}</p>
           </article>
         `).join("");
       }
@@ -4035,6 +4261,52 @@
         updatePersonalDeckStatus();
         renderUserCenter();
         flashSecretRuntimeNote("Added to personal deck");
+      }
+
+      function serializePersonalDeckRefForRecovery(question) {
+        if (question.runtimeFamily) {
+          return ["g", question.runtimeFamily, question.topicId || "", question.category || "", question.difficulty || "easy"];
+        }
+
+        return ["b", question.problemKey || deriveProblemKey(question)];
+      }
+
+      function deserializePersonalDeckRefFromRecovery(ref) {
+        if (!Array.isArray(ref)) {
+          return null;
+        }
+
+        if (ref[0] === "b") {
+          const question = builtInQuestionLookup.get(ref[1]);
+          return question ? cloneQuestionSnapshot(question) : null;
+        }
+
+        if (ref[0] === "g") {
+          const runtimeFamily = ref[1];
+          const topicId = ref[2] || "";
+          const category = ref[3] || "";
+          const difficulty = ref[4] || "all";
+          const generated = buildRuntimeQuestionsForFamily(runtimeFamily, 8, difficulty === "freddybean" ? "freddybean" : "all");
+          const filtered = generated.filter((question) => {
+            if (topicId && question.topicId !== topicId) {
+              return false;
+            }
+            if (category && question.category !== category) {
+              return false;
+            }
+            if (difficulty && difficulty !== "all" && difficulty !== "freddybean" && question.difficulty !== difficulty) {
+              return false;
+            }
+            return true;
+          });
+          const pool = filtered.length > 0 ? filtered : generated;
+          if (pool.length === 0) {
+            return null;
+          }
+          return cloneQuestionSnapshot(pool[Math.floor(Math.random() * pool.length)]);
+        }
+
+        return null;
       }
 
       function serializeVisualForRecovery(visual) {
@@ -4162,6 +4434,8 @@
           Number(entry.wrong) || 0,
           Number(entry.skipped) || 0,
           serializeTopicStatsForRecovery(entry.topicStats),
+          entry.showHints ? 1 : 0,
+          entry.personalDeckOnly ? 1 : 0,
         ];
       }
 
@@ -4175,8 +4449,10 @@
           selectedTopicIds: normalizeSelectedTopicIds(Array.isArray(entry[2]) ? entry[2] : []),
           difficulty: typeof entry[3] === "string" ? entry[3] : DEFAULT_DIFFICULTY,
           questionCount: clampInt(entry[4], 5, 100, DEFAULT_QUESTION_COUNT),
-          timerMinutes: clampNumber(entry[5], 0, 90, DEFAULT_TIMER_MINUTES),
+          timerMinutes: clampNumber(entry[5], 0, 100, DEFAULT_TIMER_MINUTES),
           intenseTimer: Boolean(entry[6]),
+          showHints: entry.length > 13 ? Boolean(entry[13]) : undefined,
+          personalDeckOnly: entry.length > 14 ? Boolean(entry[14]) : undefined,
           elapsedSeconds: Number(entry[7]) || 0,
           score: Number(entry[8]) || 0,
           correct: Number(entry[9]) || 0,
@@ -4188,23 +4464,99 @@
 
       function buildRecoveryPayload() {
         const stored = loadStoredData();
-        return {
-          v: 2,
-          n: sanitizeDisplayName(stored.displayName || state.displayName || DEFAULT_DISPLAY_NAME),
-          p: [
-            stored.questionCount ?? DEFAULT_QUESTION_COUNT,
-            stored.timerMinutes ?? DEFAULT_TIMER_MINUTES,
-            stored.difficulty || DEFAULT_DIFFICULTY,
-            stored.showHints === true ? 1 : 0,
-            stored.intenseTimer === true ? 1 : 0,
-            stored.personalDeckOnly === true ? 1 : 0,
-            normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds()),
-            Number.isFinite(stored.bestScore) ? stored.bestScore : null,
-            stored.freddybeanUnlocked === true ? 1 : 0,
-          ],
-          h: getStoredHistory().map(serializeHistoryEntryForRecovery),
-          d: getStoredPersonalDeck().map(serializeQuestionForRecovery),
-        };
+        const payload = { v: 4 };
+        const displayName = sanitizeDisplayName(stored.displayName || state.displayName || DEFAULT_DISPLAY_NAME);
+        if (displayName !== DEFAULT_DISPLAY_NAME) {
+          payload.n = displayName;
+        }
+
+        const prefs = {};
+        const questionCount = clampInt(stored.questionCount, 5, 100, DEFAULT_QUESTION_COUNT);
+        const timerMinutes = clampNumber(stored.timerMinutes, 0, 100, DEFAULT_TIMER_MINUTES);
+        const difficulty = typeof stored.difficulty === "string" ? stored.difficulty : DEFAULT_DIFFICULTY;
+        const showHints = stored.showHints === true;
+        const intenseTimer = stored.intenseTimer === true;
+        const personalDeckOnly = stored.personalDeckOnly === true;
+        const selectedTopics = normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds());
+        const bestScore = Number.isFinite(stored.bestScore) ? stored.bestScore : null;
+        const freddybeanUnlocked = stored.freddybeanUnlocked === true;
+
+        if (questionCount !== DEFAULT_QUESTION_COUNT) prefs.q = questionCount;
+        if (timerMinutes !== DEFAULT_TIMER_MINUTES) prefs.t = timerMinutes;
+        if (difficulty !== DEFAULT_DIFFICULTY) prefs.d = difficulty;
+        if (showHints) prefs.h = 1;
+        if (intenseTimer) prefs.i = 1;
+        if (personalDeckOnly) prefs.p = 1;
+        if (selectedTopics.length !== getAllTopicIds().length || selectedTopics.some((topicId, index) => topicId !== getAllTopicIds()[index])) prefs.s = selectedTopics;
+        if (bestScore !== null) prefs.b = bestScore;
+        if (freddybeanUnlocked) prefs.f = 1;
+
+        if (Object.keys(prefs).length > 0) {
+          payload.p = prefs;
+        }
+
+        const history = getStoredHistory().map(serializeHistoryEntryForRecovery);
+        if (history.length > 0) {
+          payload.h = history;
+        }
+
+        const personalDeck = getStoredPersonalDeck().map(serializePersonalDeckRefForRecovery);
+        if (personalDeck.length > 0) {
+          payload.d = personalDeck;
+        }
+
+        return payload;
+      }
+
+      function loadRecoverySnapshots() {
+        const stored = loadStoredData();
+        const snapshots = stored[RECOVERY_SNAPSHOTS_KEY];
+        return snapshots && typeof snapshots === "object" ? snapshots : {};
+      }
+
+      function saveRecoverySnapshots(nextSnapshots) {
+        savePreferences({ [RECOVERY_SNAPSHOTS_KEY]: nextSnapshots });
+      }
+
+      function isShortRecoveryCode(code) {
+        const trimmed = String(code || "").trim().toUpperCase();
+        if (trimmed.length !== SHORT_RECOVERY_CODE_LENGTH || !trimmed.startsWith(SHORT_RECOVERY_CODE_PREFIX)) {
+          return false;
+        }
+        for (let index = SHORT_RECOVERY_CODE_PREFIX.length; index < trimmed.length; index += 1) {
+          if (!SHORT_RECOVERY_ALPHABET.includes(trimmed[index])) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function generateShortRecoveryCode() {
+        const bytes = new Uint8Array(SHORT_RECOVERY_CODE_LENGTH - SHORT_RECOVERY_CODE_PREFIX.length);
+        window.crypto.getRandomValues(bytes);
+        let out = SHORT_RECOVERY_CODE_PREFIX;
+        for (let index = 0; index < bytes.length; index += 1) {
+          out += SHORT_RECOVERY_ALPHABET[bytes[index] % SHORT_RECOVERY_ALPHABET.length];
+        }
+        return out;
+      }
+
+      function storeRecoverySnapshot(payload) {
+        const snapshots = loadRecoverySnapshots();
+        let code = generateShortRecoveryCode();
+        while (snapshots[code]) {
+          code = generateShortRecoveryCode();
+        }
+        snapshots[code] = { t: Date.now(), p: payload };
+        const pruned = Object.entries(snapshots)
+          .sort((a, b) => Number(b[1]?.t || 0) - Number(a[1]?.t || 0))
+          .slice(0, 128)
+          .reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+          }, {});
+        saveRecoverySnapshots(pruned);
+        return code;
       }
 
       function encodeRecoveryPayload(payload) {
@@ -4223,6 +4575,14 @@
 
       function decodeRecoveryPayload(code) {
         const trimmed = String(code || "").trim();
+        if (isShortRecoveryCode(trimmed)) {
+          const snapshots = loadRecoverySnapshots();
+          const snapshot = snapshots[trimmed];
+          if (!snapshot || typeof snapshot !== "object" || !snapshot.p || typeof snapshot.p !== "object") {
+            throw new Error("That short recovery code is not stored on this browser anymore.");
+          }
+          return snapshot.p;
+        }
         if (!trimmed.startsWith(RECOVERY_CODE_PREFIX)) {
           throw new Error("That recovery code is not a Signal Deck code.");
         }
@@ -4243,9 +4603,9 @@
 
       function generateRecoveryCode() {
         try {
-          const code = encodeRecoveryPayload(buildRecoveryPayload());
+          const code = storeRecoverySnapshot(buildRecoveryPayload());
           elements.recoveryCodeOutput.value = code;
-          setRecoveryStatus("Recovery code generated from your current local data.");
+          setRecoveryStatus("Short recovery code generated from your current local data.");
         } catch (_error) {
           setRecoveryStatus("Could not generate a recovery code from the current data.");
         }
@@ -4269,7 +4629,37 @@
         let restoredName;
         let freddybeanUnlocked = false;
 
-        if (payload.v === 2 && Array.isArray(payload.p)) {
+        if (payload.v === 4) {
+          preferences = {
+            questionCount: payload.p?.q,
+            timerMinutes: payload.p?.t,
+            difficulty: payload.p?.d,
+            showHints: Boolean(payload.p?.h),
+            intenseTimer: Boolean(payload.p?.i),
+            personalDeckOnly: Boolean(payload.p?.p),
+            selectedTopics: Array.isArray(payload.p?.s) ? payload.p.s : getAllTopicIds(),
+            bestScore: payload.p?.b,
+          };
+          freddybeanUnlocked = Boolean(payload.p?.f) || payload.p?.d === "freddybean";
+          history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
+          personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializePersonalDeckRefFromRecovery).filter(Boolean);
+          restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
+        } else if (payload.v === 3 && Array.isArray(payload.p)) {
+          preferences = {
+            questionCount: payload.p[0],
+            timerMinutes: payload.p[1],
+            difficulty: payload.p[2],
+            showHints: Boolean(payload.p[3]),
+            intenseTimer: Boolean(payload.p[4]),
+            personalDeckOnly: Boolean(payload.p[5]),
+            selectedTopics: Array.isArray(payload.p[6]) ? payload.p[6] : getAllTopicIds(),
+            bestScore: payload.p[7],
+          };
+          freddybeanUnlocked = Boolean(payload.p[8]) || payload.p[2] === "freddybean";
+          history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
+          personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializePersonalDeckRefFromRecovery).filter(Boolean);
+          restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
+        } else if (payload.v === 2 && Array.isArray(payload.p)) {
           preferences = {
             questionCount: payload.p[0],
             timerMinutes: payload.p[1],
@@ -4298,7 +4688,7 @@
         const restored = {
           appearanceTheme: currentTheme,
           questionCount: clampInt(preferences.questionCount, 5, 100, DEFAULT_QUESTION_COUNT),
-          timerMinutes: clampNumber(preferences.timerMinutes, 0, 90, DEFAULT_TIMER_MINUTES),
+          timerMinutes: clampNumber(preferences.timerMinutes, 0, 100, DEFAULT_TIMER_MINUTES),
           difficulty: typeof preferences.difficulty === "string" ? preferences.difficulty : DEFAULT_DIFFICULTY,
           showHints: preferences.showHints === true,
           intenseTimer: preferences.intenseTimer === true,
@@ -4565,8 +4955,8 @@
         clearInlineErrors();
 
         const timerMinutes = Number.parseFloat(elements.timerMinutes.value);
-        if (!Number.isFinite(timerMinutes) || timerMinutes < 0 || timerMinutes > 90) {
-          elements.setupError.textContent = "Use a timer between 0 and 90 minutes.";
+        if (!Number.isFinite(timerMinutes) || timerMinutes < 0 || timerMinutes > 100) {
+          elements.setupError.textContent = "Use a timer between 0 and 100 minutes.";
           return;
         }
 
@@ -4941,6 +5331,8 @@
           questionCount: state.sessionLength,
           timerMinutes: state.timerSeconds / 60,
           intenseTimer: state.intenseTimer,
+          showHints: state.showHints,
+          personalDeckOnly: state.personalDeckOnly,
           elapsedSeconds,
           score: orderedResults.reduce((sum, entry) => sum + entry.score, 0),
           correct: orderedResults.filter((entry) => entry.status === "correct").length,
@@ -5221,9 +5613,158 @@
         return question.workedSolution || buildWorkedExplanation(question);
       }
 
+      function hashString(text) {
+        let hash = 2166136261;
+        const raw = String(text || "");
+        for (let index = 0; index < raw.length; index += 1) {
+          hash ^= raw.charCodeAt(index);
+          hash = Math.imul(hash, 16777619);
+        }
+        return (hash >>> 0).toString(36);
+      }
+
+      function deriveProblemKey(question) {
+        return `${question.topicId || "q"}:${hashString([
+          question.topicId || "",
+          question.category || "",
+          question.prompt || "",
+          question.inputMode || "",
+          Number(question.answer || 0).toFixed(8),
+          Number(question.mentalAnswer || 0).toFixed(8),
+        ].join("||"))}`;
+      }
+
+      function buildBuiltInQuestionLookup(bank) {
+        const lookup = new Map();
+        Object.values(bank).forEach((questions) => {
+          questions.forEach((question) => {
+            if (question.problemKey) {
+              lookup.set(question.problemKey, question);
+            }
+          });
+        });
+        return lookup;
+      }
+
+      function ensureSentence(text) {
+        const clean = String(text || "").trim();
+        if (!clean) {
+          return "";
+        }
+        return /[.!?]$/.test(clean) ? clean : `${clean}.`;
+      }
+
+      function extractVariableDefinitions(prompt) {
+        const pairMatch = prompt.match(/Let ([A-Za-z][A-Za-z0-9_]*) be (.+?) and ([A-Za-z][A-Za-z0-9_]*) be (.+?)(?:\.| Estimate|$)/);
+        if (pairMatch) {
+          return [
+            { name: pairMatch[1], description: pairMatch[2].trim() },
+            { name: pairMatch[3], description: pairMatch[4].trim() },
+          ];
+        }
+        const singleMatch = prompt.match(/Let ([A-Za-z][A-Za-z0-9_]*) be (.+?)(?:\.| Estimate|$)/);
+        if (singleMatch) {
+          return [{ name: singleMatch[1], description: singleMatch[2].trim() }];
+        }
+        return [];
+      }
+
+      function describeCardTarget(question) {
+        const named = extractVariableDefinitions(question.prompt);
+        const mode = question.inputMode || "";
+        const category = (question.category || "").toLowerCase();
+        if (category.includes("correlation")) {
+          if (named.length >= 2) {
+            return `the correlation between ${named[0].name} and ${named[1].name}`;
+          }
+          return "the requested correlation";
+        }
+        if (category.includes("covariance")) {
+          if (named.length >= 2) {
+            return `the covariance between ${named[0].name} and ${named[1].name}`;
+          }
+          return "the requested covariance";
+        }
+        if (category.includes("variance")) {
+          if (named.length >= 1) {
+            return `the variance of ${named[0].name}`;
+          }
+          return "the requested variance";
+        }
+        if (mode === "probability") return "the requested probability";
+        if (mode === "percent") return "the requested percentage";
+        if (mode === "correlation") return "the requested correlation";
+        if (mode === "variance") return "the requested variance";
+        if (mode === "count") return "the requested count";
+        if (mode === "steps") return "the requested expected waiting time or step count";
+        if (mode === "dollars") return "the requested dollar value";
+        return "the requested numerical quantity";
+      }
+
+      function buildReadableHint(question) {
+        if (question.topicId === "momentsMgf") {
+          return buildMomentsHint(question);
+        }
+        if (question.topicId === "basicReview") {
+          return buildBasicReviewHint(question);
+        }
+        if (question.topicId === "fisherInfo") {
+          return buildFisherHint(question);
+        }
+        if (question.topicId === "ito") {
+          return buildItoHint(question);
+        }
+        const base = ensureSentence(question.hint || "");
+        if (!base) {
+          return `This card asks for ${describeCardTarget(question)}. Start from the standard identity for this family, then substitute the numbers from the prompt.`;
+        }
+        return `This card asks for ${describeCardTarget(question)}. ${base}`;
+      }
+
+      function buildMomentsHint(question) {
+        const named = extractVariableDefinitions(question.prompt);
+        if (question.category === "Covariance") {
+          if (named.length >= 2) {
+            return `This card asks for the covariance between ${named[0].name} and ${named[1].name}, where ${named[0].name} is ${named[0].description} and ${named[1].name} is ${named[1].description}. Work one trial at a time with indicator variables or one-die contributions, compute the single-trial covariance, and then add over the independent trials.`;
+          }
+          return "This card asks for a covariance. Define the two random variables clearly, compute their covariance on one trial, and then add over the independent trials.";
+        }
+        if (question.category === "Correlation") {
+          if (named.length >= 2) {
+            return `This card asks for the correlation between ${named[0].name} and ${named[1].name}, where ${named[0].name} is ${named[0].description} and ${named[1].name} is ${named[1].description}. First compute the covariance, then divide by sqrt(Var(${named[0].name}) Var(${named[1].name})).`;
+          }
+          return "This card asks for a correlation. Compute the covariance first, then divide by the product of the two standard deviations.";
+        }
+        if (question.category === "Variance") {
+          if (named.length >= 1) {
+            return `This card asks for the variance of ${named[0].name}, where ${named[0].name} is ${named[0].description}. Identify the one-trial variable, compute its variance, and then add across independent trials; for a binomial count, that becomes np(1-p).`;
+          }
+          return `This card asks for ${describeCardTarget(question)}. Treat the variable as a sum of independent one-trial pieces and add the variances.`;
+        }
+        return `This card asks for ${describeCardTarget(question)}. ${ensureSentence(question.hint || "Start from the standard moment identity for this family")}`;
+      }
+
+      function buildBasicReviewHint(question) {
+        return `This card asks for ${describeCardTarget(question)} for the named distribution. Write down the standard closed-form formula for that moment, check that the moment exists, and then substitute the parameter values from the prompt.`;
+      }
+
+      function buildFisherHint(question) {
+        return `This card asks for ${describeCardTarget(question)} in a Fisher-information setting. Start by deciding whether you need one-observation information, total information for n iid observations, the Cramer-Rao lower bound 1 / I_n, or the efficient standard-error scale 1 / sqrt(I_n).`;
+      }
+
+      function buildItoHint(question) {
+        if (question.prompt.includes("ln(") || question.prompt.includes("ln S")) {
+          return "This card asks for a drift or volatility after the transform X = ln S. Apply Ito's lemma to X = ln S, so dX = (mu - sigma^2 / 2) dt + sigma dW, and then read off the requested coefficient.";
+        }
+        return `This card asks for ${describeCardTarget(question)} after transforming a geometric Brownian motion. Rewrite the transformed process as X = f(S); if the transform is a power, write X = S^k. Then apply Ito's lemma and read the requested drift or volatility from the resulting dX or dX/X expression.`;
+      }
+
       function enrichQuestionBank(bank) {
         Object.values(bank).forEach((questions) => {
           questions.forEach((question) => {
+            question.problemKey = question.problemKey || deriveProblemKey(question);
+            question.runtimeFamily = question.runtimeFamily || null;
+            question.hint = buildReadableHint(question);
             question.workedSolution = buildWorkedExplanation(question);
             question.methodExplanation = getExpandedExplanation(question);
           });
@@ -5252,10 +5793,27 @@
           return buildCouponCollectorWorkedExplanation(question);
         }
 
+        if (question.topicId === "momentsMgf") {
+          return buildMomentsWorkedExplanation(question);
+        }
+
+        if (question.topicId === "basicReview") {
+          return buildBasicReviewWorkedExplanation(question);
+        }
+
+        if (question.topicId === "fisherInfo") {
+          return buildFisherWorkedExplanation(question);
+        }
+
+        if (question.topicId === "ito") {
+          return buildItoWorkedExplanation(question);
+        }
+
         const paragraphs = [];
 
+        paragraphs.push(`This card asks for ${describeCardTarget(question)}.`);
         if (question.explanation) {
-          paragraphs.push(question.explanation);
+          paragraphs.push(ensureSentence(question.explanation));
         }
 
         paragraphs.push(`Exact answer for this card: ${formatAnswer(question)}.`);
@@ -5265,6 +5823,85 @@
         }
 
         return paragraphs.join("\n\n");
+      }
+
+      function buildMomentsWorkedExplanation(question) {
+        const named = extractVariableDefinitions(question.prompt);
+        const intro = `This card asks for ${describeCardTarget(question)}.`;
+        if (question.category === "Covariance") {
+          const setup = named.length >= 2
+            ? `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. Write the full variables as sums of one-trial contributions, so only same-trial pairs can contribute to the covariance.`
+            : "Write each random variable as a sum of one-trial contributions. Because different trials are independent, only same-trial pairs contribute to the covariance.";
+          return [
+            intro,
+            setup,
+            ensureSentence(question.explanation),
+            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          ].filter(Boolean).join("\n\n");
+        }
+        if (question.category === "Correlation") {
+          const setup = named.length >= 2
+            ? `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. Correlation is covariance divided by sqrt(Var(${named[0].name}) Var(${named[1].name})), so first compute or recall the covariance and both variances.`
+            : "Correlation is covariance divided by the product of the two standard deviations. So first compute the covariance, then compute the two variances, and only then normalize.";
+          return [
+            intro,
+            setup,
+            ensureSentence(question.explanation),
+            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          ].filter(Boolean).join("\n\n");
+        }
+        if (question.category === "Variance") {
+          const setup = named.length >= 1
+            ? `Let ${named[0].name} be ${named[0].description}. View ${named[0].name} as a sum of one-trial random variables. Independent trials make variances add, and for a binomial count the variance is np(1-p).`
+            : "View the target variable as a sum of one-trial random variables. Independent trials make variances add, so the whole problem reduces to the one-trial variance.";
+          return [
+            intro,
+            setup,
+            ensureSentence(question.explanation),
+            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          ].filter(Boolean).join("\n\n");
+        }
+        return [
+          intro,
+          ensureSentence(question.explanation),
+          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+        ].filter(Boolean).join("\n\n");
+      }
+
+      function buildBasicReviewWorkedExplanation(question) {
+        return [
+          `This card asks for ${describeCardTarget(question)} for the distribution named in the prompt.`,
+          `Start by recalling the closed-form formula for that moment. Then substitute the parameter values from the card and simplify carefully.`,
+          ensureSentence(question.explanation),
+          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+        ].filter(Boolean).join("\n\n");
+      }
+
+      function buildFisherWorkedExplanation(question) {
+        return [
+          `This card asks for ${describeCardTarget(question)} in a Fisher-information problem.`,
+          `The usual order of attack is: compute the one-observation information, multiply by the sample size if the observations are iid, and then either invert to get the Cramer-Rao lower bound or take the reciprocal square root to get the efficient standard-error scale.`,
+          ensureSentence(question.explanation),
+          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+        ].filter(Boolean).join("\n\n");
+      }
+
+      function buildItoWorkedExplanation(question) {
+        return [
+          `This card asks for ${describeCardTarget(question)} after applying a transform to a geometric Brownian motion.`,
+          question.prompt.includes("ln")
+            ? "Define X = ln S. Ito's lemma gives dX = (mu - sigma^2 / 2) dt + sigma dW, so the transformed process has a drift term and a diffusion term that can be read off directly."
+            : "Define X = f(S). If the transform is a power, write X = S^k. Then apply Ito's lemma, simplify the dt and dW terms, and read off the drift or volatility from the resulting expression.",
+          ensureSentence(question.explanation),
+          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+        ].filter(Boolean).join("\n\n");
       }
 
       function buildCouponCollectorWorkedExplanation(question) {
@@ -6224,17 +6861,17 @@
           let questions = [];
 
           if (topicId === "ito") {
-            questions = buildRuntimeItoQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeItoQuestions(perTopicCount), "ito");
           } else if (topicId === "ev") {
-            questions = buildRuntimeKellyQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeKellyQuestions(perTopicCount), "kelly");
           } else if (topicId === "sharpeGraph") {
-            questions = buildRuntimeSharpeQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeSharpeQuestions(perTopicCount), "sharpe");
           } else if (topicId === "greenBook") {
-            questions = buildRuntimeCouponQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeCouponQuestions(perTopicCount), "coupon");
           } else if (topicId === "randomWalks") {
-            questions = buildRuntimeAsymmetricRuinQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeAsymmetricRuinQuestions(perTopicCount), "asymmetricRuin");
           } else if (topicId === "fixedIncome") {
-            questions = buildRuntimeFixedIncomeQuestions(perTopicCount);
+            questions = tagRuntimeFamily(buildRuntimeFixedIncomeQuestions(perTopicCount), "fixedIncome");
           }
 
           if (difficulty !== "all") {
@@ -6249,6 +6886,39 @@
         }
 
         return generated;
+      }
+
+      function tagRuntimeFamily(questions, runtimeFamily) {
+        return questions.map((question) => ({
+          ...question,
+          runtimeFamily,
+          problemKey: null,
+        }));
+      }
+
+      function buildRuntimeQuestionsForFamily(runtimeFamily, count, difficulty = "all") {
+        let questions = [];
+        if (runtimeFamily === "ito") {
+          questions = tagRuntimeFamily(buildRuntimeItoQuestions(count), "ito");
+        } else if (runtimeFamily === "kelly") {
+          questions = tagRuntimeFamily(buildRuntimeKellyQuestions(count), "kelly");
+        } else if (runtimeFamily === "sharpe") {
+          questions = tagRuntimeFamily(buildRuntimeSharpeQuestions(count), "sharpe");
+        } else if (runtimeFamily === "coupon") {
+          questions = tagRuntimeFamily(buildRuntimeCouponQuestions(count), "coupon");
+        } else if (runtimeFamily === "asymmetricRuin") {
+          questions = tagRuntimeFamily(buildRuntimeAsymmetricRuinQuestions(count), "asymmetricRuin");
+        } else if (runtimeFamily === "fixedIncome") {
+          questions = tagRuntimeFamily(buildRuntimeFixedIncomeQuestions(count), "fixedIncome");
+        }
+
+        if (difficulty !== "all") {
+          questions = difficulty === "freddybean"
+            ? questions.filter(isFreddybeanQuestion)
+            : questions.filter((question) => question.difficulty === difficulty);
+        }
+
+        return questions;
       }
 
       function enrichRuntimeQuestions(questions) {
@@ -19234,7 +19904,7 @@
         }
 
         if (inputMode === "probability") {
-          return hasPercent || Math.abs(value) >= 1 ? value / 100 : value;
+          return hasPercent || Math.abs(value) > 1 ? value / 100 : value;
         }
 
         if (inputMode === "percent") {
