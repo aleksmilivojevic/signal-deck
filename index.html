@@ -2501,6 +2501,12 @@
         gap: 0.75rem;
       }
 
+      .session-options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
       .toggle-row {
         display: grid;
         grid-template-columns: auto 1fr;
@@ -2595,6 +2601,10 @@
       }
 
       @media (max-width: 640px) {
+        .session-options-grid {
+          grid-template-columns: 1fr;
+        }
+
         .hero {
           padding: 2.4rem 7.15rem 1.35rem 0.95rem;
         }
@@ -2753,10 +2763,6 @@
         </div>
         <p id="secret-toggle-target" class="eyebrow">K-man's</p>
         <h1>Signal Deck</h1>
-        <p class="dek">
-          A mental-math drill deck with custom-length sessions, upfront timer control, live right-or-wrong feedback,
-          and an on-demand solved-card summary.
-        </p>
         <div class="appearance-toolbar" aria-label="Appearance toggle">
           <div id="appearance-toggle" class="appearance-toggle">
             <button class="appearance-choice" type="button" data-appearance-theme="90s" aria-label="90's style" title="90's">90</button>
@@ -2836,9 +2842,9 @@
             <p class="field-note">Probabilities can be typed as decimals like <code>0.05</code>, fractions like <code>1/20</code>, or percentages like <code>5%</code>.</p>
           </article>
 
-          <article class="field-card">
+          <article class="field-card field-card--wide">
             <span class="field-label">Session options</span>
-            <div class="toggle-stack">
+            <div class="toggle-stack session-options-grid">
               <label class="toggle-row" for="show-hints">
                 <input id="show-hints" type="checkbox" />
                 <div>
@@ -3770,56 +3776,266 @@
 </details>
 </div></details>
 <details class="guide-card guide-card--wide guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fully Worked Examples</span></summary><div class="guide-topic-body">
-<p>These fixed-value examples carry each calculation from the information in the prompt to the final numerical answer.</p>
 <details class="guide-details">
-<summary>Conditional probability: choose a coin, observe HH, predict the next toss</summary>
-<p>One of three coins is selected uniformly. Their head probabilities are <code>1/4</code>, <code>1/2</code>, and <code>3/4</code>. After observing <code>HH</code>, the likelihoods are <code>1/16</code>, <code>1/4</code>, and <code>9/16</code>. Equal priors mean that the posterior weights are proportional to <code>1:4:9</code>, so the posterior probabilities are <code>1/14</code>, <code>4/14</code>, and <code>9/14</code>.</p>
-<p>The next-head probability is the posterior-weighted average:
-<code>(1/14)(1/4) + (4/14)(1/2) + (9/14)(3/4)</code>.
-Putting the terms over denominator <code>56</code> gives
+<summary>Ito / GBM example: drift and volatility of S²</summary>
+<p>Suppose <code>S_t</code> follows geometric Brownian motion
+<code>dS_t = 0.08 S_t dt + 0.30 S_t dW_t</code>.
+Define <code>X_t = S_t²</code>. We want the stochastic differential for <code>X_t</code>, and in particular its drift and its diffusion coefficient.</p>
+<p>Apply Ito's lemma to <code>f(S) = S²</code>. Then
+<code>f'(S) = 2S</code> and
+<code>f''(S) = 2</code>.
+Ito's lemma says
+<code>df(S_t) = f'(S_t)dS_t + 0.5 f''(S_t)(dS_t)²</code>.
+So
+<code>dX_t = 2S_t dS_t + (dS_t)²</code>.</p>
+<p>Now substitute the GBM form for <code>dS_t</code>. The first term becomes
+<code>2S_t(0.08 S_t dt + 0.30 S_t dW_t) = 0.16 S_t² dt + 0.60 S_t² dW_t</code>.
+For the quadratic-variation term, only the Brownian part survives, so
+<code>(dS_t)² = (0.30 S_t)² (dW_t)² = 0.09 S_t² dt</code>.</p>
+<p>Add the pieces:
+<code>dX_t = (0.16 + 0.09) S_t² dt + 0.60 S_t² dW_t = 0.25 X_t dt + 0.60 X_t dW_t</code>.</p>
+<p>Therefore the drift of <code>X_t</code> is <code>0.25 X_t</code>, and the diffusion coefficient is <code>0.60 X_t</code>. If a prompt asks for the volatility parameter of the GBM satisfied by <code>X_t</code>, that parameter is <code>0.60</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Fisher / large-sample MLE example: Bernoulli standard error</summary>
+<p>Suppose <code>X_1, ..., X_100</code> are iid <code>Bernoulli(p)</code>, and the prompt says to use the large-sample MLE formula at <code>p = 0.4</code>. The MLE is
+<code>p-hat = sample proportion</code>. For large samples,
+<code>Var(p-hat) ≈ p(1-p)/n</code>.</p>
+<p>Plug in the given numbers:
+<code>Var(p-hat) ≈ 0.4 × 0.6 / 100 = 0.24 / 100 = 0.0024</code>.</p>
+<p>The standard error is the square root:
+<code>SE(p-hat) ≈ sqrt(0.0024) ≈ 0.049</code>.</p>
+<p>The same answer can be written from Fisher information. One Bernoulli observation has information
+<code>I_1(p) = 1 / (p(1-p))</code>.
+So for <code>n = 100</code>,
+<code>I_n(p) = 100 / (0.4 × 0.6) = 416.67</code>.
+The Cramer-Rao / large-sample variance scale is then
+<code>1 / I_n(p) ≈ 0.0024</code>,
+and the standard error is again
+<code>1 / sqrt(I_n(p)) ≈ 0.049</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Sharpe / Cantelli example: bound probability of a negative return</summary>
+<p>Suppose a monthly return has Sharpe ratio <code>S = 0.5</code> and monthly volatility <code>σ = 2%</code>. We want an upper bound on the probability of a negative monthly return when no distribution is assumed.</p>
+<p>First recover the mean from Sharpe:
+<code>μ = Sσ = 0.5 × 2% = 1%</code>.</p>
+<p>The event of a negative return is
+<code>{R &lt; 0}</code>.
+Rewrite that around the mean:
+<code>R &lt; 0</code> means
+<code>R - μ ≤ -μ</code>.
+So this is a one-sided deviation of size <code>a = μ = 1%</code> below the mean.</p>
+<p>Cantelli's inequality says
+<code>P(R - μ ≤ -a) ≤ σ² / (σ² + a²)</code>.
+Here
+<code>σ² = (2%)² = 4</code> in squared-percentage units and
+<code>a² = (1%)² = 1</code>.
+Therefore
+<code>P(R &lt; 0) ≤ 4 / (4 + 1) = 4/5 = 0.80</code>.</p>
+<p>So the correct conclusion is not that the probability of a loss is about <code>80%</code>. The conclusion is that, using only mean and variance information, Cantelli gives the upper bound
+<code>P(R &lt; 0) ≤ 0.80</code>. It is a worst-case bound, not an estimate of the actual probability.</p>
+</details>
+<details class="guide-details">
+<summary>Conditional probability example: choose a coin, observe HH, predict the next toss</summary>
+<p>One of three coins is selected uniformly. Their probabilities of heads are <code>1/4</code>, <code>1/2</code>, and <code>3/4</code>. The selected coin is tossed twice and both tosses are heads. We want the conditional probability that the next toss is also heads.</p>
+<p>Let <code>C_1</code>, <code>C_2</code>, and <code>C_3</code> denote the three possible coins. Before observing any tosses, each coin has prior probability <code>1/3</code>. The likelihoods of observing <code>HH</code> are
+<code>P(HH | C_1) = (1/4)² = 1/16</code>,
+<code>P(HH | C_2) = (1/2)² = 1/4</code>, and
+<code>P(HH | C_3) = (3/4)² = 9/16</code>.</p>
+<p>Because the prior probabilities are equal, the posterior weights are proportional to the likelihoods:
+<code>1/16 : 1/4 : 9/16 = 1 : 4 : 9</code>.
+Their sum is <code>14</code>, so the posterior probabilities are
+<code>1/14</code>, <code>4/14</code>, and <code>9/14</code>.</p>
+<p>The next-toss probability is the posterior-weighted average of the three head probabilities:
+<code>P(H next | HH) = (1/14)(1/4) + (4/14)(1/2) + (9/14)(3/4)</code>.</p>
+<p>Putting everything over denominator <code>56</code> gives
 <code>1/56 + 8/56 + 27/56 = 36/56 = 9/14 ≈ 0.6429</code>.
-Therefore the probability of heads on the next toss is about <code>64.3%</code>.</p>
+Therefore the probability that the next toss is heads is <code>9/14</code>, or about <code>64.3%</code>.</p>
 </details>
 <details class="guide-details">
-<summary>Fixed income: price a three-year coupon bond</summary>
-<p>A three-year bond has face value <code>$1,000</code>, annual coupon rate <code>6%</code>, annual payments, and yield <code>5%</code>. The annual coupon is <code>0.06 × 1,000 = $60</code>. Its cash flows are therefore <code>$60</code>, <code>$60</code>, and <code>$1,060</code>.</p>
-<p>Discount each cash flow:
-<code>P = 60/1.05 + 60/1.05² + 1,060/1.05³</code>.
-The three present values are approximately <code>57.14</code>, <code>54.42</code>, and <code>915.69</code>. Adding them gives
-<code>P ≈ $1,027.25</code>.
-The price exceeds face value because the <code>6%</code> coupon rate exceeds the <code>5%</code> yield.</p>
+<summary>Fixed-income example: price a coupon bond</summary>
+<p>Consider a three-year bond with face value <code>$1,000</code>, an annual coupon rate of <code>6%</code>, annual coupon payments, and an annual yield of <code>5%</code>. The coupon payment is
+<code>0.06 × 1,000 = $60</code> each year.</p>
+<p>The cash flows are <code>$60</code> after year 1, <code>$60</code> after year 2, and <code>$1,060</code> after year 3 because the final coupon and principal arrive together. Discount each cash flow at the yield:
+<code>P = 60/1.05 + 60/1.05² + 1,060/1.05³</code>.</p>
+<p>Compute the discount factors:
+<code>1.05² = 1.1025</code> and <code>1.05³ = 1.157625</code>. Therefore
+<code>60/1.05 ≈ 57.14</code>,
+<code>60/1.1025 ≈ 54.42</code>, and
+<code>1,060/1.157625 ≈ 915.69</code>.</p>
+<p>Add the present values:
+<code>P ≈ 57.14 + 54.42 + 915.69 = $1,027.25</code>.
+The price is above face value because the bond pays a <code>6%</code> coupon while the market yield is only <code>5%</code>.</p>
 </details>
 <details class="guide-details">
-<summary>Kelly sizing: asymmetric gain and loss</summary>
-<p>A bet wins with probability <code>0.60</code>. The amount wagered gains <code>50%</code> on a win and loses <code>25%</code> on a loss. If fraction <code>f</code> of bankroll is wagered, expected log growth is
+<summary>Kelly example: asymmetric gain and loss</summary>
+<p>A bet wins with probability <code>p = 0.60</code>. A winning dollar of bankroll earns <code>50%</code>, while a loss removes <code>25%</code> of the amount bet. If fraction <code>f</code> of bankroll is wagered, wealth is multiplied by <code>1 + 0.50f</code> after a win and by <code>1 - 0.25f</code> after a loss.</p>
+<p>The Kelly fraction maximizes expected log growth:
 <code>g(f) = 0.60 ln(1 + 0.50f) + 0.40 ln(1 - 0.25f)</code>.</p>
-<p>Set the derivative to zero:
+<p>Differentiate and set the derivative equal to zero:
+<code>g'(f) = 0.60(0.50)/(1 + 0.50f) - 0.40(0.25)/(1 - 0.25f) = 0</code>.</p>
+<p>Thus
 <code>0.30/(1 + 0.50f) = 0.10/(1 - 0.25f)</code>.
 Cross-multiplying gives
-<code>0.30 - 0.075f = 0.10 + 0.05f</code>, hence
-<code>0.20 = 0.125f</code> and <code>f = 1.6</code>.
-The unconstrained Kelly fraction is <code>160%</code>. If borrowing is forbidden and <code>f ≤ 1</code>, the constrained optimum is <code>100%</code>.</p>
+<code>0.30(1 - 0.25f) = 0.10(1 + 0.50f)</code>, so
+<code>0.30 - 0.075f = 0.10 + 0.05f</code>.</p>
+<p>Therefore <code>0.20 = 0.125f</code>, which gives
+<code>f = 1.6</code>. The unconstrained Kelly solution is to wager <code>160%</code> of bankroll. If borrowing is forbidden and the feasible range is <code>0 ≤ f ≤ 1</code>, the constrained optimum is the boundary value <code>f = 1</code>.</p>
 </details>
 <details class="guide-details">
-<summary>Order statistics: expected maximum of five exponentials</summary>
-<p>Let <code>X_1, ..., X_5</code> be iid exponential random variables with rate <code>λ = 2</code>. Exponential order-statistic gaps are independent, with successive expected gaps
-<code>1/(5λ)</code>, <code>1/(4λ)</code>, <code>1/(3λ)</code>, <code>1/(2λ)</code>, and <code>1/λ</code>.</p>
+<summary>Order-statistics example: expected maximum of exponentials</summary>
+<p>Let <code>X_1, ..., X_5</code> be independent exponential random variables with rate <code>λ = 2</code>. We want <code>E[max(X_1, ..., X_5)]</code>.</p>
+<p>For exponential samples, the gaps between successive order statistics are independent. The first gap, from zero to the minimum, has rate <code>5λ</code> and mean <code>1/(5λ)</code>. After the first observation occurs, four exponential clocks remain, so the next gap has mean <code>1/(4λ)</code>. Continuing this way, the expected maximum is
+<code>1/(5λ) + 1/(4λ) + 1/(3λ) + 1/(2λ) + 1/λ</code>.</p>
+<p>Factor out <code>1/λ</code>:
+<code>E[max] = H_5/λ</code>, where
+<code>H_5 = 1 + 1/2 + 1/3 + 1/4 + 1/5</code>.</p>
+<p>Using denominator <code>60</code>,
+<code>H_5 = (60 + 30 + 20 + 15 + 12)/60 = 137/60</code>.
+Therefore
+<code>E[max] = (137/60)/2 = 137/120 ≈ 1.1417</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Biased gambler's ruin example: hit the upper boundary first</summary>
+<p>A random walk moves right with probability <code>p = 0.60</code> and left with probability <code>q = 0.40</code>. It starts at <code>i = 2</code> and stops when it reaches either <code>0</code> or <code>N = 5</code>. We want the probability of reaching <code>5</code> before <code>0</code>.</p>
+<p>For <code>p ≠ q</code>, the upper-boundary hitting probability is
+<code>h(i) = [1 - (q/p)^i] / [1 - (q/p)^N]</code>.</p>
+<p>Here
+<code>q/p = 0.40/0.60 = 2/3</code>. Substitute <code>i = 2</code> and <code>N = 5</code>:
+<code>h(2) = [1 - (2/3)²] / [1 - (2/3)^5]</code>.</p>
+<p>The numerator is
+<code>1 - 4/9 = 5/9</code>.
+The denominator is
+<code>1 - 32/243 = 211/243</code>.
+Thus
+<code>h(2) = (5/9)/(211/243) = (5/9)(243/211) = 135/211 ≈ 0.6398</code>.</p>
+<p>Therefore the probability of reaching <code>5</code> before <code>0</code> is about <code>64.0%</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Normal order statistics: expected maximum and minimum of two standard normals</summary>
+<p>Let <code>X</code> and <code>Y</code> be independent <code>N(0,1)</code> random variables. We want
+<code>E[max(X,Y)]</code> and <code>E[min(X,Y)]</code>.</p>
+<p>Use the identities
+<code>max(X,Y) = (X + Y + |X - Y|)/2</code> and
+<code>min(X,Y) = (X + Y - |X - Y|)/2</code>.
+Because both variables have mean zero,
+<code>E[X + Y] = 0</code>. Thus
+<code>E[max(X,Y)] = 0.5 E[|X-Y|]</code>.</p>
+<p>The difference of two independent normal variables is normal. Its mean is
+<code>0 - 0 = 0</code>, and its variance is
+<code>1 + 1 = 2</code>, so
+<code>X-Y ~ N(0,2)</code>.
+If <code>Z ~ N(0,s²)</code>, then
+<code>E[|Z|] = s sqrt(2/pi)</code>.
+Here <code>s = sqrt(2)</code>, so
+<code>E[|X-Y|] = sqrt(2)sqrt(2/pi) = 2/sqrt(pi)</code>.</p>
 <p>Therefore
-<code>E[max(X_1,...,X_5)] = H_5/λ</code>.
-Since
-<code>H_5 = 1 + 1/2 + 1/3 + 1/4 + 1/5 = 137/60</code>,
-the answer is
-<code>(137/60)/2 = 137/120 ≈ 1.1417</code>.</p>
+<code>E[max(X,Y)] = 0.5(2/sqrt(pi)) = 1/sqrt(pi) ≈ 0.5642</code>.
+Similarly,
+<code>E[min(X,Y)] = -0.5 E[|X-Y|] = -1/sqrt(pi) ≈ -0.5642</code>.
+The minimum is the negative of the maximum because the joint distribution is symmetric about zero.</p>
 </details>
 <details class="guide-details">
-<summary>Biased gambler's ruin: reach 5 before 0</summary>
-<p>A walk starts at <code>i = 2</code>, moves right with probability <code>p = 0.60</code>, moves left with probability <code>q = 0.40</code>, and stops at <code>0</code> or <code>N = 5</code>. For <code>p ≠ q</code>, the upper-hit probability is
-<code>[1 - (q/p)^i]/[1 - (q/p)^N]</code>.</p>
-<p>Here <code>q/p = 2/3</code>, so
-<code>h(2) = [1 - (2/3)²]/[1 - (2/3)^5]</code>.
-The numerator is <code>5/9</code> and the denominator is <code>211/243</code>. Thus
-<code>h(2) = (5/9)(243/211) = 135/211 ≈ 0.6398</code>.
-The probability of reaching <code>5</code> first is about <code>64.0%</code>.</p>
+<summary>Minimum-variance hedge: choose how many shares of B to short</summary>
+<p>Suppose one share of stock A has return variance <code>Var(r_A) = 0.04</code>.
+Stock B has return variance <code>Var(r_B) = 0.09</code>, and the correlation between the two returns is <code>0.50</code>.
+We hold one share of A and short <code>h</code> shares of B, so the hedged return is
+<code>r_A - h r_B</code>.</p>
+<p>First convert correlation to covariance. The standard deviations are
+<code>sqrt(0.04) = 0.20</code> and
+<code>sqrt(0.09) = 0.30</code>. Hence
+<code>Cov(r_A,r_B) = Corr(r_A,r_B) SD(r_A) SD(r_B)</code>
+<code>= 0.50 × 0.20 × 0.30 = 0.03</code>.</p>
+<p>The portfolio variance is
+<code>V(h) = Var(r_A - h r_B)</code>
+<code>= 0.04 + 0.09h² - 2h(0.03)</code>
+<code>= 0.04 + 0.09h² - 0.06h</code>.</p>
+<p>Differentiate:
+<code>V'(h) = 0.18h - 0.06</code>.
+Set the derivative equal to zero:
+<code>0.18h - 0.06 = 0</code>, so
+<code>h = 0.06/0.18 = 1/3</code>.
+Because <code>V''(h) = 0.18 &gt; 0</code>, this is the variance-minimizing hedge.</p>
+<p>Thus we should short <code>1/3</code> share of B for each share of A.
+The minimized variance is
+<code>V(1/3) = 0.04 + 0.09(1/9) - 0.06(1/3)</code>
+<code>= 0.04 + 0.01 - 0.02 = 0.03</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Coupon collector: variance and a rough 95% interval for 20 coupons</summary>
+<p>There are <code>n = 20</code> equally likely coupon types. Draw with replacement until every type has appeared, and let <code>T</code> be the number of draws. We will compute the mean, variance, standard deviation, and a rough central <code>95%</code> interval.</p>
+<p>After <code>20-i</code> types have been collected, exactly <code>i</code> unseen types remain. The probability that the next draw finds a new type is <code>i/20</code>. The waiting time for that next new type is geometric, so the total collection time is a sum of independent geometric stage times.</p>
+<p>The mean is
+<code>E[T] = nH_n</code>.
+Using
+<code>H_20 = 1 + 1/2 + ... + 1/20 ≈ 3.59774</code>,
+we get
+<code>E[T] = 20(3.59774) ≈ 71.95</code>.</p>
+<p>The exact variance is
+<code>Var(T) = n² sum(i=1 to n, 1/i²) - nH_n</code>.
+For <code>n = 20</code>,
+<code>sum(i=1 to 20, 1/i²) ≈ 1.59616</code>. Therefore
+<code>Var(T) ≈ 20²(1.59616) - 20(3.59774)</code>
+<code>= 638.46 - 71.95 = 566.51</code>.</p>
+<p>The standard deviation is
+<code>SD(T) = sqrt(566.51) ≈ 23.80</code>.
+A quick normal-style central <code>95%</code> interval is
+<code>mean ± 1.96 SD</code>, giving
+<code>71.95 ± 1.96(23.80) = 71.95 ± 46.65</code>.
+This produces the interval
+<code>[25.30, 118.60]</code>.</p>
+<p>The interval is an approximation, not an exact coupon-collector confidence statement, because the stopping-time distribution is right-skewed. The exact mean and variance calculations above do not depend on that approximation.</p>
+</details>
+<details class="guide-details">
+<summary>Rao-Blackwell example: improve an estimator of a Bernoulli probability</summary>
+<p>Let <code>X_1</code> and <code>X_2</code> be independent <code>Bernoulli(p)</code> observations, and take <code>p = 0.30</code> for the numerical comparison. The estimator
+<code>U = X_1</code> is unbiased because
+<code>E[U] = E[X_1] = p</code>, but it ignores the second observation.</p>
+<p>The total
+<code>T = X_1 + X_2</code> is sufficient for <code>p</code>. Rao-Blackwellization replaces <code>U</code> by
+<code>U* = E[U | T] = E[X_1 | X_1 + X_2]</code>.</p>
+<p>Conditional on <code>T = 0</code>, both observations are zero, so <code>E[X_1 | T=0] = 0</code>.
+Conditional on <code>T = 2</code>, both are one, so <code>E[X_1 | T=2] = 1</code>.
+Conditional on <code>T = 1</code>, the outcomes <code>(1,0)</code> and <code>(0,1)</code> have equal conditional probability, so
+<code>E[X_1 | T=1] = 1/2</code>.
+In all three cases,
+<code>E[X_1 | T] = T/2</code>.</p>
+<p>Thus the improved estimator is
+<code>U* = (X_1 + X_2)/2</code>, the sample proportion.
+It remains unbiased:
+<code>E[U*] = E[T]/2 = 2p/2 = p</code>.</p>
+<p>The original variance is
+<code>Var(U) = p(1-p)</code>, which at <code>p = 0.30</code> is
+<code>0.30(0.70) = 0.21</code>.
+The improved variance is
+<code>Var(U*) = Var(T)/4 = 2p(1-p)/4 = p(1-p)/2</code>,
+which is
+<code>0.21/2 = 0.105</code>.
+Rao-Blackwellization cuts the variance in half while preserving unbiasedness.</p>
+</details>
+<details class="guide-details">
+<summary>Lognormal example: compute the mean and variance from normal parameters</summary>
+<p>Suppose
+<code>ln(X) ~ N(μ,σ²)</code> with
+<code>μ = 0.10</code> and
+<code>σ = 0.30</code>. We want <code>E[X]</code> and <code>Var(X)</code>.</p>
+<p>Write <code>X = exp(Y)</code>, where
+<code>Y ~ N(μ,σ²)</code>. The normal moment-generating identity is
+<code>E[exp(tY)] = exp(tμ + 0.5t²σ²)</code>.</p>
+<p>For the first moment, set <code>t = 1</code>:
+<code>E[X] = E[exp(Y)] = exp(μ + 0.5σ²)</code>
+<code>= exp(0.10 + 0.5(0.30²))</code>
+<code>= exp(0.10 + 0.045) = exp(0.145) ≈ 1.1560</code>.</p>
+<p>For the second moment, use <code>X² = exp(2Y)</code> and set <code>t = 2</code>:
+<code>E[X²] = exp(2μ + 0.5(2²)σ²)</code>
+<code>= exp(2μ + 2σ²)</code>
+<code>= exp(0.20 + 2(0.09)) = exp(0.38) ≈ 1.4623</code>.</p>
+<p>Now subtract the square of the mean:
+<code>Var(X) = E[X²] - E[X]²</code>.
+Since
+<code>E[X]² = exp(2 × 0.145) = exp(0.29) ≈ 1.3364</code>,
+we obtain
+<code>Var(X) ≈ 1.4623 - 1.3364 = 0.1259</code>.</p>
 </details>
 </div></details>
 <details class="guide-card guide-card--wide guide-topic-card" open><summary class="guide-topic-summary"><span class="guide-topic-title">Your Custom Learning Topics</span></summary><div class="guide-topic-body">
