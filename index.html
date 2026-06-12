@@ -159,7 +159,7 @@
       }
 
       .eyebrow {
-        margin: 0 0 0.62rem;
+        margin: 1.25rem 0 0.2rem;
         font-size: 0.76rem;
         letter-spacing: 0.08em;
         color: #1f1f1f;
@@ -168,7 +168,7 @@
       }
 
       h1 {
-        margin: 1.85rem 0 0;
+        margin: 0;
         max-width: none;
         font-size: clamp(2.2rem, 5vw, 3.45rem);
         line-height: 1;
@@ -195,6 +195,60 @@
         flex-wrap: wrap;
         gap: 0.75rem;
         margin-top: 1.25rem;
+      }
+
+      .workspace-shell {
+        margin: -0.5rem 0 1.5rem;
+      }
+
+      .workspace-nav {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .workspace-tab {
+        display: grid;
+        place-items: center;
+        align-content: center;
+        min-height: 4.35rem;
+        padding: 0.8rem 0.9rem 0.9rem;
+        text-align: center;
+        border-top: 2px solid var(--win-lite);
+        border-left: 2px solid var(--win-lite);
+        border-right: 2px solid var(--win-dark);
+        border-bottom: 2px solid var(--win-dark);
+        background: var(--paper);
+        box-shadow: inset 1px 1px 0 var(--win-mid), inset -1px -1px 0 var(--win-black);
+        color: var(--ink);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+      }
+
+      .workspace-tab:active {
+        transform: translate(1px, 1px);
+      }
+
+      .workspace-tab strong {
+        font-size: 1rem;
+        line-height: 1.1;
+        font-weight: 700;
+      }
+
+      .workspace-tab.is-active {
+        border-top: 2px solid var(--win-dark);
+        border-left: 2px solid var(--win-dark);
+        border-right: 2px solid var(--win-lite);
+        border-bottom: 2px solid var(--win-lite);
+        box-shadow: inset 1px 1px 0 var(--win-black), inset -1px -1px 0 var(--win-mid);
+        color: #000080;
+      }
+
+      .workspace-copy {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.55;
       }
 
       .appearance-toolbar {
@@ -358,7 +412,7 @@
         gap: 0.55rem;
         align-content: start;
         justify-items: stretch;
-        min-height: 16.5rem;
+        min-height: 13.25rem;
         height: 100%;
       }
 
@@ -1333,6 +1387,63 @@
         padding-top: 2.25rem;
       }
 
+      body[data-theme="modern"] .workspace-shell {
+        position: relative;
+        top: auto;
+        z-index: auto;
+        margin: -0.55rem 0 1.8rem;
+        padding: 0.95rem 1rem 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.74);
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(18px);
+      }
+
+      body[data-theme="modern"] .workspace-nav {
+        gap: 0.7rem;
+      }
+
+      body[data-theme="modern"] .workspace-tab {
+        min-height: 4.7rem;
+        padding: 0.95rem 1rem 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 248, 253, 0.9) 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 8px 18px rgba(15, 23, 42, 0.04);
+      }
+
+      body[data-theme="modern"] .workspace-tab:hover {
+        transform: translateY(-1px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 16px 28px rgba(15, 23, 42, 0.08);
+      }
+
+      body[data-theme="modern"] .workspace-tab:active {
+        transform: translateY(0);
+      }
+
+      body[data-theme="modern"] .workspace-tab.is-active {
+        border-color: rgba(59, 130, 246, 0.22);
+        background: linear-gradient(180deg, rgba(34, 101, 151, 0.98) 0%, rgba(35, 88, 130, 0.98) 100%);
+        box-shadow: 0 18px 34px rgba(37, 99, 152, 0.26);
+        color: #ffffff;
+      }
+
+      body[data-theme="modern"] .workspace-tab strong {
+        color: var(--modern-text);
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body[data-theme="modern"] .workspace-tab.is-active strong {
+        color: #ffffff;
+      }
+
+      body[data-theme="modern"] .workspace-copy {
+        margin-top: 0.8rem;
+        color: #64748b;
+        font-size: 0.92rem;
+      }
+
       body[data-theme="modern"] .appearance-toolbar {
         top: 0.95rem;
         left: 1rem;
@@ -1966,6 +2077,7 @@
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .guide-details summary::before,
@@ -1986,6 +2098,11 @@
       .guide-details[open] summary::before,
       .explanation-details[open] summary::before {
         content: "-";
+      }
+
+      .guide-details summary:active,
+      .explanation-details summary:active {
+        background: transparent;
       }
 
       .guide-details summary::-webkit-details-marker,
@@ -2009,6 +2126,11 @@
         display: block;
         cursor: pointer;
         list-style: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .guide-topic-summary:active {
+        background: transparent;
       }
 
       .guide-topic-summary::-webkit-details-marker {
@@ -2223,6 +2345,11 @@
       details.live-item summary {
         cursor: pointer;
         list-style: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      details.live-item summary:active {
+        background: transparent;
       }
 
       details.live-item summary::-webkit-details-marker {
@@ -2291,6 +2418,32 @@
         margin-bottom: 0.85rem;
       }
 
+      .topic-toolbar-actions {
+        display: flex;
+        gap: 0.55rem;
+      }
+
+      .topic-toolbar--stacked {
+        display: grid;
+        gap: 0.65rem;
+        justify-items: start;
+      }
+
+      .topic-toolbar-actions .button {
+        width: 7.25rem;
+        justify-content: center;
+      }
+
+      .recovery-actions {
+        display: flex;
+        gap: 0.55rem;
+      }
+
+      .recovery-actions .button {
+        width: 9.5rem;
+        justify-content: center;
+      }
+
       .topic-grid {
         display: grid;
         gap: 0.8rem;
@@ -2305,6 +2458,7 @@
         padding: 1rem;
         cursor: pointer;
         transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .topic-card:hover {
@@ -2316,6 +2470,7 @@
         margin-top: 0.15rem;
         width: 1.05rem;
         height: 1.05rem;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .topic-card.is-selected {
@@ -2542,6 +2697,27 @@
           top: 0.82rem;
           right: 0.55rem;
         }
+
+        .workspace-nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        body[data-theme="modern"] .workspace-shell {
+          top: auto;
+          margin-bottom: 1.2rem;
+          padding: 0.8rem 0.82rem 0.85rem;
+          border-radius: 20px;
+        }
+
+        .workspace-tab,
+        body[data-theme="modern"] .workspace-tab {
+          min-height: 4rem;
+          padding: 0.78rem 0.82rem 0.84rem;
+        }
+
+        .workspace-tab strong {
+          font-size: 0.94rem;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -2588,10 +2764,22 @@
           </div>
           <div id="secret-runtime-note" class="secret-runtime-note" aria-live="polite"></div>
         </div>
-        <div class="hero-actions">
-          <button id="build-new-quiz-hero" class="button button--primary" type="button">Build new quiz</button>
-          <button id="open-learning-guide-hero" class="button button--secondary" type="button">Open learning guide</button>
-          <button id="open-user-center-hero" class="button button--secondary" type="button">Open user center</button>
+      </section>
+
+      <section class="workspace-shell" aria-label="Workspace navigation">
+        <div class="workspace-nav" role="tablist" aria-label="Signal Deck sections">
+          <button id="workspace-tab-play" class="workspace-tab is-active" type="button" role="tab" aria-selected="true" data-workspace-tab="play">
+            <strong>Quiz</strong>
+          </button>
+          <button id="workspace-tab-learn" class="workspace-tab" type="button" role="tab" aria-selected="false" data-workspace-tab="learn">
+            <strong>Learn</strong>
+          </button>
+          <button id="workspace-tab-create" class="workspace-tab" type="button" role="tab" aria-selected="false" data-workspace-tab="create">
+            <strong>Create</strong>
+          </button>
+          <button id="workspace-tab-user" class="workspace-tab" type="button" role="tab" aria-selected="false" data-workspace-tab="user">
+            <strong>User</strong>
+          </button>
         </div>
       </section>
 
@@ -2672,6 +2860,13 @@
                   <p class="toggle-copy">Use only saved cards. Topic filters, difficulty, hints, and intense timing still apply to that subset.</p>
                 </div>
               </label>
+              <label class="toggle-row" for="include-custom-cards">
+                <input id="include-custom-cards" type="checkbox" />
+                <div>
+                  <p class="toggle-title">Include custom cards</p>
+                  <p class="toggle-copy">Add your saved custom templates into the quiz pool. Trophies stay off for runs that include custom cards.</p>
+                </div>
+              </label>
             </div>
             <p id="personal-deck-note" class="field-note setup-footnote">The review rail and end-of-session analysis always show the full solution notes.</p>
           </article>
@@ -2697,10 +2892,6 @@
             <h2>Track previous runs</h2>
           </div>
           <p class="panel-copy">Saved sessions keep their topics, difficulty, question count, timer, elapsed time, and score breakdown so you can see what keeps hurting you.</p>
-        </div>
-
-        <div class="hero-actions">
-          <button id="close-user-center" class="button button--ghost" type="button">Hide user center</button>
         </div>
 
         <div class="user-grid">
@@ -2742,11 +2933,11 @@
             <div class="setup-grid">
               <div class="field-card">
                 <span class="field-label">Recovery code</span>
-                <div class="score-rules">
+                <div class="recovery-actions">
                   <button id="generate-recovery-code" class="button button--ghost" type="button">Generate code</button>
                   <button id="restore-recovery-code" class="button button--ghost" type="button">Recover from code</button>
                 </div>
-                <p class="field-note">Generated codes are short local restore keys for this browser. They bring back your personal deck, history, and saved setup from local storage.</p>
+                <p class="field-note">Generated codes contain your saved profile state and can be recovered on another device or browser. They include your personal deck, custom cards, custom learning topics, history, and saved setup.</p>
               </div>
               <div class="field-card field-card--wide">
                 <label class="field-label" for="recovery-code-output">Generated code</label>
@@ -2762,23 +2953,123 @@
         </div>
       </section>
 
+      <section class="panel user-panel is-hidden" id="create-center">
+        <div class="panel-heading">
+          <div>
+            <p class="section-tag">Question Creator</p>
+            <h2>Build custom cards</h2>
+          </div>
+        </div>
+
+        <div class="user-grid">
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar topic-toolbar--stacked">
+              <span class="field-label">New custom card</span>
+              <div class="topic-toolbar-actions">
+                <button id="load-custom-example" class="button button--ghost" type="button">Load example</button>
+                <button id="clear-custom-card-form" class="button button--ghost" type="button">Clear form</button>
+              </div>
+            </div>
+
+            <label class="field-label" for="custom-topic-select">Topic</label>
+            <select id="custom-topic-select" class="field-input"></select>
+
+            <label class="field-label" for="custom-question-text">Question text</label>
+            <textarea id="custom-question-text" class="field-input" rows="6" spellcheck="false"></textarea>
+            <p class="field-note">Use <code>{{x}}</code> to insert a variable. LaTeX-style snippets like <code>\sqrt{n}</code>, <code>\frac{a}{b}</code>, <code>\lambda</code>, and <code>\sigma</code> are rendered in the sample and in quiz mode.</p>
+
+            <div class="toggle-stack">
+              <label class="toggle-row" for="custom-randomized">
+                <input id="custom-randomized" type="checkbox" />
+                <div>
+                  <p class="toggle-title">Randomize variables</p>
+                  <p class="toggle-copy">If on, the card samples fresh variable values each time it appears in a quiz.</p>
+                </div>
+              </label>
+            </div>
+            <label class="field-label" for="custom-variable-specs">Variable values</label>
+            <textarea id="custom-variable-specs" class="field-input" rows="5" spellcheck="false"></textarea>
+            <p class="field-note">One variable per line. Examples: <code>n = 10..50 step 5</code>, <code>k = 2..20 step 2 skip 8, 12</code>, <code>p = 0.2, 0.25, 0.3</code>.</p>
+
+            <label class="field-label" for="custom-hint-text">Hint text</label>
+            <textarea id="custom-hint-text" class="field-input" rows="4" spellcheck="false"></textarea>
+            <p class="field-note">Optional. This is what appears when you press Hint during quiz. You can also use <code>{{x}}</code> variables here.</p>
+
+            <label class="field-label" for="custom-solution-text">Solution text</label>
+            <textarea id="custom-solution-text" class="field-input" rows="5" spellcheck="false"></textarea>
+            <p class="field-note">Optional. This is what appears when you open the previous-card review during quiz. You can also use <code>{{x}}</code> variables here.</p>
+          </article>
+
+          <article class="field-card">
+            <label class="field-label" for="custom-difficulty-select">Difficulty</label>
+            <select id="custom-difficulty-select" class="field-input">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </article>
+
+          <article class="field-card">
+            <label class="field-label" for="custom-input-mode-select">Answer format</label>
+            <select id="custom-input-mode-select" class="field-input">
+              <option value="number">Number</option>
+              <option value="probability">Probability</option>
+              <option value="percent">Percent</option>
+              <option value="dollars">Dollars</option>
+              <option value="count">Count</option>
+              <option value="variance">Variance</option>
+              <option value="correlation">Correlation</option>
+              <option value="steps">Steps</option>
+            </select>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <span class="field-label">Accepted interval</span>
+            <p class="field-note">Both endpoints are inclusive. For a single exact answer, make the lower and upper formulas the same.</p>
+            <input id="custom-lower-expression" class="field-input" type="text" spellcheck="false" placeholder="Lower endpoint formula" />
+            <input id="custom-upper-expression" class="field-input" type="text" spellcheck="false" placeholder="Upper endpoint formula" />
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="score-rules">
+              <button id="update-custom-sample" class="button button--secondary" type="button">Update sample</button>
+              <button id="save-custom-card" class="button button--primary" type="button">Save card</button>
+            </div>
+            <p id="custom-card-status" class="field-note" aria-live="polite"></p>
+            <p id="custom-card-error" class="field-note inline-note--error" aria-live="polite"></p>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Preview</span>
+              <span id="custom-template-count" class="pill"></span>
+            </div>
+            <div id="custom-card-preview" class="user-list">
+              <p class="empty-state">Update a sample to preview the rendered prompt and accepted interval.</p>
+            </div>
+          </article>
+
+          <article class="field-card field-card--wide">
+            <div class="topic-toolbar">
+              <span class="field-label">Saved custom cards</span>
+            </div>
+            <div id="custom-template-list" class="user-list">
+              <p class="empty-state">No custom cards saved yet.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section class="panel learning-panel is-hidden" id="learning-guide">
 <div class="panel-heading">
 <div>
 <p class="section-tag">Learning Guide</p>
 <h2>Common techniques</h2>
 </div>
-<p class="panel-copy">
-            This section is written meaning first, shortcut second. Each topic starts by stating the exact quantity
-            being estimated, then gives the fast mental rule, then explains why that rule is reasonable.
-          </p>
-</div>
-<div class="hero-actions">
-<button class="button button--ghost" id="close-learning-guide" type="button">Hide learning guide</button>
 </div>
 <div class="learning-grid">
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Logs, Roots, and Exponents</span></summary><div class="guide-topic-body">
-<p>These cards ask you to approximate the numerical value of a smooth function at a point where exact computation would be too slow. The standard move is: choose a nearby anchor where the function is easy, then use one or two terms of a local expansion. Concretely, use <code>ln(1+u) ≈ u - u²/2</code> when <code>u</code> is small, <code>sqrt(a+h) ≈ sqrt(a) + h/(2sqrt(a))</code> when <code>a</code> is a nearby perfect square, <code>e^u ≈ 1 + u + u²/2</code> when <code>u</code> is small, and <code>log₂(x) = ln(x)/ln(2)</code> for base-2 logs.</p>
+<p>Choose a nearby point where the function is easy to evaluate, then use one or two terms of a local expansion. Use <code>ln(1+u) ≈ u - u²/2</code> when <code>u</code> is small, <code>sqrt(a+h) ≈ sqrt(a) + h/(2sqrt(a))</code> when <code>a</code> is a nearby perfect square, <code>e^u ≈ 1 + u + u²/2</code> when <code>u</code> is small, and <code>log₂(x) = ln(x)/ln(2)</code> for base-2 logs.</p>
 <div class="guide-example">
 <strong>Examples:</strong> to estimate <code>ln(1.08)</code>, write it as <code>ln(1+0.08)</code> and use <code>0.08 - 0.08²/2 = 0.0768</code>. To estimate <code>sqrt(50)</code>, anchor at <code>49</code> and use <code>sqrt(49+1) ≈ 7 + 1/(2·7) = 7.07</code>. To estimate <code>log₂(10)</code>, compute <code>ln(10)/ln(2) ≈ 2.303/0.693 ≈ 3.32</code>.
             </div>
@@ -2822,7 +3113,7 @@
               <code>E[max(Z₁,Z₂)] = 1/sqrt(pi) ≈ 0.5642</code>,
               and by symmetry
               <code>E[min(Z₁,Z₂)] = -1/sqrt(pi)</code>.</p>
-<p>A sharper large-<code>n</code> refinement is <code>E[M_n] ≈ u_n + γ a_n</code>, where <code>a_n ≈ 1/(n φ(u_n))</code> and <code>γ ≈ 0.577</code>. For fast mental work the intended workflow is: first find the <code>1/n</code> upper-tail quantile, then remember that the actual expected maximum is a little larger.</p>
+<p>A sharper large-<code>n</code> refinement is <code>E[M_n] ≈ u_n + γ a_n</code>, where <code>a_n ≈ 1/(n φ(u_n))</code> and <code>γ ≈ 0.577</code>. For a fast estimate, first find the <code>1/n</code> upper-tail quantile; the expected maximum is slightly larger.</p>
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Discrete Extremes and Full Sets</span></summary><div class="guide-topic-body">
@@ -2848,7 +3139,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Conditional Probability and Bayes Updates</span></summary><div class="guide-topic-body">
-<p>These cards usually have two layers. First there is a hidden state, such as which coin was chosen, which urn you are drawing from, or whether a patient really has a disease. Then there is observed data, such as a toss sequence, a draw sequence, or a test result. The correct update is always the same: for each possible hidden state <code>h</code>, compute <code>P(h) P(data | h)</code>, then renormalize across all states. In words: posterior is proportional to prior times likelihood.</p>
+<p>Let <code>h</code> denote the hidden state, such as the selected coin, urn, or disease status. For each possible state, compute <code>P(h) P(data | h)</code>, then divide by the sum over all states. Thus the posterior probability is proportional to prior probability times likelihood.</p>
 <div class="guide-example">
 <strong>Examples:</strong> if one of three coins with head probabilities <code>1/4</code>, <code>1/2</code>, and <code>3/4</code> is chosen uniformly and you observe <code>HH</code>, then the posterior weights are proportional to <code>(1/4)^2</code>, <code>(1/2)^2</code>, and <code>(3/4)^2</code>, namely <code>1 : 4 : 9</code>. So the probability the next toss is heads is the posterior weighted average
               <code>(1/4)(1/14) + (1/2)(4/14) + (3/4)(9/14) = 9/14</code>.
@@ -2918,7 +3209,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Sharpe from a PnL Graph</span></summary><div class="guide-topic-body">
-<p>In these cards, the graph shows cumulative PnL over equally spaced periods. If the cumulative values are <code>C_0, C_1, ..., C_m</code>, then the period-by-period return or PnL series is <code>R_i = C_i - C_{i-1}</code>. The period Sharpe ratio is <code>mean(R_i) / sd(R_i)</code>. If the prompt asks for annualized Sharpe, multiply the period Sharpe by <code>sqrt(periods per year)</code>.</p>
+<p>If a graph shows cumulative PnL values <code>C_0, C_1, ..., C_m</code> at equally spaced times, recover each period's PnL as <code>R_i = C_i - C_{i-1}</code>. The period Sharpe ratio is <code>mean(R_i) / sd(R_i)</code>. For annualized Sharpe, multiply by <code>sqrt(periods per year)</code>.</p>
 <div class="guide-example">
 <strong>Example:</strong> if monthly cumulative PnL is <code>0, 2, 2, 4, 4, 6</code>, then the monthly increments are <code>2, 0, 2, 0, 2</code>. Their mean is <code>(2+0+2+0+2)/5 = 1.2</code>. Their standard deviation is about <code>0.98</code>. So the monthly Sharpe is about <code>1.2/0.98 ≈ 1.22</code>. If the prompt asks for annualized Sharpe, multiply by <code>sqrt(12)</code> to get about <code>4.2</code>.
             </div>
@@ -2963,7 +3254,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-card--wide guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Basic Review Distributions</span></summary><div class="guide-topic-body">
-<p>This section is a factual reference table. Each row states specific objects: the mean <code>E[X]</code>, the variance <code>Var(X)</code>, the third raw moment <code>E[X^3]</code>, and the fourth raw moment <code>E[X^4]</code> when those moments are standard and worth remembering. If a moment does not exist, that is a mathematical fact about the distribution, not a missing formula.</p>
+<p>Each row gives the mean <code>E[X]</code>, variance <code>Var(X)</code>, third raw moment <code>E[X^3]</code>, and fourth raw moment <code>E[X^4]</code> when they exist. An entry marked “does not exist” means the defining integral or sum diverges.</p>
 <div class="guide-example">
 <strong>Examples:</strong> for <code>U(0,1)</code>, <code>E[X^k] = 1/(k+1)</code>; for standard normal, odd moments are <code>0</code> and even moments are <code>(k-1)!!</code>; for <code>Poisson(λ)</code>, mean and variance are both <code>λ</code>; for <code>Lognormal(μ,σ²)</code>, <code>E[X] = e^{μ + σ²/2}</code>.
             </div>
@@ -3020,6 +3311,13 @@
 <td><code>1/λ²</code></td>
 <td><code>6/λ³</code></td>
 <td><code>24/λ⁴</code></td>
+</tr>
+<tr>
+<td><code>Laplace(μ,b)</code></td>
+<td><code>μ</code></td>
+<td><code>2b²</code></td>
+<td><code>μ³ + 6μb²</code></td>
+<td><code>μ⁴ + 12μ²b² + 24b⁴</code></td>
 </tr>
 <tr>
 <td><code>Lognormal(μ,σ²)</code></td>
@@ -3081,6 +3379,11 @@
 <td><code>t &lt; 1/θ</code></td>
 </tr>
 <tr>
+<td><code>Laplace(μ,b)</code></td>
+<td><code>exp(μt)/(1-b²t²)</code></td>
+<td><code>|t| &lt; 1/b</code></td>
+</tr>
+<tr>
 <td><code>Uniform(a,b)</code></td>
 <td><code>(e^{tb}-e^{ta})/(t(b-a))</code></td>
 <td>all <code>t</code>, extend continuously at <code>t=0</code></td>
@@ -3105,7 +3408,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Moments and MGF Workflow</span></summary><div class="guide-topic-body">
-<p>The tables are references, but the actual workflow is systematic. When a moment question appears, the intended route is usually one of four explicit moves: differentiate the mgf at zero, recognize the parent family, rewrite the random variable as a transform of a simpler one, or use symmetry to show an odd moment is zero.</p>
+<p>To calculate a moment, differentiate the mgf at zero, use a known formula for the distribution family, rewrite the variable as a transform of a simpler one, or use symmetry to show that an odd moment is zero.</p>
 <div class="guide-example">
 <strong>Examples:</strong> for <code>X ~ N(0,1)</code>, odd moments vanish by symmetry and <code>E[X^{2m}] = (2m-1)!!</code>. For a lognormal <code>X = e^Y</code> with <code>Y ~ N(μ,σ²)</code>, raw moments come from <code>E[X^r] = E[e^{rY}] = exp(rμ + 0.5r²σ²)</code>. For Poisson or binomial, the mgf or factorial-moment route is usually faster than summing the pmf directly.</div>
 <details class="guide-details">
@@ -3122,7 +3425,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Distribution Relationships</span></summary><div class="guide-topic-body">
-<p>Many of the distributions in this deck are linked by exact constructions or clean limits. The point of this section is to state those links explicitly, so that you can move from one family to another instead of memorizing disconnected formulas.</p>
+<p>Sums of Bernoulli variables produce binomial counts, rare-event binomials converge to Poisson laws, normalized independent gamma variables produce beta laws, and the quotient of two independent standard normals is Cauchy.</p>
 <div class="guide-example">
 <strong>Examples:</strong> <code>Binomial(n,p)</code> becomes <code>Poisson(λ)</code> when <code>n</code> is large, <code>p</code> is small, and <code>np = λ</code>; exponential is the continuous analogue of geometric waiting time; the <code>k</code>-th order statistic of uniform draws is beta; and if <code>X</code> and <code>Y</code> are iid standard normal, then <code>X/Y</code> is standard Cauchy.
             </div>
@@ -3194,7 +3497,11 @@
 <summary>Why these formulas are so structured</summary>
 <p>For <code>Uniform(0,1)</code>, the order statistics carve the unit interval into <code>n + 1</code> exchangeable spacings. By symmetry, each spacing has expected length <code>1/(n+1)</code>. Summing the first <code>r</code> spacings gives the expected <code>r</code>-th smallest value <code>r/(n+1)</code>. That is why the formula is exact and so clean.</p>
 <p>For discrete dice, exact expectations come from survival probabilities: the <code>j</code>-th largest roll is at least <code>k</code> exactly when at least <code>j</code> rolls land in <code>{k, k+1, ..., m}</code>. The site computes that exact discrete answer, but the mental shortcut treats the die as a continuous uniform grid, which is why the accepted range covers both.</p>
-<p>Exponentials are special because of the memoryless property. After the smallest draw occurs, the remaining gaps are still exponential with updated rates, which makes the ordered spacings independent. That turns the expected largest into a harmonic sum: <code>H_n / λ</code>, then <code>(H_n - 1)/λ</code> for the second-largest, and so on. Mentally, <code>H_n ≈ ln n + γ</code> is the quick anchor.</p>
+<p>Exponentials are special because the ordered gaps are explicit. If <code>X_(1) &lt; ... &lt; X_(n)</code> are the sorted values, then <code>X_(1)</code> has mean <code>1/(nλ)</code>, the next gap <code>X_(2)-X_(1)</code> has mean <code>1/((n-1)λ)</code>, and in general the gaps are independent exponentials with rates <code>nλ,(n-1)λ,...,λ</code>. So
+              <code>E[X_(n)] = 1/(nλ) + 1/((n-1)λ) + ... + 1/λ = H_n/λ</code>.
+              More generally, the <code>j</code>-th largest value is <code>X_(n-j+1)</code>, so
+              <code>E[X_(n-j+1)] = (1/λ)\sum_{m=j}^n 1/m</code>.
+              For mental math, replace <code>H_n</code> by <code>ln n + γ</code>.</p>
 <p>The minimum of <code>n</code> uniforms is Beta(<code>1,n</code>), so <code>E[min] = 1/(n+1)</code> and <code>Var(min) = n/((n+1)^2(n+2))</code>. Broken-stick spacings are the same exchangeability idea in disguise: if you cut <code>[0,1]</code> at random, the <code>m</code> segment lengths form a symmetric Dirichlet vector, so the expected <code>j</code>-th largest spacing is <code>(1/m)∑_{k=j}^m 1/k</code>.</p>
 <p>The polygon version of the broken-stick problem is just the “largest piece” test: the pieces can form a polygon exactly when no piece exceeds <code>1/2</code>, since the total length is 1. And for the random-interval cards, all intervals intersect exactly when the middle cut between the <code>n</code>-th and <code>(n+1)</code>-st ordered endpoints is crossed by every pair, which is why the answer becomes a pure counting ratio <code>2^n/(2n choose n)</code>.</p>
 </details>
@@ -3225,7 +3532,7 @@
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fisher Information</span></summary><div class="guide-topic-body">
 <p>Fisher information is the amount of local curvature in the log-likelihood with respect to the parameter. For one observation, it is <code>I_1(θ) = E[(∂_θ ℓ)^2]</code>, or equivalently <code>I_1(θ) = -E[∂_θ² ℓ]</code> when the regularity conditions are valid. For <code>n</code> independent observations, information adds: <code>I_n(θ) = n I_1(θ)</code>.</p>
 <div class="guide-example">
-<strong>Examples:</strong> one <code>Bernoulli(p)</code> observation has information <code>1 / (p(1-p))</code>, so at <code>p = 1/2</code> that is <code>4</code>. For <code>n</code> iid <code>Poisson(λ)</code> observations, total information is <code>n/λ</code>, so the MLE’s asymptotic standard error is about <code>√(λ/n)</code>. For <code>X_i ∼ N(μ,σ^2)</code> with known <code>σ^2</code>, information is <code>n/σ^2</code>, so the natural scale for estimating <code>μ</code> is <code>σ/√(n)</code>.</div>
+<strong>Examples:</strong> one <code>Bernoulli(p)</code> observation has information <code>1 / (p(1-p))</code>, so at <code>p = 1/2</code> that is <code>4</code>. For <code>n</code> iid <code>Poisson(λ)</code> observations, total information is <code>n/λ</code>, so the large-sample standard error scale for <code>λ̂</code> is about <code>√(λ/n)</code>. For <code>X_i ∼ N(μ,σ^2)</code> with known <code>σ^2</code>, information is <code>n/σ^2</code>, so the natural scale for estimating <code>μ</code> is <code>σ/√(n)</code>.</div>
 <div class="guide-fact-grid">
 <article class="guide-fact-card">
 <h4><code>Bernoulli(p)</code></h4>
@@ -3290,7 +3597,7 @@
               <code>I_{25}(p)=25 · 16/3 = 400/3</code>.
               The Cramér–Rao lower bound is the reciprocal:
               <code>Var(p̂) ≥ 1/I_{25}(p)=3/400=0.0075</code>.
-              If the prompt instead asked for the asymptotic MLE standard error, take a square root and get
+              If the prompt instead asked for the large-sample MLE standard error, take a square root and get
               <code>√(3/400) ≈ 0.0866</code>.</p>
 </details>
 </div></details>
@@ -3350,7 +3657,7 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Ito and GBM</span></summary><div class="guide-topic-body">
-<p>These cards ask for the drift or volatility of a transformed process. The model is geometric Brownian motion:
+<p>For a transformed geometric Brownian motion, begin with:
               <code>dS/S = μ dt + σ dW</code>.
               If the transform is a power, write it explicitly as <code>X = S^k</code>. Then the transformed process satisfies
               <code>dX/X = (kμ + 0.5k(k-1)σ²) dt + kσ dW</code>.
@@ -3365,7 +3672,7 @@
 <summary>Why the power rule is so convenient</summary>
 <p>Ito’s lemma says <code>df(S) = f'(S)dS + 0.5 f''(S)(dS)²</code>. For GBM, <code>(dS)² = σ² S² dt</code>. If <code>f(S) = S^k</code>, then <code>f'(S) = kS^{k-1}</code> and <code>f''(S) = k(k-1)S^{k-2}</code>, so both terms stay proportional to <code>S^k</code>.</p>
 <p>The signed diffusion coefficient in <code>dX/X</code> is <code>kσ</code>. The volatility magnitude is <code>|k|σ</code>. Those are different when <code>k &lt; 0</code>. For example, if <code>X = 1/S</code>, then the diffusion term is <code>-σ dW</code>, but the volatility is still <code>σ</code>.</p>
-<p>The log case is not a power card; it has its own formula. The practical workflow is therefore: first identify whether the transform is <code>X = S^k</code> or <code>X = ln S</code>, then decide whether the prompt wants the drift coefficient or the volatility magnitude, and only then plug in the numbers.</p>
+<p>For <code>X = S^k</code>, use the power-transform formula above. For <code>X = ln S</code>, use its separate formula. Then select the requested drift coefficient or volatility magnitude and substitute the given values.</p>
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Stopping and Martingales</span></summary><div class="guide-topic-body">
@@ -3428,7 +3735,9 @@
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Permutations and Coupons</span></summary><div class="guide-topic-body">
-<p>Several classics live here. The expected number of cycles in a random permutation of <code>n</code> items is <code>H_n</code>, the expected number of fixed points is <code>1</code>, the derangement probability is close to <code>1/e</code>, and the expected time to collect <code>n</code> equally likely coupon types is <code>n H_n</code>.</p>
+<p>Several classics live here. The expected number of cycles in a random permutation of <code>n</code> items is <code>H_n</code>, the expected number of fixed points is <code>1</code>, the derangement probability is
+              <code>\sum_{k=0}^n (-1)^k/k!</code>
+              and is close to <code>1/e</code> for moderate <code>n</code>, and the expected time to collect <code>n</code> equally likely coupon types is <code>n H_n</code>.</p>
 <div class="guide-example">
 <strong>Example:</strong> for <code>4</code> coupon types, the expected collection time is <code>4(1 + 1/2 + 1/3 + 1/4) ≈ 8.33</code>.
             </div>
@@ -3459,6 +3768,74 @@
               <code>T_n ≈ mean ± z × sd</code> with mean <code>nH_n</code> and standard deviation <code>sqrt(Var(T_n))</code>.</p>
 <p>So a one-sigma band uses <code>z = 1</code>, and a rough central <code>95%</code> band uses <code>z ≈ 1.96</code>. In practice, many interview-style estimates round that to about <code>2</code>.</p>
 </details>
+</div></details>
+<details class="guide-card guide-card--wide guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fully Worked Examples</span></summary><div class="guide-topic-body">
+<p>These fixed-value examples carry each calculation from the information in the prompt to the final numerical answer.</p>
+<details class="guide-details">
+<summary>Conditional probability: choose a coin, observe HH, predict the next toss</summary>
+<p>One of three coins is selected uniformly. Their head probabilities are <code>1/4</code>, <code>1/2</code>, and <code>3/4</code>. After observing <code>HH</code>, the likelihoods are <code>1/16</code>, <code>1/4</code>, and <code>9/16</code>. Equal priors mean that the posterior weights are proportional to <code>1:4:9</code>, so the posterior probabilities are <code>1/14</code>, <code>4/14</code>, and <code>9/14</code>.</p>
+<p>The next-head probability is the posterior-weighted average:
+<code>(1/14)(1/4) + (4/14)(1/2) + (9/14)(3/4)</code>.
+Putting the terms over denominator <code>56</code> gives
+<code>1/56 + 8/56 + 27/56 = 36/56 = 9/14 ≈ 0.6429</code>.
+Therefore the probability of heads on the next toss is about <code>64.3%</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Fixed income: price a three-year coupon bond</summary>
+<p>A three-year bond has face value <code>$1,000</code>, annual coupon rate <code>6%</code>, annual payments, and yield <code>5%</code>. The annual coupon is <code>0.06 × 1,000 = $60</code>. Its cash flows are therefore <code>$60</code>, <code>$60</code>, and <code>$1,060</code>.</p>
+<p>Discount each cash flow:
+<code>P = 60/1.05 + 60/1.05² + 1,060/1.05³</code>.
+The three present values are approximately <code>57.14</code>, <code>54.42</code>, and <code>915.69</code>. Adding them gives
+<code>P ≈ $1,027.25</code>.
+The price exceeds face value because the <code>6%</code> coupon rate exceeds the <code>5%</code> yield.</p>
+</details>
+<details class="guide-details">
+<summary>Kelly sizing: asymmetric gain and loss</summary>
+<p>A bet wins with probability <code>0.60</code>. The amount wagered gains <code>50%</code> on a win and loses <code>25%</code> on a loss. If fraction <code>f</code> of bankroll is wagered, expected log growth is
+<code>g(f) = 0.60 ln(1 + 0.50f) + 0.40 ln(1 - 0.25f)</code>.</p>
+<p>Set the derivative to zero:
+<code>0.30/(1 + 0.50f) = 0.10/(1 - 0.25f)</code>.
+Cross-multiplying gives
+<code>0.30 - 0.075f = 0.10 + 0.05f</code>, hence
+<code>0.20 = 0.125f</code> and <code>f = 1.6</code>.
+The unconstrained Kelly fraction is <code>160%</code>. If borrowing is forbidden and <code>f ≤ 1</code>, the constrained optimum is <code>100%</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Order statistics: expected maximum of five exponentials</summary>
+<p>Let <code>X_1, ..., X_5</code> be iid exponential random variables with rate <code>λ = 2</code>. Exponential order-statistic gaps are independent, with successive expected gaps
+<code>1/(5λ)</code>, <code>1/(4λ)</code>, <code>1/(3λ)</code>, <code>1/(2λ)</code>, and <code>1/λ</code>.</p>
+<p>Therefore
+<code>E[max(X_1,...,X_5)] = H_5/λ</code>.
+Since
+<code>H_5 = 1 + 1/2 + 1/3 + 1/4 + 1/5 = 137/60</code>,
+the answer is
+<code>(137/60)/2 = 137/120 ≈ 1.1417</code>.</p>
+</details>
+<details class="guide-details">
+<summary>Biased gambler's ruin: reach 5 before 0</summary>
+<p>A walk starts at <code>i = 2</code>, moves right with probability <code>p = 0.60</code>, moves left with probability <code>q = 0.40</code>, and stops at <code>0</code> or <code>N = 5</code>. For <code>p ≠ q</code>, the upper-hit probability is
+<code>[1 - (q/p)^i]/[1 - (q/p)^N]</code>.</p>
+<p>Here <code>q/p = 2/3</code>, so
+<code>h(2) = [1 - (2/3)²]/[1 - (2/3)^5]</code>.
+The numerator is <code>5/9</code> and the denominator is <code>211/243</code>. Thus
+<code>h(2) = (5/9)(243/211) = 135/211 ≈ 0.6398</code>.
+The probability of reaching <code>5</code> first is about <code>64.0%</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-card--wide guide-topic-card" open><summary class="guide-topic-summary"><span class="guide-topic-title">Your Custom Learning Topics</span></summary><div class="guide-topic-body">
+<p>Create your own Learn-topic pills here. Use <code>$...$</code>, <code>\(...\)</code>, <code>\[...\]</code>, or backticks for highlighted math-style snippets. These topics stay in local storage and ride along with recovery when present.</p>
+<div class="guide-details">
+<label class="field-label" for="custom-learning-topic-title">Topic title</label>
+<input id="custom-learning-topic-title" class="field-input" type="text" spellcheck="false" placeholder="Example: Coupon Collector Variance Shortcut" />
+<label class="field-label" for="custom-learning-topic-body">Topic text</label>
+<textarea id="custom-learning-topic-body" class="field-input" rows="6" spellcheck="false" placeholder="Write the explanation you want to keep in the Learning Center."></textarea>
+<div class="score-rules">
+<button id="save-custom-learning-topic" class="button button--secondary" type="button">Save topic</button>
+<button id="clear-custom-learning-topic-form" class="button button--ghost" type="button">Clear form</button>
+</div>
+<p id="custom-learning-topic-status" class="field-note" aria-live="polite"></p>
+</div>
+<div id="custom-learning-topic-list" class="user-list"></div>
 </div></details>
 </div>
 </section>
@@ -3624,7 +4001,7 @@
         { id: "regression", label: "Regression", description: "OLS, regression MLE, residual variance, prediction, and Bayesian coefficient updates.", meta: "OLS / MLE / Bayes" },
         { id: "orderStats", label: "Order statistics", description: "Uniform, dice, and exponential top-k / bottom-k estimate drills.", meta: "max / 2nd / min" },
         { id: "estimation", label: "Estimation and MLE", description: "Likelihood-based parameter recovery, sample summaries, and fast inference rules.", meta: "MLE / inference" },
-        { id: "fisherInfo", label: "Fisher information", description: "Information, Cramer-Rao bounds, and MLE asymptotic variance / standard-error drills.", meta: "I(theta) / CRLB" },
+        { id: "fisherInfo", label: "Fisher information", description: "Information, Cramer-Rao bounds, and large-sample MLE variance / standard-error drills.", meta: "I(theta) / CRLB" },
         { id: "options", label: "Options pricing", description: "Put-call parity, synthetic forwards, binomial pricing, and intrinsic-versus-time-value drills.", meta: "calls / puts / parity" },
         { id: "fixedIncome", label: "Fixed income", description: "Present value, coupon bonds, annuities, perpetuities, and simple yield-based pricing drills.", meta: "PV / bonds / yields" },
         { id: "greeks", label: "Greeks", description: "Delta, hedge sizing, vega intuition, and option-position sensitivity questions.", meta: "delta / gamma / vega" },
@@ -3637,6 +4014,7 @@
         { id: "polygons", label: "Symmetric polygons", description: "Cycle walks and regular-polygon geometry with closed-form anchors.", meta: "n-gons" },
         { id: "eigenvalues", label: "Markov chain spectra", description: "Transition-matrix eigenvalues and spectral gaps for simple random walks on rings.", meta: "transition matrix" },
         { id: "greenBook", label: "Classic puzzles", description: "Noodles, runs, streaks, permutations, derangements, and coupon-collector staples.", meta: "classic puzzles" },
+        { id: "miscCustom", label: "Miscellaneous custom cards", description: "A catch-all topic for saved custom cards that do not fit the built-in categories.", meta: "custom catch-all" },
       ];
 
       const elements = {
@@ -3657,13 +4035,9 @@
         clearTopics: document.getElementById("clear-topics"),
         learningGuide: document.getElementById("learning-guide"),
         userCenter: document.getElementById("user-center"),
+        workspaceTabs: Array.from(document.querySelectorAll("[data-workspace-tab]")),
         appearanceToggle: document.getElementById("appearance-toggle"),
-        buildNewQuizHero: document.getElementById("build-new-quiz-hero"),
-        openLearningGuideHero: document.getElementById("open-learning-guide-hero"),
-        openUserCenterHero: document.getElementById("open-user-center-hero"),
-        openLearningGuideSetup: document.getElementById("open-learning-guide-setup"),
-        closeLearningGuide: document.getElementById("close-learning-guide"),
-        closeUserCenter: document.getElementById("close-user-center"),
+        createCenter: document.getElementById("create-center"),
         secretToggleTarget: document.getElementById("secret-toggle-target"),
         secretRuntimeNote: document.getElementById("secret-runtime-note"),
         displayNameInput: document.getElementById("display-name-input"),
@@ -3683,6 +4057,32 @@
         trophyRoom: document.getElementById("trophy-room"),
         historyList: document.getElementById("history-list"),
         clearUserMemory: document.getElementById("clear-user-memory"),
+        customCardsOnly: document.getElementById("include-custom-cards"),
+        customTopicSelect: document.getElementById("custom-topic-select"),
+        customQuestionText: document.getElementById("custom-question-text"),
+        customHintText: document.getElementById("custom-hint-text"),
+        customSolutionText: document.getElementById("custom-solution-text"),
+        customDifficultySelect: document.getElementById("custom-difficulty-select"),
+        customInputModeSelect: document.getElementById("custom-input-mode-select"),
+        customLowerExpression: document.getElementById("custom-lower-expression"),
+        customUpperExpression: document.getElementById("custom-upper-expression"),
+        customRandomized: document.getElementById("custom-randomized"),
+        customVariableSpecs: document.getElementById("custom-variable-specs"),
+        loadCustomExample: document.getElementById("load-custom-example"),
+        clearCustomCardForm: document.getElementById("clear-custom-card-form"),
+        updateCustomSample: document.getElementById("update-custom-sample"),
+        saveCustomCard: document.getElementById("save-custom-card"),
+        customCardStatus: document.getElementById("custom-card-status"),
+        customCardError: document.getElementById("custom-card-error"),
+        customCardPreview: document.getElementById("custom-card-preview"),
+        customTemplateCount: document.getElementById("custom-template-count"),
+        customTemplateList: document.getElementById("custom-template-list"),
+        customLearningTopicTitle: document.getElementById("custom-learning-topic-title"),
+        customLearningTopicBody: document.getElementById("custom-learning-topic-body"),
+        saveCustomLearningTopic: document.getElementById("save-custom-learning-topic"),
+        clearCustomLearningTopicForm: document.getElementById("clear-custom-learning-topic-form"),
+        customLearningTopicStatus: document.getElementById("custom-learning-topic-status"),
+        customLearningTopicList: document.getElementById("custom-learning-topic-list"),
         progressLabel: document.getElementById("progress-label"),
         timerLabel: document.getElementById("timer-label"),
         liveScoreLabel: document.getElementById("live-score-label"),
@@ -3744,17 +4144,25 @@
         showHints: false,
         intenseTimer: false,
         personalDeckOnly: false,
+        customCardsOnly: false,
         perQuestionBaseSeconds: 0,
         perQuestionBonusQuestions: 0,
         sessionLength: DEFAULT_QUESTION_COUNT,
         difficulty: DEFAULT_DIFFICULTY,
         freddybeanUnlocked: false,
         selectedTopics: getAllTopicIds(),
-        liveGenerationEnabled: false,
+        liveGenerationEnabled: true,
         displayName: DEFAULT_DISPLAY_NAME,
         lastResultStatus: null,
         summaryOpen: false,
         updateSequence: 0,
+        customEditingTemplateId: null,
+        customEditingCreatedAt: null,
+        customPreviewQuestion: null,
+        customLearningTopicEditingId: null,
+        customLearningTopicEditingCreatedAt: null,
+        activeWorkspace: "play",
+        playView: "setup",
         secretTapCount: 0,
         secretTapTimerId: null,
         difficultyTapCount: 0,
@@ -3771,13 +4179,17 @@
         updateDeckIdentity();
         renderBestScore();
         renderUserCenter();
+        renderCustomTemplateTopicOptions();
+        renderCreateCenter();
+        renderCustomLearningTopics();
         updateTopicCount();
         renderLiveReview();
+        renderWorkspaceTabs();
+        applyWorkspaceVisibility(false);
         wireEvents();
       }
 
       function wireEvents() {
-        elements.buildNewQuizHero.addEventListener("click", goToNewQuizSetup);
         elements.startSession.addEventListener("click", startSession);
         elements.restartSession.addEventListener("click", startSession);
         elements.backToSetup.addEventListener("click", showSetupScreen);
@@ -3787,10 +4199,6 @@
         elements.summaryToggle.addEventListener("click", toggleSessionSummary);
         elements.summaryClose.addEventListener("click", () => setSessionSummaryOpen(false));
         elements.summaryBackdrop.addEventListener("click", () => setSessionSummaryOpen(false));
-        elements.openLearningGuideHero.addEventListener("click", showLearningGuide);
-        elements.openUserCenterHero.addEventListener("click", showUserCenter);
-        elements.closeLearningGuide.addEventListener("click", hideLearningGuide);
-        elements.closeUserCenter.addEventListener("click", hideUserCenter);
         elements.clearUserMemory.addEventListener("click", clearAllMemory);
         elements.appearanceToggle.addEventListener("click", handleAppearanceToggle);
         elements.secretToggleTarget.addEventListener("click", handleSecretToggleTap);
@@ -3800,11 +4208,25 @@
         elements.questionCount.addEventListener("input", updateTopicCount);
         elements.difficultySelect.addEventListener("change", updateTopicCount);
         elements.personalDeckOnly.addEventListener("change", handlePersonalDeckOnlyChange);
+        elements.customCardsOnly.addEventListener("change", handleCustomCardsOnlyChange);
         elements.displayNameInput.addEventListener("input", handleDisplayNameInput);
         elements.generateRecoveryCode.addEventListener("click", generateRecoveryCode);
         elements.restoreRecoveryCode.addEventListener("click", restoreRecoveryCode);
         elements.addToPersonalDeck.addEventListener("click", addCurrentQuestionToPersonalDeck);
+        elements.loadCustomExample.addEventListener("click", loadCustomCardExample);
+        elements.clearCustomCardForm.addEventListener("click", resetCustomCardForm);
+        elements.updateCustomSample.addEventListener("click", updateCustomCardSample);
+        elements.saveCustomCard.addEventListener("click", saveCustomCardTemplate);
+        elements.customTemplateList.addEventListener("click", handleCustomTemplateListClick);
+        elements.saveCustomLearningTopic.addEventListener("click", saveCustomLearningTopic);
+        elements.clearCustomLearningTopicForm.addEventListener("click", resetCustomLearningTopicForm);
+        elements.customLearningTopicList.addEventListener("click", handleCustomLearningTopicListClick);
         window.addEventListener("resize", syncSummaryPresentation);
+        elements.workspaceTabs.forEach((button) => {
+          button.addEventListener("click", () => {
+            setWorkspace(button.dataset.workspaceTab || "play");
+          });
+        });
 
         bindDismissOnEnter(elements.displayNameInput);
         bindDismissOnEnter(elements.recoveryCodeInput);
@@ -3928,6 +4350,82 @@
         }
       }
 
+      function renderWorkspaceTabs() {
+        elements.workspaceTabs.forEach((button) => {
+          const active = button.dataset.workspaceTab === state.activeWorkspace;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-selected", active ? "true" : "false");
+        });
+      }
+
+      function currentPlayWorkspaceElement() {
+        if (state.playView === "session") {
+          return elements.sessionScreen;
+        }
+        if (state.playView === "results") {
+          return elements.resultsScreen;
+        }
+        return elements.setupScreen;
+      }
+
+      function workspaceTargetElement(workspace) {
+        if (workspace === "learn") {
+          return elements.learningGuide;
+        }
+        if (workspace === "user") {
+          return elements.userCenter;
+        }
+        if (workspace === "create") {
+          return elements.createCenter;
+        }
+        return currentPlayWorkspaceElement();
+      }
+
+      function applyWorkspaceVisibility(scrollToTarget = true) {
+        const showingPlay = state.activeWorkspace === "play";
+        const showingLearn = state.activeWorkspace === "learn";
+        const showingUser = state.activeWorkspace === "user";
+        const showingCreate = state.activeWorkspace === "create";
+
+        elements.setupScreen.classList.toggle("is-hidden", !(showingPlay && state.playView === "setup"));
+        elements.sessionScreen.classList.toggle("is-hidden", !(showingPlay && state.playView === "session"));
+        elements.resultsScreen.classList.toggle("is-hidden", !(showingPlay && state.playView === "results"));
+        elements.learningGuide.classList.toggle("is-hidden", !showingLearn);
+        elements.userCenter.classList.toggle("is-hidden", !showingUser);
+        elements.createCenter.classList.toggle("is-hidden", !showingCreate);
+
+        if (showingCreate) {
+          renderCreateCenter();
+        }
+        if (showingLearn) {
+          renderCustomLearningTopics();
+        }
+
+        renderWorkspaceTabs();
+
+        if (!scrollToTarget) {
+          return;
+        }
+
+        const target = workspaceTargetElement(state.activeWorkspace);
+        if (!target) {
+          return;
+        }
+
+        window.requestAnimationFrame(() => {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      function setWorkspace(workspace, options = {}) {
+        const normalized = ["play", "learn", "user", "create"].includes(workspace) ? workspace : "play";
+        state.activeWorkspace = normalized;
+        if (normalized !== "play") {
+          setSessionSummaryOpen(false);
+        }
+        applyWorkspaceVisibility(options.scroll !== false);
+      }
+
       function renderTopicGrid() {
         elements.topicGrid.innerHTML = TOPICS.map(
           (topic) => `
@@ -3980,8 +4478,10 @@
         elements.showHints.checked = stored.showHints === true;
         elements.intenseTimer.checked = stored.intenseTimer === true;
         elements.personalDeckOnly.checked = stored.personalDeckOnly === true;
-        state.liveGenerationEnabled = stored.liveGenerationEnabled === true;
+        elements.customCardsOnly.checked = stored.customCardsOnly === true;
+        state.liveGenerationEnabled = typeof stored.liveGenerationEnabled === "boolean" ? stored.liveGenerationEnabled : true;
         state.personalDeckOnly = stored.personalDeckOnly === true;
+        state.customCardsOnly = stored.customCardsOnly === true;
         state.freddybeanUnlocked = stored.freddybeanUnlocked === true || stored.difficulty === "freddybean";
         ensureFreddybeanOption();
         setDisplayName(stored.displayName || DEFAULT_DISPLAY_NAME, false);
@@ -4035,6 +4535,12 @@
         updatePersonalDeckStatus();
       }
 
+      function handleCustomCardsOnlyChange() {
+        state.customCardsOnly = elements.customCardsOnly.checked;
+        savePreferences({ customCardsOnly: state.customCardsOnly });
+        updateTopicCount();
+      }
+
       function renderBestScore() {
         const stored = loadStoredData();
         if (stored.bestScore === undefined) {
@@ -4057,6 +4563,205 @@
           : [];
       }
 
+      function normalizeCustomTemplateRecord(record) {
+        if (!record || typeof record !== "object") {
+          return null;
+        }
+        const promptTemplate = typeof record.promptTemplate === "string" ? record.promptTemplate : "";
+        const lowerExpression = typeof record.lowerExpression === "string" ? record.lowerExpression : "";
+        const upperExpression = typeof record.upperExpression === "string" ? record.upperExpression : "";
+        if (!promptTemplate.trim() || !lowerExpression.trim() || !upperExpression.trim()) {
+          return null;
+        }
+        const topicId = typeof record.topicId === "string" && TOPICS.some((topic) => topic.id === record.topicId)
+          ? record.topicId
+          : (TOPICS[0]?.id || "");
+        const difficulty = ["easy", "medium", "hard"].includes(record.difficulty) ? record.difficulty : "easy";
+        const inputMode = ["number", "probability", "percent", "dollars", "count", "variance", "correlation", "steps"].includes(record.inputMode)
+          ? record.inputMode
+          : "number";
+        return {
+          id: typeof record.id === "string" && record.id ? record.id : `custom-${Math.random().toString(36).slice(2, 11)}`,
+          createdAt: Number(record.createdAt) || Date.now(),
+          topicId,
+          promptTemplate,
+          hintTemplate: typeof record.hintTemplate === "string" ? record.hintTemplate : "",
+          solutionTemplate: typeof record.solutionTemplate === "string" ? record.solutionTemplate : "",
+          lowerExpression,
+          upperExpression,
+          variableSpecText: typeof record.variableSpecText === "string" ? record.variableSpecText : "",
+          randomized: record.randomized === true,
+          difficulty,
+          inputMode,
+        };
+      }
+
+      function getStoredCustomTemplates() {
+        const stored = loadStoredData();
+        return Array.isArray(stored.customTemplates)
+          ? stored.customTemplates.map(normalizeCustomTemplateRecord).filter(Boolean)
+          : [];
+      }
+
+      function normalizeCustomLearningTopicRecord(record) {
+        if (!record || typeof record !== "object") {
+          return null;
+        }
+        const title = String(record.title || "").replace(/\s+/g, " ").trim();
+        const body = String(record.body || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+        if (!title || !body) {
+          return null;
+        }
+        return {
+          id: typeof record.id === "string" && record.id ? record.id : `learn-${Math.random().toString(36).slice(2, 11)}`,
+          createdAt: Number(record.createdAt) || Date.now(),
+          title,
+          body,
+        };
+      }
+
+      function getStoredCustomLearningTopics() {
+        const stored = loadStoredData();
+        return Array.isArray(stored.customLearningTopics)
+          ? stored.customLearningTopics.map(normalizeCustomLearningTopicRecord).filter(Boolean).slice(0, 200)
+          : [];
+      }
+
+      function renderInlineLearningTopicHTML(text) {
+        const source = String(text || "");
+        let output = "";
+        const pattern = /(`[^`]+`|\$\$[\s\S]+?\$\$|\$[^$\n]+\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\])/g;
+        let lastIndex = 0;
+        let match;
+        while ((match = pattern.exec(source)) !== null) {
+          if (match.index > lastIndex) {
+            output += escapeHtml(source.slice(lastIndex, match.index));
+          }
+          let token = match[0];
+          if (token.startsWith("`")) {
+            token = token.slice(1, -1);
+          } else if (token.startsWith("$$")) {
+            token = token.slice(2, -2);
+          } else if (token.startsWith("$")) {
+            token = token.slice(1, -1);
+          } else if (token.startsWith("\\(") || token.startsWith("\\[")) {
+            token = token.slice(2, -2);
+          }
+          output += `<code>${escapeHtml(renderMathText(token))}</code>`;
+          lastIndex = pattern.lastIndex;
+        }
+        if (lastIndex < source.length) {
+          output += escapeHtml(source.slice(lastIndex));
+        }
+        return output;
+      }
+
+      function renderLearningTopicBodyHTML(text) {
+        const normalized = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+        if (!normalized) {
+          return "";
+        }
+        return normalized
+          .split(/\n\s*\n/)
+          .map((paragraph) => `<p class="user-copy" style="white-space: normal;">${renderInlineLearningTopicHTML(paragraph).replace(/\n/g, "<br />")}</p>`)
+          .join("");
+      }
+
+      function resetCustomLearningTopicForm() {
+        state.customLearningTopicEditingId = null;
+        state.customLearningTopicEditingCreatedAt = null;
+        elements.customLearningTopicTitle.value = "";
+        elements.customLearningTopicBody.value = "";
+        elements.saveCustomLearningTopic.textContent = "Save topic";
+      }
+
+      function renderCustomLearningTopics() {
+        const topics = getStoredCustomLearningTopics().sort((left, right) => Number(right.createdAt || 0) - Number(left.createdAt || 0));
+        if (!topics.length) {
+          elements.customLearningTopicList.innerHTML = '<p class="empty-state">No custom learning topics saved yet.</p>';
+          return;
+        }
+        elements.customLearningTopicList.innerHTML = topics.map((topic) => `
+          <article class="user-card">
+            <div class="user-row-head">
+              <h3 class="user-title">${renderInlineLearningTopicHTML(topic.title)}</h3>
+            </div>
+            ${renderLearningTopicBodyHTML(topic.body)}
+            <div class="score-rules">
+              <button class="button button--ghost" type="button" data-edit-custom-learning-topic="${escapeHtml(topic.id)}">Edit</button>
+              <button class="button button--ghost button--danger" type="button" data-delete-custom-learning-topic="${escapeHtml(topic.id)}">Delete</button>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function loadCustomLearningTopicIntoForm(topic) {
+        state.customLearningTopicEditingId = topic.id;
+        state.customLearningTopicEditingCreatedAt = Number(topic.createdAt) || Date.now();
+        elements.customLearningTopicTitle.value = topic.title || "";
+        elements.customLearningTopicBody.value = topic.body || "";
+        elements.saveCustomLearningTopic.textContent = "Update topic";
+        elements.customLearningTopicStatus.textContent = "";
+      }
+
+      function saveCustomLearningTopic() {
+        const title = String(elements.customLearningTopicTitle.value || "").replace(/\s+/g, " ").trim();
+        const body = String(elements.customLearningTopicBody.value || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+        if (!title) {
+          elements.customLearningTopicStatus.textContent = "Add a topic title first.";
+          elements.customLearningTopicTitle.focus();
+          return;
+        }
+        if (!body) {
+          elements.customLearningTopicStatus.textContent = "Add some topic text first.";
+          elements.customLearningTopicBody.focus();
+          return;
+        }
+        const topics = getStoredCustomLearningTopics();
+        const nextRecord = normalizeCustomLearningTopicRecord({
+          id: state.customLearningTopicEditingId || `learn-${Math.random().toString(36).slice(2, 11)}`,
+          createdAt: state.customLearningTopicEditingCreatedAt || Date.now(),
+          title,
+          body,
+        });
+        if (!nextRecord) {
+          elements.customLearningTopicStatus.textContent = "Could not save that topic.";
+          return;
+        }
+        const next = state.customLearningTopicEditingId
+          ? topics.map((topic) => topic.id === state.customLearningTopicEditingId ? nextRecord : topic)
+          : [nextRecord, ...topics];
+        savePreferences({ customLearningTopics: next.slice(0, 200) });
+        const wasEditing = Boolean(state.customLearningTopicEditingId);
+        resetCustomLearningTopicForm();
+        elements.customLearningTopicStatus.textContent = wasEditing ? "Topic updated." : "Topic saved.";
+        renderCustomLearningTopics();
+      }
+
+      function handleCustomLearningTopicListClick(event) {
+        const editButton = event.target.closest("[data-edit-custom-learning-topic]");
+        if (editButton) {
+          const topicId = editButton.getAttribute("data-edit-custom-learning-topic");
+          const topic = getStoredCustomLearningTopics().find((entry) => entry.id === topicId);
+          if (topic) {
+            loadCustomLearningTopicIntoForm(topic);
+          }
+          return;
+        }
+        const deleteButton = event.target.closest("[data-delete-custom-learning-topic]");
+        if (!deleteButton) {
+          return;
+        }
+        const topicId = deleteButton.getAttribute("data-delete-custom-learning-topic");
+        const next = getStoredCustomLearningTopics().filter((entry) => entry.id !== topicId);
+        savePreferences({ customLearningTopics: next.slice(0, 200) });
+        if (state.customLearningTopicEditingId === topicId) {
+          resetCustomLearningTopicForm();
+        }
+        elements.customLearningTopicStatus.textContent = "Topic deleted.";
+        renderCustomLearningTopics();
+      }
+
       function questionFingerprint(question) {
         const visualKey = question.visual ? JSON.stringify({
           type: question.visual.type,
@@ -4070,6 +4775,10 @@
           question.inputMode || "",
           Number(question.answer || 0).toFixed(12),
           Number(question.mentalAnswer || 0).toFixed(12),
+          Number(question.acceptedLower ?? NaN).toFixed(12),
+          Number(question.acceptedUpper ?? NaN).toFixed(12),
+          question.source || "",
+          question.customTemplateId || "",
           visualKey,
         ]);
       }
@@ -4126,6 +4835,255 @@
         renderTopicWorkList(history);
         renderTrophyRoom(history);
         renderHistoryList(history);
+      }
+
+      function renderCustomTemplateTopicOptions() {
+        if (!elements.customTopicSelect) {
+          return;
+        }
+        const currentValue = elements.customTopicSelect.value;
+        elements.customTopicSelect.innerHTML = TOPICS.map((topic) => `<option value="${escapeHtml(topic.id)}">${escapeHtml(topic.label)}</option>`).join("");
+        const fallback = TOPICS[0]?.id || "";
+        elements.customTopicSelect.value = TOPICS.some((topic) => topic.id === currentValue) ? currentValue : fallback;
+      }
+
+      function customInputModeLabel(inputMode) {
+        switch (inputMode) {
+          case "probability": return "Probability";
+          case "percent": return "Percent";
+          case "dollars": return "Dollars";
+          case "count": return "Count";
+          case "variance": return "Variance";
+          case "correlation": return "Correlation";
+          case "steps": return "Steps";
+          default: return "Number";
+        }
+      }
+
+      function clearCustomCardMessages() {
+        elements.customCardStatus.textContent = "";
+        elements.customCardError.textContent = "";
+      }
+
+      function setCustomCardStatus(text, isError = false) {
+        elements.customCardStatus.textContent = isError ? "" : text;
+        elements.customCardError.textContent = isError ? text : "";
+      }
+
+      function resetCustomCardForm() {
+        state.customEditingTemplateId = null;
+        state.customEditingCreatedAt = null;
+        state.customPreviewQuestion = null;
+        if (elements.customTopicSelect.options.length === 0) {
+          renderCustomTemplateTopicOptions();
+        }
+        elements.customTopicSelect.value = TOPICS[0]?.id || "";
+        elements.customQuestionText.value = "";
+        elements.customHintText.value = "";
+        elements.customSolutionText.value = "";
+        elements.customDifficultySelect.value = "easy";
+        elements.customInputModeSelect.value = "number";
+        elements.customLowerExpression.value = "";
+        elements.customUpperExpression.value = "";
+        elements.customRandomized.checked = false;
+        elements.customVariableSpecs.value = "";
+        clearCustomCardMessages();
+        renderCreateCenter();
+      }
+
+      function buildCustomCardSummary(template) {
+        const promptText = String(template.promptTemplate || "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/g, "$1");
+        const rendered = renderMathText(promptText.trim()).replace(/\s+/g, " ").trim();
+        if (!rendered) {
+          return "Untitled custom card";
+        }
+        return rendered.length > 180 ? `${rendered.slice(0, 177)}...` : rendered;
+      }
+
+      function renderCustomCardPreview() {
+        const question = state.customPreviewQuestion;
+        if (!question) {
+          elements.customCardPreview.innerHTML = '<p class="empty-state">Update a sample to preview the rendered prompt and accepted interval.</p>';
+          return;
+        }
+        elements.customCardPreview.innerHTML = `
+          <article class="user-card">
+            <div class="user-row-head">
+              <h3 class="user-title">${escapeHtml(topicLabel(question.topicId))}</h3>
+              <span class="user-score">${escapeHtml(formatDifficultyLabel(question.difficulty))}</span>
+            </div>
+            <p class="user-copy" style="white-space: pre-wrap;">${escapeHtml(question.prompt)}</p>
+            <p class="user-copy user-copy--muted">Accepted range: ${escapeHtml(getAcceptedRange(question))}</p>
+            <p class="user-copy user-copy--muted">${escapeHtml(question.explanation || "")}</p>
+          </article>
+        `;
+      }
+
+      function renderCustomTemplateList() {
+        const templates = getStoredCustomTemplates().sort((left, right) => Number(right.createdAt || 0) - Number(left.createdAt || 0));
+        if (elements.customTemplateCount) {
+          elements.customTemplateCount.textContent = `${templates.length} saved`;
+        }
+        if (templates.length === 0) {
+          elements.customTemplateList.innerHTML = '<p class="empty-state">No custom cards saved yet.</p>';
+          return;
+        }
+        elements.customTemplateList.innerHTML = templates.map((template) => `
+          <article class="user-card">
+            <div class="user-row-head">
+              <h3 class="user-title">${escapeHtml(buildCustomCardSummary(template))}</h3>
+              <span class="user-score">${escapeHtml(template.randomized ? "Randomized" : "Fixed")}</span>
+            </div>
+            <p class="user-copy user-copy--muted">${escapeHtml(topicLabel(template.topicId))} • ${escapeHtml(formatDifficultyLabel(template.difficulty))} • ${escapeHtml(customInputModeLabel(template.inputMode))}</p>
+            <div class="score-rules">
+              <button class="button button--ghost" type="button" data-edit-custom-template="${escapeHtml(template.id)}">Edit</button>
+              <button class="button button--ghost button--danger" type="button" data-delete-custom-template="${escapeHtml(template.id)}">Delete</button>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function renderCreateCenter() {
+        if (elements.customTopicSelect.options.length === 0) {
+          renderCustomTemplateTopicOptions();
+        }
+        elements.saveCustomCard.textContent = state.customEditingTemplateId ? "Update card" : "Save card";
+        renderCustomCardPreview();
+        renderCustomTemplateList();
+      }
+
+      function buildCustomTemplateDraft() {
+        return normalizeCustomTemplateRecord({
+          id: state.customEditingTemplateId || `custom-${Math.random().toString(36).slice(2, 11)}`,
+          createdAt: state.customEditingCreatedAt || Date.now(),
+          topicId: elements.customTopicSelect.value || TOPICS[0]?.id || "",
+          promptTemplate: elements.customQuestionText.value,
+          hintTemplate: elements.customHintText.value,
+          solutionTemplate: elements.customSolutionText.value,
+          lowerExpression: elements.customLowerExpression.value,
+          upperExpression: elements.customUpperExpression.value,
+          variableSpecText: elements.customVariableSpecs.value,
+          randomized: elements.customRandomized.checked,
+          difficulty: elements.customDifficultySelect.value || "easy",
+          inputMode: elements.customInputModeSelect.value || "number",
+        });
+      }
+
+      function loadCustomTemplateIntoForm(template) {
+        state.customEditingTemplateId = template.id;
+        state.customEditingCreatedAt = Number(template.createdAt) || Date.now();
+        elements.customTopicSelect.value = template.topicId;
+        elements.customQuestionText.value = template.promptTemplate || "";
+        elements.customHintText.value = template.hintTemplate || "";
+        elements.customSolutionText.value = template.solutionTemplate || "";
+        elements.customDifficultySelect.value = template.difficulty || "easy";
+        elements.customInputModeSelect.value = template.inputMode || "number";
+        elements.customLowerExpression.value = template.lowerExpression || "";
+        elements.customUpperExpression.value = template.upperExpression || "";
+        elements.customRandomized.checked = template.randomized === true;
+        elements.customVariableSpecs.value = template.variableSpecText || "";
+        clearCustomCardMessages();
+        try {
+          state.customPreviewQuestion = instantiateCustomQuestion(template, template.randomized);
+        } catch (_error) {
+          state.customPreviewQuestion = null;
+        }
+        renderCreateCenter();
+        showCreateCenter();
+      }
+
+      function loadCustomCardExample() {
+        const exampleTopicId = TOPICS.some((topic) => topic.id === "miscCustom")
+          ? "miscCustom"
+          : (TOPICS[0]?.id || "");
+        loadCustomTemplateIntoForm({
+          id: `example-${Math.random().toString(36).slice(2, 11)}`,
+          createdAt: Date.now(),
+          topicId: exampleTopicId,
+          promptTemplate: "What is {{n}}^2 + {{k}}?",
+          hintTemplate: "Substitute the sampled values into n^2 + k. For example, if n = 15 and k = 7, compute 15^2 + 7.",
+          solutionTemplate: "For this generated version, first square {{n}} to get {{n}}^2. Then add {{k}}. That gives the final answer.",
+          lowerExpression: "n^2 + k",
+          upperExpression: "n^2 + k",
+          variableSpecText: "n = 10..20 step 5\nk = 1, 3, 7",
+          randomized: true,
+          difficulty: "easy",
+          inputMode: "number",
+        });
+        setCustomCardStatus("Example template loaded.");
+      }
+
+      function updateCustomCardSample() {
+        clearCustomCardMessages();
+        try {
+          const template = buildCustomTemplateDraft();
+          if (!template) {
+            throw new Error("Fill in the prompt and both accepted-interval formulas first.");
+          }
+          state.customPreviewQuestion = instantiateCustomQuestion(template, template.randomized);
+          setCustomCardStatus("Sample updated.");
+          renderCreateCenter();
+        } catch (error) {
+          state.customPreviewQuestion = null;
+          renderCreateCenter();
+          setCustomCardStatus(error instanceof Error ? error.message : "Could not build a sample from that custom card.", true);
+        }
+      }
+
+      function saveCustomCardTemplate() {
+        clearCustomCardMessages();
+        try {
+          const template = buildCustomTemplateDraft();
+          if (!template) {
+            throw new Error("Fill in the prompt and both accepted-interval formulas first.");
+          }
+          const preview = instantiateCustomQuestion(template, template.randomized);
+          const templates = getStoredCustomTemplates();
+          const existingIndex = templates.findIndex((entry) => entry.id === template.id);
+          if (existingIndex >= 0) {
+            templates[existingIndex] = template;
+          } else {
+            templates.unshift(template);
+          }
+          savePreferences({ customTemplates: templates.slice(0, 1000) });
+          state.customEditingTemplateId = template.id;
+          state.customEditingCreatedAt = Number(template.createdAt) || Date.now();
+          state.customPreviewQuestion = preview;
+          renderCreateCenter();
+          setCustomCardStatus(existingIndex >= 0 ? "Custom card updated." : "Custom card saved.");
+        } catch (error) {
+          setCustomCardStatus(error instanceof Error ? error.message : "Could not save that custom card.", true);
+        }
+      }
+
+      function handleCustomTemplateListClick(event) {
+        const button = event.target instanceof HTMLElement ? event.target.closest("button") : null;
+        if (!button) {
+          return;
+        }
+        const editId = button.getAttribute("data-edit-custom-template");
+        const deleteId = button.getAttribute("data-delete-custom-template");
+        const templates = getStoredCustomTemplates();
+        if (editId) {
+          const template = templates.find((entry) => entry.id === editId);
+          if (template) {
+            loadCustomTemplateIntoForm(template);
+          }
+          return;
+        }
+        if (deleteId) {
+          const next = templates.filter((entry) => entry.id !== deleteId);
+          savePreferences({ customTemplates: next.slice(0, 1000) });
+          if (state.customEditingTemplateId === deleteId) {
+            resetCustomCardForm();
+          } else {
+            if (state.customPreviewQuestion && state.customPreviewQuestion.customTemplateId === deleteId) {
+              state.customPreviewQuestion = null;
+            }
+            renderCreateCenter();
+            setCustomCardStatus("Custom card deleted.");
+          }
+        }
       }
 
       function getTrophyDefinitions() {
@@ -4201,7 +5159,8 @@
         return allTopics.length > 0
           && selected.length === allTopics.length
           && selected.every((topicId, index) => topicId === allTopics[index])
-          && entry.personalDeckOnly !== true;
+          && entry.personalDeckOnly !== true
+          && entry.customCardsOnly !== true;
       }
 
       function renderProfileAndRecovery() {
@@ -4255,7 +5214,6 @@
         }
 
         elements.historyList.innerHTML = history.map((entry) => {
-          const topicNames = Array.isArray(entry.selectedTopicIds) ? entry.selectedTopicIds.map(topicLabel).join(", ") : "";
           const scoreClass = entry.score >= 0 ? "positive" : "negative";
           return `
             <article class="user-card">
@@ -4263,7 +5221,6 @@
                 <h3 class="user-title">${escapeHtml(formatHistoryTimestamp(entry.timestamp))}</h3>
                 <span class="user-score ${scoreClass}">Score ${escapeHtml(String(entry.score))}</span>
               </div>
-              <p class="user-copy">${escapeHtml(`Topics: ${topicNames || "n/a"}`)}</p>
               <p class="user-copy user-copy--muted">Difficulty: ${escapeHtml(formatDifficultyLabel(entry.difficulty))} • Questions: ${escapeHtml(String(entry.questionCount))} • Timer: ${escapeHtml(entry.timerMinutes === 0 ? "Untimed" : `${entry.timerMinutes}m${entry.intenseTimer ? " intense" : ""}`)} • Elapsed: ${escapeHtml(formatElapsed(entry.elapsedSeconds, entry.timerMinutes > 0))}</p>
               <p class="user-copy user-copy--muted">Correct: ${escapeHtml(String(entry.correct))} • Wrong: ${escapeHtml(String(entry.wrong))} • Skipped: ${escapeHtml(String(entry.skipped))}</p>
             </article>
@@ -4304,6 +5261,10 @@
       }
 
       function serializePersonalDeckRefForRecovery(question) {
+        if (question.source === "custom-template") {
+          return ["q", serializeQuestionForRecovery(question)];
+        }
+
         if (question.runtimeFamily) {
           return ["g", question.runtimeFamily, question.topicId || "", question.category || "", question.difficulty || "easy"];
         }
@@ -4314,6 +5275,10 @@
       function deserializePersonalDeckRefFromRecovery(ref) {
         if (!Array.isArray(ref)) {
           return null;
+        }
+
+        if (ref[0] === "q") {
+          return deserializeQuestionFromRecovery(ref[1]);
         }
 
         if (ref[0] === "b") {
@@ -4405,6 +5370,9 @@
           question.difficulty || "",
           question.source || "",
           serializeVisualForRecovery(question.visual),
+          Number.isFinite(question.acceptedLower) ? question.acceptedLower : null,
+          Number.isFinite(question.acceptedUpper) ? question.acceptedUpper : null,
+          question.customTemplateId || "",
         ];
       }
 
@@ -4429,7 +5397,68 @@
           difficulty: payload[13] || "easy",
           source: payload[14] || null,
           visual: deserializeVisualFromRecovery(payload[15]),
+          acceptedLower: Number.isFinite(payload[16]) ? Number(payload[16]) : null,
+          acceptedUpper: Number.isFinite(payload[17]) ? Number(payload[17]) : null,
+          customTemplateId: payload[18] || null,
         };
+      }
+
+      function serializeCustomTemplateForRecovery(template) {
+        return [
+          template.id || "",
+          Number(template.createdAt) || Date.now(),
+          template.topicId || "",
+          template.promptTemplate || "",
+          template.hintTemplate || "",
+          template.solutionTemplate || "",
+          template.lowerExpression || "",
+          template.upperExpression || "",
+          template.variableSpecText || "",
+          template.randomized ? 1 : 0,
+          template.difficulty || "easy",
+          template.inputMode || "number",
+        ];
+      }
+
+      function deserializeCustomTemplateFromRecovery(payload) {
+        if (!Array.isArray(payload)) {
+          return null;
+        }
+        return normalizeCustomTemplateRecord({
+          id: payload[0] || "",
+          createdAt: Number(payload[1]) || Date.now(),
+          topicId: payload[2] || "",
+          promptTemplate: payload[3] || "",
+          hintTemplate: payload[4] || "",
+          solutionTemplate: payload[5] || "",
+          lowerExpression: payload[6] || "",
+          upperExpression: payload[7] || "",
+          variableSpecText: payload[8] || "",
+          randomized: Boolean(payload[9]),
+          difficulty: payload[10] || "easy",
+          inputMode: payload[11] || "number",
+        });
+      }
+
+      function serializeCustomLearningTopicForRecovery(topic) {
+        return [
+          topic.id || "",
+          Number(topic.createdAt) || Date.now(),
+          topic.title || "",
+          topic.body || "",
+        ];
+      }
+
+      function deserializeCustomLearningTopicFromRecovery(payload) {
+        if (!Array.isArray(payload)) {
+          return null;
+        }
+        return normalizeCustomLearningTopicRecord({
+          id: payload[0] || "",
+          createdAt: Number(payload[1]) || Date.now(),
+          title: payload[2] || "",
+          body: payload[3] || "",
+        });
       }
 
       function serializeTopicStatsForRecovery(topicStats) {
@@ -4476,6 +5505,7 @@
           serializeTopicStatsForRecovery(entry.topicStats),
           entry.showHints ? 1 : 0,
           entry.personalDeckOnly ? 1 : 0,
+          entry.customCardsOnly ? 1 : 0,
         ];
       }
 
@@ -4493,6 +5523,7 @@
           intenseTimer: Boolean(entry[6]),
           showHints: entry.length > 13 ? Boolean(entry[13]) : undefined,
           personalDeckOnly: entry.length > 14 ? Boolean(entry[14]) : undefined,
+          customCardsOnly: entry.length > 15 ? Boolean(entry[15]) : undefined,
           elapsedSeconds: Number(entry[7]) || 0,
           score: Number(entry[8]) || 0,
           correct: Number(entry[9]) || 0,
@@ -4517,6 +5548,7 @@
         const showHints = stored.showHints === true;
         const intenseTimer = stored.intenseTimer === true;
         const personalDeckOnly = stored.personalDeckOnly === true;
+        const customCardsOnly = stored.customCardsOnly === true;
         const selectedTopics = normalizeSelectedTopicIds(Array.isArray(stored.selectedTopics) ? stored.selectedTopics : getAllTopicIds());
         const bestScore = Number.isFinite(stored.bestScore) ? stored.bestScore : null;
         const freddybeanUnlocked = stored.freddybeanUnlocked === true;
@@ -4527,6 +5559,7 @@
         if (showHints) prefs.h = 1;
         if (intenseTimer) prefs.i = 1;
         if (personalDeckOnly) prefs.p = 1;
+        if (customCardsOnly) prefs.u = 1;
         if (selectedTopics.length !== getAllTopicIds().length || selectedTopics.some((topicId, index) => topicId !== getAllTopicIds()[index])) prefs.s = selectedTopics;
         if (bestScore !== null) prefs.b = bestScore;
         if (freddybeanUnlocked) prefs.f = 1;
@@ -4543,6 +5576,16 @@
         const personalDeck = getStoredPersonalDeck().map(serializePersonalDeckRefForRecovery);
         if (personalDeck.length > 0) {
           payload.d = personalDeck;
+        }
+
+        const customTemplates = getStoredCustomTemplates().map(serializeCustomTemplateForRecovery);
+        if (customTemplates.length > 0) {
+          payload.c = customTemplates;
+        }
+
+        const customLearningTopics = getStoredCustomLearningTopics().map(serializeCustomLearningTopicForRecovery);
+        if (customLearningTopics.length > 0) {
+          payload.l = customLearningTopics;
         }
 
         return payload;
@@ -4619,7 +5662,7 @@
           const snapshots = loadRecoverySnapshots();
           const snapshot = snapshots[trimmed];
           if (!snapshot || typeof snapshot !== "object" || !snapshot.p || typeof snapshot.p !== "object") {
-            throw new Error("That short recovery code is not stored on this browser anymore.");
+            throw new Error("That is a legacy local-only code. Recover it on the browser that created it, then generate a new portable code.");
           }
           return snapshot.p;
         }
@@ -4643,9 +5686,9 @@
 
       function generateRecoveryCode() {
         try {
-          const code = storeRecoverySnapshot(buildRecoveryPayload());
+          const code = encodeRecoveryPayload(buildRecoveryPayload());
           elements.recoveryCodeOutput.value = code;
-          setRecoveryStatus("Short recovery code generated from your current local data.");
+          setRecoveryStatus("Portable recovery code generated. It contains the saved profile state and can be used on another device or browser.");
         } catch (_error) {
           setRecoveryStatus("Could not generate a recovery code from the current data.");
         }
@@ -4655,7 +5698,7 @@
         try {
           const payload = decodeRecoveryPayload(elements.recoveryCodeInput.value);
           applyRecoveryPayload(payload);
-          setRecoveryStatus("Recovery code loaded. Personal deck, history, and saved setup have been restored.");
+          setRecoveryStatus("Recovery code loaded. Personal deck, custom cards, custom learning topics, history, and saved setup have been restored.");
         } catch (error) {
           setRecoveryStatus(error instanceof Error ? error.message : "Could not read that recovery code.");
         }
@@ -4677,12 +5720,15 @@
             showHints: Boolean(payload.p?.h),
             intenseTimer: Boolean(payload.p?.i),
             personalDeckOnly: Boolean(payload.p?.p),
+            customCardsOnly: Boolean(payload.p?.u),
             selectedTopics: Array.isArray(payload.p?.s) ? payload.p.s : getAllTopicIds(),
             bestScore: payload.p?.b,
           };
           freddybeanUnlocked = Boolean(payload.p?.f) || payload.p?.d === "freddybean";
           history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
           personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializePersonalDeckRefFromRecovery).filter(Boolean);
+          var customTemplates = (Array.isArray(payload.c) ? payload.c : []).map(deserializeCustomTemplateFromRecovery).filter(Boolean);
+          var customLearningTopics = (Array.isArray(payload.l) ? payload.l : []).map(deserializeCustomLearningTopicFromRecovery).filter(Boolean);
           restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
         } else if (payload.v === 3 && Array.isArray(payload.p)) {
           preferences = {
@@ -4694,10 +5740,13 @@
             personalDeckOnly: Boolean(payload.p[5]),
             selectedTopics: Array.isArray(payload.p[6]) ? payload.p[6] : getAllTopicIds(),
             bestScore: payload.p[7],
+            customCardsOnly: Boolean(payload.p[9]),
           };
           freddybeanUnlocked = Boolean(payload.p[8]) || payload.p[2] === "freddybean";
           history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
           personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializePersonalDeckRefFromRecovery).filter(Boolean);
+          var customTemplates = (Array.isArray(payload.c) ? payload.c : []).map(deserializeCustomTemplateFromRecovery).filter(Boolean);
+          var customLearningTopics = [];
           restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
         } else if (payload.v === 2 && Array.isArray(payload.p)) {
           preferences = {
@@ -4709,10 +5758,13 @@
             personalDeckOnly: Boolean(payload.p[5]),
             selectedTopics: Array.isArray(payload.p[6]) ? payload.p[6] : getAllTopicIds(),
             bestScore: payload.p[7],
+            customCardsOnly: false,
           };
           freddybeanUnlocked = Boolean(payload.p[8]) || payload.p[2] === "freddybean";
           history = (Array.isArray(payload.h) ? payload.h : []).map(deserializeHistoryEntryFromRecovery).filter(Boolean);
           personalDeck = (Array.isArray(payload.d) ? payload.d : []).map(deserializeQuestionFromRecovery).filter(Boolean);
+          var customTemplates = [];
+          var customLearningTopics = [];
           restoredName = sanitizeDisplayName(payload.n || DEFAULT_DISPLAY_NAME);
         } else {
           preferences = payload.preferences && typeof payload.preferences === "object" ? payload.preferences : {};
@@ -4721,6 +5773,8 @@
           personalDeck = Array.isArray(payload.personalDeck)
             ? payload.personalDeck.filter((question) => question && typeof question === "object" && typeof question.prompt === "string").slice(0, 1000)
             : [];
+          var customTemplates = Array.isArray(payload.customTemplates) ? payload.customTemplates.map(normalizeCustomTemplateRecord).filter(Boolean).slice(0, 1000) : [];
+          var customLearningTopics = Array.isArray(payload.customLearningTopics) ? payload.customLearningTopics.map(normalizeCustomLearningTopicRecord).filter(Boolean).slice(0, 200) : [];
           restoredName = sanitizeDisplayName(payload.displayName || DEFAULT_DISPLAY_NAME);
         }
 
@@ -4733,10 +5787,13 @@
           showHints: preferences.showHints === true,
           intenseTimer: preferences.intenseTimer === true,
           personalDeckOnly: preferences.personalDeckOnly === true,
+          customCardsOnly: preferences.customCardsOnly === true,
           selectedTopics: restoredTopics.length > 0 ? restoredTopics : getAllTopicIds(),
           bestScore: Number.isFinite(preferences.bestScore) ? preferences.bestScore : undefined,
           history: history.slice(0, 200),
           personalDeck: personalDeck.slice(0, 1000),
+          customTemplates: customTemplates.slice(0, 1000),
+          customLearningTopics: customLearningTopics.slice(0, 200),
           displayName: restoredName,
           freddybeanUnlocked,
           liveGenerationEnabled: state.liveGenerationEnabled,
@@ -4746,6 +5803,8 @@
         loadPreferences();
         renderBestScore();
         renderUserCenter();
+        renderCreateCenter();
+        renderCustomLearningTopics();
         updateTopicCount();
         renderLiveReview();
         updateSummaryToggle();
@@ -4832,7 +5891,7 @@
       }
 
       function clearAllMemory() {
-        if (!window.confirm("Delete all saved memory? This clears quiz history, saved settings, and performance memory.")) {
+        if (!window.confirm("Delete all saved memory? This clears quiz history, saved settings, custom cards, custom learning topics, and performance memory.")) {
           return;
         }
 
@@ -4845,14 +5904,18 @@
         elements.showHints.checked = false;
         elements.intenseTimer.checked = false;
         elements.personalDeckOnly.checked = false;
+        elements.customCardsOnly.checked = false;
         elements.displayNameInput.value = "";
         elements.recoveryCodeOutput.value = "";
         elements.recoveryCodeInput.value = "";
         clearRecoveryStatus();
-        state.liveGenerationEnabled = false;
+        state.liveGenerationEnabled = true;
         state.personalDeckOnly = false;
+        state.customCardsOnly = false;
         state.freddybeanUnlocked = false;
         setDisplayName(DEFAULT_DISPLAY_NAME, false);
+        resetCustomCardForm();
+        resetCustomLearningTopicForm();
         ensureFreddybeanOption();
         elements.difficultySelect.value = DEFAULT_DIFFICULTY;
         setSelectedTopics(getAllTopicIds());
@@ -4860,6 +5923,7 @@
         clearInlineErrors();
         renderBestScore();
         renderUserCenter();
+        renderCustomLearningTopics();
         updateTopicCount();
         updatePersonalDeckStatus();
         renderLiveReview();
@@ -4912,12 +5976,20 @@
         state.difficultyTapCount = 0;
         window.clearTimeout(state.difficultyTapTimerId);
         state.difficultyTapTimerId = null;
-        state.freddybeanUnlocked = true;
+        state.freddybeanUnlocked = !state.freddybeanUnlocked;
         ensureFreddybeanOption();
-        elements.difficultySelect.value = "freddybean";
-        savePreferences({ freddybeanUnlocked: true, difficulty: "freddybean" });
+        if (state.freddybeanUnlocked) {
+          elements.difficultySelect.value = "freddybean";
+          savePreferences({ freddybeanUnlocked: true, difficulty: "freddybean" });
+          flashSecretRuntimeNote("Freddybean difficulty unlocked");
+        } else {
+          if (elements.difficultySelect.value === "freddybean") {
+            elements.difficultySelect.value = "easy";
+          }
+          savePreferences({ freddybeanUnlocked: false, difficulty: elements.difficultySelect.value || "easy" });
+          flashSecretRuntimeNote("Freddybean difficulty hidden");
+        }
         updateTopicCount();
-        flashSecretRuntimeNote("Freddybean difficulty unlocked");
       }
 
       function ensureFreddybeanOption() {
@@ -5027,17 +6099,23 @@
         state.showHints = elements.showHints.checked;
         state.intenseTimer = intenseTimer;
         state.personalDeckOnly = elements.personalDeckOnly.checked;
+        state.customCardsOnly = elements.customCardsOnly.checked;
         state.selectedTopics = selectedTopics;
         state.sessionLength = questionCount;
         state.difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
 
         const questionDeck = buildSessionDeck(selectedTopics, questionCount, state.difficulty, {
           personalDeckOnly: state.personalDeckOnly,
+          customCardsOnly: state.customCardsOnly,
         });
         if (questionDeck.length === 0) {
           elements.setupError.textContent = state.personalDeckOnly
-            ? "No saved personal-deck cards match that topic and difficulty combination."
-            : "No questions match that topic and difficulty combination.";
+            ? (state.customCardsOnly
+                ? "No saved personal-deck cards or custom cards match that topic and difficulty combination."
+                : "No saved personal-deck cards match that topic and difficulty combination.")
+            : (state.customCardsOnly
+                ? "No built-in or custom cards match that topic and difficulty combination."
+                : "No questions match that topic and difficulty combination.");
           return;
         }
 
@@ -5071,6 +6149,7 @@
           showHints: state.showHints,
           intenseTimer: state.intenseTimer,
           personalDeckOnly: state.personalDeckOnly,
+          customCardsOnly: state.customCardsOnly,
           selectedTopics,
         });
 
@@ -5226,7 +6305,7 @@
           return;
         }
 
-        const correct = isApproxCorrect(question, parsedAnswer);
+        const correct = isApproxCorrect(question, parsedAnswer, rawInput);
         const result = {
           sessionCardId: currentEntry.sessionCardId,
           cardNumber: currentEntry.originalCardNumber,
@@ -5250,13 +6329,8 @@
         }
 
         const question = currentEntry.question;
-        let revisitPending = false;
-
-        if (currentEntry.canScheduleRevisit) {
-          currentEntry.canScheduleRevisit = false;
-          state.deck.push(createSessionDeckEntry(question, currentEntry.originalCardNumber, currentEntry.revisitCount + 1));
-          revisitPending = true;
-        }
+        currentEntry.canScheduleRevisit = false;
+        state.deck.push(createSessionDeckEntry(question, currentEntry.originalCardNumber, currentEntry.revisitCount + 1));
 
         const result = {
           sessionCardId: currentEntry.sessionCardId,
@@ -5266,7 +6340,7 @@
           parsedAnswer: null,
           status: "skipped",
           score: 0,
-          revisitPending,
+          revisitPending: true,
           timedOut: false,
         };
 
@@ -5363,6 +6437,7 @@
 
         const history = getStoredHistory();
         const elapsedSeconds = state.elapsedSeconds;
+        const usedCustomCards = orderedResults.some((entry) => entry.question && entry.question.source === "custom-template");
         history.unshift({
           id: `history-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           timestamp: new Date().toISOString(),
@@ -5373,6 +6448,7 @@
           intenseTimer: state.intenseTimer,
           showHints: state.showHints,
           personalDeckOnly: state.personalDeckOnly,
+          customCardsOnly: usedCustomCards,
           elapsedSeconds,
           score: orderedResults.reduce((sum, entry) => sum + entry.score, 0),
           correct: orderedResults.filter((entry) => entry.status === "correct").length,
@@ -5422,7 +6498,7 @@
 
         if (state.showHints) {
           elements.hintPanel.classList.remove("is-hidden");
-          elements.hintText.textContent = question.hint;
+          elements.hintText.textContent = buildReadableHint(question);
         } else {
           elements.hintPanel.classList.add("is-hidden");
           elements.hintText.textContent = "";
@@ -5569,6 +6645,20 @@
 
       function createLiveReviewMarkup(entry, isOpen) {
         const openAttribute = isOpen ? " open" : "";
+        const exactAnswerLabel = entry.question.source === "custom-template" ? "Answer interval" : "Exact answer";
+        const explanationMarkup = entry.revisitPending
+          ? `
+            <details class="explanation-details">
+              <summary>Worked solution locked for now</summary>
+              <div class="explanation-body">
+                <section class="explanation-section">
+                  <strong class="explanation-section-title">Why it is hidden</strong>
+                  <p>This card is still queued to return later in the same session, so the worked solution stays hidden until you either solve it, skip it again on revisit, or end the quiz.</p>
+                </section>
+              </div>
+            </details>
+          `
+          : renderExpandedExplanation(entry.question);
         return `
           <details class="live-item ${escapeHtml(entry.status)}"${openAttribute}>
             <summary>
@@ -5582,15 +6672,16 @@
             ${renderQuestionVisualMarkup(entry.question, { context: "review" })}
             <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
             ${getSessionNoteMarkup(entry)}
-            <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
+            <div class="review-meta"><span>${escapeHtml(exactAnswerLabel)}: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
             ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
             <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
-            ${renderExpandedExplanation(entry.question)}
+            ${explanationMarkup}
           </details>
         `;
       }
 
       function createFinalReviewMarkup(entry) {
+        const exactAnswerLabel = entry.question.source === "custom-template" ? "Answer interval" : "Exact answer";
         return `
           <article class="review-row ${escapeHtml(entry.status)}">
             <div class="review-topline">
@@ -5602,7 +6693,7 @@
             ${renderQuestionVisualMarkup(entry.question, { context: "review" })}
             <div class="review-meta"><span>Your answer: <strong>${escapeHtml(entry.status === "skipped" ? "Skipped" : formatUserAnswer(entry))}</strong></span></div>
             ${getSessionNoteMarkup(entry)}
-            <div class="review-meta"><span>Exact answer: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
+            <div class="review-meta"><span>${escapeHtml(exactAnswerLabel)}: <strong>${escapeHtml(formatAnswer(entry.question))}</strong></span></div>
             ${questionHasDistinctMentalAnswer(entry.question) ? `<div class="review-meta"><span>Shortcut answer: <strong>${escapeHtml(formatMentalAnswer(entry.question))}</strong></span></div>` : ""}
             <div class="review-meta"><span>Accepted range: <strong>${escapeHtml(getAcceptedRange(entry.question))}</strong></span></div>
             ${renderExpandedExplanation(entry.question)}
@@ -5650,7 +6741,10 @@
       }
 
       function getWorkedExplanation(question) {
-        return question.workedSolution || buildWorkedExplanation(question);
+        if (question.source === "custom-template" && question.workedSolution) {
+          return question.workedSolution;
+        }
+        return buildWorkedExplanation(question) || question.workedSolution || ensureSentence(question.explanation);
       }
 
       function hashString(text) {
@@ -5738,10 +6832,20 @@
         if (mode === "count") return "the requested count";
         if (mode === "steps") return "the requested expected waiting time or step count";
         if (mode === "dollars") return "the requested dollar value";
-        return "the requested numerical quantity";
+        if (question.formatHint) return `the ${question.formatHint}`;
+        return "the final numeric answer";
       }
 
       function buildReadableHint(question) {
+        if (question.source === "custom-template" && question.hint) {
+          return question.hint;
+        }
+        if (question.topicId === "maxNormals") {
+          return buildMaxNormalsHint(question);
+        }
+        if (question.topicId === "discreteExtremes") {
+          return buildDiscreteExtremesHint(question);
+        }
         if (question.topicId === "momentsMgf") {
           return buildMomentsHint(question);
         }
@@ -5754,49 +6858,93 @@
         if (question.topicId === "ito") {
           return buildItoHint(question);
         }
+        if (question.topicId === "orderStats") {
+          return buildOrderStatsHint(question);
+        }
+        if (question.topicId === "options") {
+          return buildOptionsHint(question);
+        }
+        if (question.topicId === "greenBook") {
+          return buildClassicPuzzleHint(question);
+        }
         const base = ensureSentence(question.hint || "");
         if (!base) {
-          return `This card asks for ${describeCardTarget(question)}. Start from the standard identity for this family, then substitute the numbers from the prompt.`;
+          return "Start from the standard identity for this family, substitute the numbers from the prompt, and simplify all the way to the final numerical answer.";
         }
-        return `This card asks for ${describeCardTarget(question)}. ${base}`;
+        return base;
+      }
+
+      function buildMaxNormalsHint(question) {
+        return "Write M_n = max(Z_1, ..., Z_n). Then P(M_n <= x) = Phi(x)^n. A good first anchor is the level x where one exceedance is expected among the n draws, meaning n P(Z > x) is about 1, or equivalently P(Z > x) is about 1/n. That x is only the location anchor; the mean sits a bit above it because values above the cutoff still contribute to the average.";
+      }
+
+      function buildDiscreteExtremesHint(question) {
+        if (question.category === "Geometric max") {
+          return "For one geometric variable, P(G >= k) = (1-p)^(k-1). For the maximum of n iid copies, look for the cutoff k where n P(G >= k) is about 1. That identifies the level where the maximum typically starts to appear.";
+        }
+        if (question.category === "Geometric min") {
+          return "Let H = min(G_1, ..., G_n). Then P(H >= k) = P(G >= k)^n = ((1-p)^(k-1))^n, so H is itself geometric with success probability 1 - (1-p)^n. Once you identify that effective success probability, the mean is 1 divided by it.";
+        }
+        return ensureSentence(question.hint || "Reduce the problem to a tail estimate for one variable, then combine across the iid sample.");
       }
 
       function buildMomentsHint(question) {
         const named = extractVariableDefinitions(question.prompt);
         if (question.category === "Covariance") {
           if (named.length >= 2) {
-            return `This card asks for the covariance between ${named[0].name} and ${named[1].name}, where ${named[0].name} is ${named[0].description} and ${named[1].name} is ${named[1].description}. Work one trial at a time with indicator variables or one-die contributions, compute the single-trial covariance, and then add over the independent trials.`;
+            return `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. Work one trial at a time with indicator variables or one-die contributions, compute the covariance on a single trial, and then add over independent trials.`;
           }
-          return "This card asks for a covariance. Define the two random variables clearly, compute their covariance on one trial, and then add over the independent trials.";
+          return "Define the two random variables clearly, compute their covariance on one trial, and then add over independent trials.";
         }
         if (question.category === "Correlation") {
           if (named.length >= 2) {
-            return `This card asks for the correlation between ${named[0].name} and ${named[1].name}, where ${named[0].name} is ${named[0].description} and ${named[1].name} is ${named[1].description}. First compute the covariance, then divide by sqrt(Var(${named[0].name}) Var(${named[1].name})).`;
+            return `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. First compute Cov(${named[0].name}, ${named[1].name}), then divide by sqrt(Var(${named[0].name}) Var(${named[1].name})).`;
           }
-          return "This card asks for a correlation. Compute the covariance first, then divide by the product of the two standard deviations.";
+          return "Compute the covariance first, then divide by the product of the two standard deviations.";
         }
         if (question.category === "Variance") {
           if (named.length >= 1) {
-            return `This card asks for the variance of ${named[0].name}, where ${named[0].name} is ${named[0].description}. Identify the one-trial variable, compute its variance, and then add across independent trials; for a binomial count, that becomes np(1-p).`;
+            return `Let ${named[0].name} be ${named[0].description}. Identify the one-trial contribution, compute its variance, and then add variances across independent trials; for a binomial count this becomes np(1-p).`;
           }
-          return `This card asks for ${describeCardTarget(question)}. Treat the variable as a sum of independent one-trial pieces and add the variances.`;
+          return "Treat the variable as a sum of independent one-trial pieces and add the variances.";
         }
-        return `This card asks for ${describeCardTarget(question)}. ${ensureSentence(question.hint || "Start from the standard moment identity for this family")}`;
+        return ensureSentence(question.hint || "Start from the standard moment identity for this family.");
       }
 
       function buildBasicReviewHint(question) {
-        return `This card asks for ${describeCardTarget(question)} for the named distribution. Write down the standard closed-form formula for that moment, check that the moment exists, and then substitute the parameter values from the prompt.`;
+        return "Write down the closed-form formula for the requested mean, variance, or raw moment, check that the moment exists, and then substitute the parameter values from the prompt.";
       }
 
       function buildFisherHint(question) {
-        return `This card asks for ${describeCardTarget(question)} in a Fisher-information setting. Start by deciding whether you need one-observation information, total information for n iid observations, the Cramer-Rao lower bound 1 / I_n, or the efficient standard-error scale 1 / sqrt(I_n).`;
+        return "First decide which quantity the card wants: one-observation information, total information for n iid observations, the Cramer-Rao lower bound 1 / I_n, or the large-sample MLE standard-error scale 1 / sqrt(I_n). Then plug in the standard formula for the family in the prompt.";
       }
 
       function buildItoHint(question) {
         if (question.prompt.includes("ln(") || question.prompt.includes("ln S")) {
-          return "This card asks for a drift or volatility after the transform X = ln S. Apply Ito's lemma to X = ln S, so dX = (mu - sigma^2 / 2) dt + sigma dW, and then read off the requested coefficient.";
+          return "Set X = ln S. Ito's lemma gives dX = (mu - sigma^2 / 2) dt + sigma dW, so the drift is mu - sigma^2 / 2 and the diffusion coefficient is sigma.";
         }
-        return `This card asks for ${describeCardTarget(question)} after transforming a geometric Brownian motion. Rewrite the transformed process as X = f(S); if the transform is a power, write X = S^k. Then apply Ito's lemma and read the requested drift or volatility from the resulting dX or dX/X expression.`;
+        return "Rewrite the transformed process as X = f(S). If the transform is a power, write X = S^k. Then apply Ito's lemma; for X = S^k, the quick rule is dX/X = (k mu + 0.5 k(k-1) sigma^2) dt + k sigma dW. If the card asks for volatility magnitude, report |k| sigma rather than the signed diffusion coefficient.";
+      }
+
+      function buildOrderStatsHint(question) {
+        if (question.prompt.includes("independent Exponential(rate")) {
+          return "Sort the sample as X_(1) < ... < X_(n). For exponential samples, X_(1) has mean 1/(n lambda), the next gap has mean 1/((n-1) lambda), and so on down to 1/lambda. Add the expected gaps needed to reach the requested order statistic.";
+        }
+        return ensureSentence(question.hint || "Use the standard order-statistic identity for the family in the prompt.");
+      }
+
+      function buildOptionsHint(question) {
+        if (question.category === "ATM option estimate") {
+          return "For an at-the-money European call with short or moderate maturity, use C ≈ S sigma sqrt(T) / sqrt(2 pi) ≈ 0.4 S sigma sqrt(T). If the prompt is about an at-the-money straddle, double the call estimate and use about 0.8 S sigma sqrt(T).";
+        }
+        return ensureSentence(question.hint || "Start from the standard pricing identity for the option structure in the prompt.");
+      }
+
+      function buildClassicPuzzleHint(question) {
+        if (question.category === "Classic puzzle: derangements") {
+          return "Use inclusion-exclusion: P(no fixed points) = sum_{k=0}^n (-1)^k / k!. For moderate n, this alternating sum is already very close to 1/e, but the exact finite-n answer is the truncated sum through k = n.";
+        }
+        return ensureSentence(question.hint || "Start from the standard counting or conditioning identity for this puzzle family.");
       }
 
       function enrichQuestionBank(bank) {
@@ -5837,6 +6985,10 @@
           return buildMomentsWorkedExplanation(question);
         }
 
+        if (question.topicId === "orderStats" && question.prompt.includes("independent Exponential(rate")) {
+          return buildExponentialOrderStatsWorkedExplanation(question);
+        }
+
         if (question.topicId === "basicReview") {
           return buildBasicReviewWorkedExplanation(question);
         }
@@ -5849,17 +7001,28 @@
           return buildItoWorkedExplanation(question);
         }
 
-        const paragraphs = [];
-
-        paragraphs.push(`This card asks for ${describeCardTarget(question)}.`);
-        if (question.explanation) {
-          paragraphs.push(ensureSentence(question.explanation));
+        if (question.topicId === "options" && question.category === "ATM option estimate") {
+          return buildATMOptionWorkedExplanation(question);
         }
 
-        paragraphs.push(`Exact answer for this card: ${formatAnswer(question)}.`);
+        if (question.topicId === "greenBook" && question.category === "Classic puzzle: derangements") {
+          return buildDerangementWorkedExplanation(question);
+        }
+
+        const paragraphs = [];
+        const methodExplanation = question.methodExplanation || getExpandedExplanation(question);
+        const methodLead = methodExplanation ? methodExplanation.split("\n\n")[0] : "";
+
+        if (question.explanation) {
+          paragraphs.push(ensureSentence(question.explanation));
+        } else if (methodLead) {
+          paragraphs.push(ensureSentence(methodLead));
+        }
+
+        paragraphs.push(`For this card, the final answer is ${formatAnswer(question)}.`);
 
         if (questionHasDistinctMentalAnswer(question)) {
-          paragraphs.push(`Intended shortcut answer: ${formatMentalAnswer(question)}.`);
+          paragraphs.push(`If you use the intended shortcut, you get ${formatMentalAnswer(question)}.`);
         }
 
         return paragraphs.join("\n\n");
@@ -5867,17 +7030,15 @@
 
       function buildMomentsWorkedExplanation(question) {
         const named = extractVariableDefinitions(question.prompt);
-        const intro = `This card asks for ${describeCardTarget(question)}.`;
         if (question.category === "Covariance") {
           const setup = named.length >= 2
             ? `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. Write the full variables as sums of one-trial contributions, so only same-trial pairs can contribute to the covariance.`
             : "Write each random variable as a sum of one-trial contributions. Because different trials are independent, only same-trial pairs contribute to the covariance.";
           return [
-            intro,
             setup,
             ensureSentence(question.explanation),
-            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+            `For this card, the final answer is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
           ].filter(Boolean).join("\n\n");
         }
         if (question.category === "Correlation") {
@@ -5885,11 +7046,10 @@
             ? `Let ${named[0].name} be ${named[0].description}, and let ${named[1].name} be ${named[1].description}. Correlation is covariance divided by sqrt(Var(${named[0].name}) Var(${named[1].name})), so first compute or recall the covariance and both variances.`
             : "Correlation is covariance divided by the product of the two standard deviations. So first compute the covariance, then compute the two variances, and only then normalize.";
           return [
-            intro,
             setup,
             ensureSentence(question.explanation),
-            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+            `For this card, the final answer is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
           ].filter(Boolean).join("\n\n");
         }
         if (question.category === "Variance") {
@@ -5897,50 +7057,90 @@
             ? `Let ${named[0].name} be ${named[0].description}. View ${named[0].name} as a sum of one-trial random variables. Independent trials make variances add, and for a binomial count the variance is np(1-p).`
             : "View the target variable as a sum of one-trial random variables. Independent trials make variances add, so the whole problem reduces to the one-trial variance.";
           return [
-            intro,
             setup,
             ensureSentence(question.explanation),
-            `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-            questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+            `For this card, the final answer is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
           ].filter(Boolean).join("\n\n");
         }
         return [
-          intro,
           ensureSentence(question.explanation),
-          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          `For this card, the final answer is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
         ].filter(Boolean).join("\n\n");
       }
 
       function buildBasicReviewWorkedExplanation(question) {
         return [
-          `This card asks for ${describeCardTarget(question)} for the distribution named in the prompt.`,
-          `Start by recalling the closed-form formula for that moment. Then substitute the parameter values from the card and simplify carefully.`,
           ensureSentence(question.explanation),
-          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          `For this card, the final answer is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
         ].filter(Boolean).join("\n\n");
       }
 
       function buildFisherWorkedExplanation(question) {
         return [
-          `This card asks for ${describeCardTarget(question)} in a Fisher-information problem.`,
-          `The usual order of attack is: compute the one-observation information, multiply by the sample size if the observations are iid, and then either invert to get the Cramer-Rao lower bound or take the reciprocal square root to get the efficient standard-error scale.`,
           ensureSentence(question.explanation),
-          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          `For this card, the final answer is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
         ].filter(Boolean).join("\n\n");
       }
 
       function buildItoWorkedExplanation(question) {
+        const match = question.prompt.match(/dS \/ S = ([0-9.]+)% dt \+ ([0-9.]+)% dW/i);
+        const mu = Number.parseFloat(match?.[1] || "");
+        const sigma = Number.parseFloat(match?.[2] || "");
+        const asksVol = question.category === "Ito volatility" || /volatility/i.test(question.prompt);
+        const transformLabel = question.prompt.match(/If X = (.+?), estimate/i)?.[1] || "";
+
+        if (!Number.isFinite(mu) || !Number.isFinite(sigma)) {
+          return [
+            ensureSentence(question.explanation),
+            `For this card, the final answer is ${formatAnswer(question)}.`,
+            questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
+          ].filter(Boolean).join("\n\n");
+        }
+
+        if (/ln\(S\)|ln S/i.test(transformLabel)) {
+          const drift = mu - 0.5 * ((sigma * sigma) / 100);
+          return [
+            `Set X = ln(S). Ito's lemma gives dX = (mu - sigma^2/2) dt + sigma dW.`,
+            asksVol
+              ? `Here sigma = ${formatNumber(sigma, 3)}%, so the diffusion coefficient in dX is ${formatNumber(sigma, 3)}%. That is exactly the volatility of X.`
+              : `Here mu = ${formatNumber(mu, 3)}% and sigma = ${formatNumber(sigma, 3)}%, so the drift is mu - sigma^2/2 = ${formatNumber(mu, 3)}% - 0.5 × ${formatNumber(sigma, 3)}%^2 = ${formatNumber(drift, 4)}%.`,
+            `For this card, the final answer is ${formatAnswer(question)}.`
+          ].join("\n\n");
+        }
+
+        const powerMatch = transformLabel.match(/^S\^(-?[0-9.]+)$/) || transformLabel.match(/^1 \/ S$/i) || transformLabel.match(/^sqrt\(S\)$/i) || transformLabel.match(/^1 \/ sqrt\(S\)$/i);
+        let k = NaN;
+        if (transformLabel.match(/^S\^(-?[0-9.]+)$/)) {
+          k = Number.parseFloat(transformLabel.match(/^S\^(-?[0-9.]+)$/)[1]);
+        } else if (/^1 \/ S$/i.test(transformLabel)) {
+          k = -1;
+        } else if (/^sqrt\(S\)$/i.test(transformLabel)) {
+          k = 0.5;
+        } else if (/^1 \/ sqrt\(S\)$/i.test(transformLabel)) {
+          k = -0.5;
+        }
+
+        if (Number.isFinite(k)) {
+          const drift = (k * mu) + (0.5 * k * (k - 1) * ((sigma * sigma) / 100));
+          const signedDiffusion = k * sigma;
+          const volatilityMagnitude = Math.abs(signedDiffusion);
+          return [
+            `Write the transform as X = S^k with k = ${formatNumber(k, 4)}. Ito's lemma then gives dX/X = (k mu + 0.5 k(k-1) sigma^2) dt + k sigma dW.`,
+            asksVol
+              ? `Substitute k = ${formatNumber(k, 4)} and sigma = ${formatNumber(sigma, 3)}%. The signed diffusion coefficient is k sigma = ${formatNumber(k, 4)} × ${formatNumber(sigma, 3)}% = ${formatNumber(signedDiffusion, 4)}%. Because the prompt asks for volatility magnitude, report |k sigma| = ${formatNumber(volatilityMagnitude, 4)}%.`
+              : `Substitute k = ${formatNumber(k, 4)}, mu = ${formatNumber(mu, 3)}%, and sigma = ${formatNumber(sigma, 3)}%. The drift becomes ${formatNumber(k, 4)} × ${formatNumber(mu, 3)}% + 0.5 × ${formatNumber(k, 4)} × (${formatNumber(k, 4)} - 1) × ${formatNumber(sigma, 3)}%^2 = ${formatNumber(drift, 4)}%.`,
+            `For this card, the final answer is ${formatAnswer(question)}.`
+          ].join("\n\n");
+        }
+
         return [
-          `This card asks for ${describeCardTarget(question)} after applying a transform to a geometric Brownian motion.`,
-          question.prompt.includes("ln")
-            ? "Define X = ln S. Ito's lemma gives dX = (mu - sigma^2 / 2) dt + sigma dW, so the transformed process has a drift term and a diffusion term that can be read off directly."
-            : "Define X = f(S). If the transform is a power, write X = S^k. Then apply Ito's lemma, simplify the dt and dW terms, and read off the drift or volatility from the resulting expression.",
           ensureSentence(question.explanation),
-          `Therefore the exact answer for this card is ${formatAnswer(question)}.`,
-          questionHasDistinctMentalAnswer(question) ? `The intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+          `For this card, the final answer is ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `If you use the intended shortcut, you get ${formatMentalAnswer(question)}.` : ""
         ].filter(Boolean).join("\n\n");
       }
 
@@ -6016,7 +7216,7 @@
           return [
             `Let m_n = min(Z₁, ..., Z_${n}). Then -m_n has the same distribution as the maximum of ${n} iid N(0, 1) draws, because multiplying by -1 preserves the standard-normal law.`,
             `So you solve the max problem first. The fast anchor is the upper-tail z-score whose tail is about 1/${n} = ${formatPercent(1 / n)}. That anchor is ${formatNumber(Math.abs(question.mentalAnswer), 4)} for the max, so the corresponding anchor for the min is ${formatMentalAnswer(question)}.`,
-            `By symmetry, the exact expected minimum is just the negative of the exact expected maximum. Therefore E[min] = ${formatAnswer(question)}.`
+            `By symmetry, the exact expected minimum is the negative of the exact expected maximum. For this card, that gives E[min] = ${formatAnswer(question)}.`
           ].join("\n\n");
         }
 
@@ -6033,8 +7233,97 @@
           paragraphs.push(`A better mean estimate keeps track of the width of the extreme-value window. With u_n ≈ ${formatNumber(anchor, 4)}, the normal density is φ(u_n) ≈ ${formatNumber(density, 4)}, so a_n = 1/(n φ(u_n)) ≈ ${formatNumber(localWidth, 4)}. Then the refined estimate E[M_n] ≈ u_n + γ a_n gives ${formatNumber(refinedMean, 4)}.`);
         }
 
-        paragraphs.push(`The exact expected maximum for this card is ${formatAnswer(question)}.`);
+        paragraphs.push(`For this card, the exact expected maximum is ${formatAnswer(question)}.`);
         return paragraphs.join("\n\n");
+      }
+
+      function buildExponentialOrderStatsWorkedExplanation(question) {
+        const match = question.prompt.match(/You draw (\d+) independent Exponential\(rate ([0-9.]+)\) variables\. Estimate the expected ([a-z-]+) draw\./i);
+        if (!match) {
+          return question.explanation || "";
+        }
+
+        const draws = Number.parseInt(match[1], 10);
+        const rate = Number.parseFloat(match[2]);
+        const rankText = match[3].toLowerCase();
+        const rankMap = {
+          largest: 1,
+          "second-largest": 2,
+          "third-largest": 3,
+          "fourth-largest": 4,
+        };
+        const rankFromTop = rankMap[rankText];
+        if (!Number.isFinite(draws) || !Number.isFinite(rate) || !Number.isFinite(rankFromTop)) {
+          return question.explanation || "";
+        }
+
+        const harmonicTerms = [];
+        for (let m = rankFromTop; m <= draws; m += 1) {
+          harmonicTerms.push(`1/${m}`);
+        }
+        const harmonicExpression = harmonicTerms.join(" + ");
+        const harmonicValue = Array.from({ length: draws - rankFromTop + 1 }, (_, idx) => 1 / (rankFromTop + idx)).reduce((sum, value) => sum + value, 0);
+        const orderIndex = draws - rankFromTop + 1;
+
+        return [
+          `Write the sorted sample as X_(1) < X_(2) < ... < X_(${draws}). For exponential samples with rate ${formatNumber(rate, 4)}, the gaps are independent: X_(1) has mean 1/(${draws} × ${formatNumber(rate, 4)}), X_(2)-X_(1) has mean 1/((${draws - 1}) × ${formatNumber(rate, 4)}), and in general X_(j)-X_(j-1) has mean 1/((${draws} - j + 1) × ${formatNumber(rate, 4)}).`,
+          `The ${rankText} draw is X_(${orderIndex}), so its expectation is the sum of the first ${orderIndex} gap means. The bracketed harmonic piece is ${harmonicExpression} = ${formatNumber(harmonicValue, 6)}.`,
+          `Now divide by the rate: E[X_(${orderIndex})] = (1/${formatNumber(rate, 4)}) × ${formatNumber(harmonicValue, 6)} = ${formatAnswer(question)}.`,
+          questionHasDistinctMentalAnswer(question) ? `For fast mental math, replace H_${draws} by ln(${draws}) + γ when you only need a rough anchor. On this card, the intended shortcut answer is ${formatMentalAnswer(question)}.` : ""
+        ].filter(Boolean).join("\n\n");
+      }
+
+      function buildATMOptionWorkedExplanation(question) {
+        const spot = Number.parseFloat(question.prompt.match(/stock is at ([0-9.]+)/i)?.[1] || "");
+        const vol = Number.parseFloat(question.prompt.match(/annual volatility is ([0-9.]+)%/i)?.[1] || "") / 100;
+        const expiryMatch = question.prompt.match(/expiry is (1 trading day|1 month|3 months|6 months|1 year)/i);
+        const expiryLabel = expiryMatch?.[1] || "";
+        const yearMap = {
+          "1 trading day": 1 / 252,
+          "1 month": 1 / 12,
+          "3 months": 0.25,
+          "6 months": 0.5,
+          "1 year": 1,
+        };
+        const years = yearMap[expiryLabel] ?? NaN;
+        const multiplier = question.prompt.includes("straddle") ? 0.8 : 0.4;
+
+        if (!Number.isFinite(spot) || !Number.isFinite(vol) || !Number.isFinite(years)) {
+          return [
+            "Use the at-the-money Black-Scholes mental scale.",
+            ensureSentence(question.explanation),
+            `For this card, the final answer is ${formatAnswer(question)}.`
+          ].join("\n\n");
+        }
+
+        const sqrtT = Math.sqrt(years);
+        return [
+          `This is an at-the-money heuristic card, so use ${multiplier} × S × sigma × sqrt(T). Here S = ${formatNumber(spot, 4)}, sigma = ${formatNumber(vol, 4)}, and T = ${formatNumber(years, 6)}.`,
+          `Compute sqrt(T) first: sqrt(${formatNumber(years, 6)}) = ${formatNumber(sqrtT, 6)}. Then the estimate is ${formatNumber(multiplier, 4)} × ${formatNumber(spot, 4)} × ${formatNumber(vol, 4)} × ${formatNumber(sqrtT, 6)} = ${formatAnswer(question)}.`,
+          question.prompt.includes("straddle")
+            ? "The 0.8 constant is just twice the at-the-money call constant 0.4, because a straddle is one call plus one put at the same strike."
+            : "The 0.4 constant comes from the Black-Scholes at-the-money call scale 1/sqrt(2pi) ≈ 0.399."
+        ].join("\n\n");
+      }
+
+      function buildDerangementWorkedExplanation(question) {
+        const n = Number.parseInt(question.prompt.match(/permutation of (\d+)/i)?.[1] || "", 10);
+        if (!Number.isFinite(n) || n <= 0) {
+          return question.explanation || "";
+        }
+
+        const terms = [];
+        for (let k = 0; k <= n; k += 1) {
+          const sign = k % 2 === 0 ? "" : "-";
+          const body = k === 0 ? "1" : k === 1 ? "1" : `1/${k}!`;
+          terms.push(`${sign}${body}`);
+        }
+
+        return [
+          `Use inclusion-exclusion. Let A_i be the event that position i is fixed. Then the derangement probability is P(no fixed points) = 1 - sum P(A_i) + sum P(A_i ∩ A_j) - ... + (-1)^${n} P(A_1 ∩ ... ∩ A_${n}).`,
+          `For a random permutation, P(k specified positions are all fixed) = 1/(k!). So the exact probability becomes ${terms.join(" + ").replace(/\+\s-/g, "- ")} = ${formatAnswer(question)}.`,
+          `As n grows, this alternating sum converges to e^(-1) = 1/e ≈ ${formatNumber(1 / Math.E, 4)}. That is why 1/e is the right mental anchor, but the exact finite-n answer on this card is ${formatAnswer(question)}.`
+        ].join("\n\n");
       }
 
       function buildRandomWalkWorkedExplanation(question) {
@@ -6215,30 +7504,30 @@
       function getExpandedExplanation(question) {
         if (question.topicId === "mentalMath") {
           if ((question.prompt.includes("sqrt") || question.prompt.includes("√")) && (question.prompt.includes("ln(") || question.prompt.includes("log₂") || question.prompt.includes("2^") || question.prompt.includes("e^"))) {
-            return "These combo cards are decomposition cards. The intended move is to split the expression into pieces that each have their own easy anchor, estimate each piece locally, and only then combine them.\n\nThat is why the accepted range is built to cover both the exact final value and the shortcut value produced by combining the intended sub-estimates. The only real risk is compounding small sign or scale errors across the pieces.";
+            return "Split the expression into terms with convenient anchors, estimate each term separately, and then combine the estimates. Preserve every operation and sign when recombining the terms.";
           }
 
           if (question.prompt.includes("sqrt") || question.prompt.includes("√")) {
-            return "The square-root estimate comes from linearizing the function f(x) = sqrt(x) around a nearby perfect square a. Since f'(a) = 1 / (2 sqrt(a)), the first-order expansion gives sqrt(a + h) approximately sqrt(a) + h / (2 sqrt(a)).\n\nSo the real skill is picking a good anchor square and noticing whether the correction should be positive or negative. If the target is very close to the anchor, the tangent-line estimate does almost all of the work.";
+            return "Linearize f(x) = sqrt(x) around a nearby perfect square a. Since f'(a) = 1 / (2 sqrt(a)), sqrt(a + h) ≈ sqrt(a) + h / (2 sqrt(a)). Choose a close anchor and give h the correct sign.";
           }
 
           if (question.category === "Base-2 log") {
-            return "Base-2 logs are just natural logs in disguise. The change-of-base identity says log base 2 of x equals ln(x) divided by ln(2), so the same log anchors still do the work.\n\nThat is why these cards are really about reuse: once you know ln(2), ln(3), ln(5), and ln(10), you can translate them into quick base-2 estimates.";
+            return "Use the change-of-base identity log base 2 of x = ln(x) / ln(2). Values such as ln(2), ln(3), ln(5), and ln(10) therefore give immediate base-2 logarithm estimates.";
           }
 
           if (question.category === "Exponential estimate") {
-            return "Exponentials are the inverse side of the same approximation game. For small u, e^u is approximately 1 + u + u^2/2, and powers of 2 can be rewritten as e^(u ln(2)).\n\nThe mental move is either to stay near 0 and use the short Taylor expansion, or to split the exponent into an easy anchor plus a small leftover piece.";
+            return "For small u, use e^u ≈ 1 + u + u^2/2. Rewrite powers of 2 as 2^u = e^(u ln 2). If the exponent is not near zero, split it into a convenient anchor plus a small correction.";
           }
 
           if (question.prompt.includes("1.") || question.prompt.includes("0.")) {
             return "Write x = 1 + u. The Taylor expansion ln(1 + u) = u - u^2/2 + u^3/3 - ... is very accurate when |u| is small, so keeping one or two terms gives a mental estimate.\n\nThe shortcut answer is the truncated series, while the exact answer keeps the higher-order terms. That is why the review shows both the exact value and the mental anchor.";
           }
 
-          return "Anchor logs and exponentials come from the identities ln(ab) = ln a + ln b, ln(a/b) = ln a - ln b, and 2^u = e^(u ln 2). So once you remember a few values like ln(2), ln(3), ln(5), and ln(10), many other expressions become short additions, subtractions, or small expansions around those anchors.\n\nThe point of these cards is not memorizing every value individually; it is reducing the target number to a familiar anchor plus a manageable local correction.";
+          return "Use ln(ab) = ln(a) + ln(b), ln(a/b) = ln(a) - ln(b), and 2^u = e^(u ln 2) to reduce the target to known values such as ln(2), ln(3), ln(5), and ln(10). Apply a local expansion only to the remaining small correction.";
         }
 
         if (question.topicId === "normal") {
-          return "These cards lean on a small lookup table of memorable one-sided normal tails and their reverse quantiles. In practice, traders and interview prep drill a few anchors like 10%, 5%, 1%, and then interpolate mentally around them.\n\nThe point is not reconstructing the Gaussian integral from scratch; it is building a fast map between tail sizes and z-scores.";
+          return "For a standard normal variable Z, useful one-sided upper-tail anchors are P(Z > 1.28) ≈ 0.10, P(Z > 1.64) ≈ 0.05, P(Z > 1.96) ≈ 0.025, and P(Z > 2.33) ≈ 0.01. Use symmetry for lower tails and double a one-sided tail probability for the corresponding two-sided event.\n\nFor an inverse question, match the stated upper-tail probability to its z-score. Interpolate only when the requested probability lies between two anchors.";
         }
 
         if (question.topicId === "maxNormals") {
@@ -6280,7 +7569,7 @@
             return "Again recover mean from Sharpe times volatility. If the prompt says returns are approximately normal, convert the target return into a z-score and use the normal table.\n\nThese are really just normal-tail questions with one extra preliminary step: Sharpe tells you mean only after you multiply it by volatility.";
           }
 
-          return "These cards start from cumulative PnL, not returns. So the first step is always to difference adjacent points on the graph and recover the period-by-period PnL sequence.\n\nOnce you have those period returns, Sharpe is just mean divided by standard deviation. If the prompt asks for annualized Sharpe, multiply the per-period Sharpe by the square root of the number of such periods in a year.";
+          return "Difference adjacent cumulative PnL values to recover the period-by-period PnL sequence. Divide the sample mean of those changes by their sample standard deviation. If annualized Sharpe is requested, multiply the period Sharpe by the square root of the number of periods per year.";
         }
 
         if (question.topicId === "ev") {
@@ -6297,10 +7586,10 @@
           }
 
           if (question.category === "Conditioning" || question.category === "Fair value") {
-            return "Condition on the first random outcome, solve the easier conditional problem, then average. When the prompt is written as a bet, the same weighted average becomes the fair value or expected profit.\n\nThese cards are less about memorizing formulas and more about pausing long enough to choose the right first conditioning variable.";
+            return "Choose a first random outcome that makes the remaining calculation simpler. Compute the conditional expectation for each value of that outcome and average using its probabilities. For a bet, this weighted average is the fair value or expected profit.";
           }
 
-          return "Expected value is just weighted averaging. Multiply each payoff by its probability and add.\n\nThe fast way to do these mentally is usually to separate the positive and negative pieces, simplify each one, and only then combine them.";
+          return "Multiply each payoff by its probability and add. Calculate the positive and negative contributions separately before combining them.";
         }
 
         if (question.topicId === "cardsSampling") {
@@ -6313,7 +7602,7 @@
 
         if (question.topicId === "conditionalProb") {
           if (question.category === "Conditional probability classic") {
-            return "These cards are warnings that the conditioning statement changes the sample space. The correct move is not to memorize slogans like “at least one” or “switching helps,” but to write down exactly which outcomes still survive after conditioning.\n\nSometimes that is a Bayes update with prior times likelihood. Other times, such as the two-child puzzle or Monty Hall, it is better viewed as a sample-space reweighting question.";
+            return "Conditioning removes or reweights outcomes in the original sample space. List the outcomes that remain possible and their conditional probabilities. Use prior times likelihood for a hidden-state update; use direct sample-space reweighting for problems such as the two-child puzzle or Monty Hall.";
           }
 
           if (question.category === "Card posterior") {
@@ -6321,7 +7610,7 @@
           }
 
           if (question.category === "Binomial posterior" || question.category === "Geometric posterior" || question.category === "Poisson posterior") {
-            return "These cards are the same Bayes template in different distributional clothing. First write the likelihood of the observed statistic under each candidate parameter value. Then multiply by the prior weight and normalize.\n\nOnce you have the posterior over the candidate models, any future-event question becomes a posterior predictive average under that updated distribution over parameters.";
+            return "For each candidate parameter value, compute the likelihood of the observed statistic, multiply by its prior probability, and normalize. A future-event probability is then the posterior-weighted average of that event's probability under each candidate parameter.";
           }
 
           if (question.category === "Urn posterior") {
@@ -6332,7 +7621,7 @@
             return "The hidden state is disease or no disease. The prior weights are prevalence and 1 minus prevalence. The likelihood of the observed test sequence under disease uses sensitivity for each positive result and 1 minus sensitivity for each negative result. Under no disease, it uses false-positive rate for each positive and specificity for each negative.\n\nOnce you have posterior disease probability, any future test question is just one more weighted average: posterior times sensitivity plus 1 minus posterior times false-positive rate.";
           }
 
-          return "These cards are hidden-state inference problems. First list the candidate hidden states. Second compute the likelihood of the observed data under each state. Third multiply prior by likelihood and normalize to get the posterior.\n\nIf the prompt then asks about a future toss, roll, or sequence, do one more averaging step under that posterior. So the whole template is: posterior first, prediction second.";
+          return "List the candidate hidden states. For each state, multiply its prior probability by the likelihood of the observed data, then normalize to obtain the posterior. For a future toss, roll, or sequence, average its state-conditional probability using those posterior weights.";
         }
 
         if (question.topicId === "momentsMgf") {
@@ -6361,11 +7650,11 @@
           }
 
           if (question.category === "Uniform moment") {
-            return "Uniform raw moments come straight from one antiderivative. For X ~ Uniform(a,b), E[X^k] is the average value of x^k on [a,b], so it equals (b^(k+1) - a^(k+1)) / ((k+1)(b-a)).\n\nThat is why these cards are usually about noticing whether symmetry makes the answer collapse. On Uniform(-1,1), every odd raw moment vanishes immediately because the integrand is odd on a symmetric interval.";
+            return "For X ~ Uniform(a,b), integrate x^k over [a,b] and divide by b-a: E[X^k] = (b^(k+1) - a^(k+1)) / ((k+1)(b-a)). On Uniform(-1,1), every odd raw moment is zero because x^k is odd and the interval is symmetric.";
           }
 
           if (question.category === "Geometric moment") {
-            return "For the geometric law on {1,2,...}, the mean and variance are the headline formulas: E[X] = 1/p and Var(X) = (1-p)/p^2. Higher raw moments can be built either from power-series identities or from sums of x^k p(1-p)^(x-1).\n\nThe practical mental point is that small p makes all moments large, because waiting time scales like 1/p. So the third and fourth moments grow quickly once the success probability gets small.";
+            return "For the geometric law on {1,2,...}, E[X] = 1/p and Var(X) = (1-p)/p^2. Build higher raw moments from power-series identities or from sums of x^k p(1-p)^(x-1). As p decreases, the waiting-time scale 1/p increases, so the third and fourth moments grow rapidly.";
           }
 
           if (question.category === "Poisson moment") {
@@ -6373,18 +7662,18 @@
           }
 
           if (question.category === "Binomial moment") {
-            return "Binomial moments come from indicator sums or factorial moments. If X = sum I_i, then E[X] = np and Var(X) = np(1-p). Higher raw moments can be expanded from X(X-1), X(X-1)(X-2), and so on.\n\nThe clean reason is that factorial moments only count distinct successful trial choices, so E[X(X-1)...(X-r+1)] = n(n-1)...(n-r+1)p^r. Converting those to ordinary powers gives the third and fourth moments quickly.";
+            return "For X ~ Binomial(n,p), write X as a sum of Bernoulli indicators to obtain E[X] = np and Var(X) = np(1-p). Its factorial moments satisfy E[X(X-1)...(X-r+1)] = n(n-1)...(n-r+1)p^r. Expand ordinary powers in terms of these factorial powers to calculate the third and fourth moments.";
           }
 
           if (question.category === "Moment existence") {
-            return "These cards are about tail heaviness, not formula memorization. The Cauchy tail is so heavy that even the first absolute moment diverges, so neither the mean nor the variance exists.\n\nPareto and Student t are similar in spirit: you only get a finite k-th moment once the tail parameter is large enough. So the first question is always existence, and only then computation.";
+            return "Check moment existence before calculating. A Cauchy variable has no finite first absolute moment, mean, or variance. A Pareto variable with tail parameter α has a finite k-th raw moment only when α > k, and a Student t variable with ν degrees of freedom has a finite k-th absolute moment only when ν > k.";
           }
 
           if (question.category === "Distribution mean" || question.category === "Distribution variance") {
             return "The quickest route here is family recognition. Uniform, beta, gamma, chi-square, F, lognormal, Laplace, Pareto, and Student t each have a compact textbook mean/variance pair, often inherited from a simpler parent family.\n\nThe real pattern is structural: chi-square is gamma, exponential is gamma with shape 1, lognormal is e^Normal, beta is a gamma ratio, and t or F only have the requested moments when their degrees of freedom are large enough. The review cards are really training that recognition map.";
           }
 
-          return "The basic-review topic is formula memory with structure underneath it. For the standard families, you want the mean and variance on immediate recall, then a few extra patterns: standard-normal even moments, geometric waiting-time scale, Poisson/binomial factorial moments, and heavy-tail existence thresholds.\n\nThe goal is to stop re-deriving these from zero during harder interview questions. Once the distribution family is familiar, many later EV, variance, regression, and asymptotic cards become one line instead of five.";
+          return "Identify the distribution's parameterization before using its mean or variance formula. For higher moments, use symmetry for centered symmetric laws, factorial moments for Poisson and binomial variables, and E[Z^(2m)] = (2m - 1)!! for Z ~ N(0,1).\n\nCheck existence before calculating a heavy-tail moment: Cauchy has no finite mean or variance, Pareto requires α > r for its r-th raw moment, and Student t with ν degrees of freedom requires ν > r for a finite r-th absolute moment.";
         }
 
         if (question.topicId === "regression") {
@@ -6397,11 +7686,11 @@
           }
 
           if (question.category === "OLS slope" || question.category === "OLS intercept") {
-            return "In simple regression, the slope is correlation times the ratio of standard deviations: beta_1 = rho sigma_Y / sigma_X. Once you know the slope, the intercept is just beta_0 = y-bar - beta_1 x-bar.\n\nSo these cards are usually about translating between scale-free correlation and slope on the original units.";
+            return "In simple regression, beta_1 = rho sigma_Y / sigma_X. After calculating the slope in the original units, use beta_0 = y-bar - beta_1 x-bar for the intercept.";
           }
 
           if (question.category === "R-squared" || question.category === "Residual variance" || question.category === "Explained variance") {
-            return "In simple linear regression with an intercept, R-squared equals rho squared. That means explained variance is rho squared times Var(Y), while residual variance is the leftover (1 - rho squared) times Var(Y).\n\nThe mental move is to square the correlation first, then decide whether the question wants explained or unexplained variation.";
+            return "In simple linear regression with an intercept, R-squared equals rho squared. Explained variance is rho^2 Var(Y), while residual variance is (1-rho^2)Var(Y).";
           }
 
           if (question.category === "Regression prediction") {
@@ -6409,7 +7698,7 @@
           }
 
           if (question.category === "Bayesian posterior mean" || question.category === "Bayesian shrinkage") {
-            return "These cards use the Gaussian regression model beta ~ N(m0, tau^2) and y_i = beta x_i + eps_i with eps_i ~ N(0, sigma^2). Once you know the sufficient statistics sum x_i y_i and sum x_i^2, the posterior mean is posterior variance times (m0 / tau^2 + sum x_i y_i / sigma^2).\n\nSo the whole game is precision weighting: weak or noisy data gets shrunk toward the prior mean, while strong data pushes the posterior toward the regression estimate.";
+            return "For beta ~ N(m0, tau^2) and y_i = beta x_i + eps_i with eps_i ~ N(0, sigma^2), combine prior precision 1/tau^2 with data precision sum(x_i^2)/sigma^2. The posterior mean equals the posterior variance times (m0/tau^2 + sum(x_i y_i)/sigma^2). Noisy data receives less weight; precise data receives more.";
           }
 
           return "For beta ~ N(m0, tau^2) and y_i = beta x_i + eps_i with known sigma^2, the posterior precision is 1/tau^2 + sum x_i^2 / sigma^2. So the posterior variance is the reciprocal of that quantity.\n\nThis is why every extra observation tightens the posterior, and why large |x_i| observations are especially informative in regression.";
@@ -6449,19 +7738,19 @@
 
         if (question.topicId === "fisherInfo") {
           if (question.category === "CRLB") {
-            return "The Cramer-Rao lower bound is just the reciprocal of total Fisher information: Var(theta-hat) >= 1 / I_n(theta) for unbiased estimators. So these cards are usually one lookup step followed by one reciprocal.\n\nFor iid samples, first multiply the one-observation information by n. After that, Bernoulli gives p(1-p)/n, Poisson gives lambda/n, Exponential-rate gives lambda^2/n, and Normal-mean with known variance gives sigma^2/n.";
+            return "For an unbiased estimator, Var(theta-hat) >= 1 / I_n(theta). With iid observations, multiply the one-observation Fisher information by n and take its reciprocal. The resulting bounds are p(1-p)/n for Bernoulli p, lambda/n for Poisson lambda, lambda^2/n for an exponential rate lambda, and sigma^2/n for a normal mean with known variance.";
           }
 
-          if (question.category === "MLE asymptotic s.e.") {
+          if (question.category === "MLE standard error") {
             return "Once you know total Fisher information I_n(theta), the large-sample MLE standard error is about 1 / sqrt(I_n(theta)). That is just the square root version of the Cramer-Rao scale.\n\nSo the mental flow is: write down the one-observation information, multiply by n, invert, and take a square root if the prompt asks for standard error rather than variance.";
           }
 
-          return "Fisher information measures curvature of the log-likelihood. Independent observations add information, so the sample information is usually n times the one-observation formula.\n\nThat is why the topic naturally branches into three card types: direct information formulas, Cramer-Rao bounds, and asymptotic MLE variance or standard-error estimates.";
+          return "Fisher information measures curvature of the log-likelihood. Independent observations add information, so the sample information is usually n times the one-observation formula.\n\nThat is why the topic naturally branches into three card types: direct information formulas, Cramer-Rao bounds, and large-sample MLE variance or standard-error estimates.";
         }
 
         if (question.topicId === "options") {
           if (question.category === "Put-call parity" || question.category === "Synthetic forward") {
-            return "Most of these cards start from the European put-call parity identity C - P = S - K e^(-rT). At zero rates that becomes C - P = S - K, so one missing price or implied spot level is often just one subtraction away.\n\nThe same identity explains why long call plus short put behaves like a forward: the option pair leaves you with the stock payoff minus the strike payment at expiry.";
+            return "Use European put-call parity: C - P = S - K e^(-rT). At zero rates this becomes C - P = S - K. A long call and short put with the same strike and maturity therefore replicate a forward payoff: the stock value minus the strike payment at expiry.";
           }
 
           if (question.category === "ATM option estimate") {
@@ -6481,7 +7770,7 @@
           }
 
           if (question.category === "Annuity present value") {
-            return "A level annuity is a finite geometric series. If it pays A each year for n years and the annual yield is y, the present value is A(1-(1+y)^(-n))/y.\n\nThe mental move is to recognize repeated equal payments and factor out the common coupon size before summing the discount factors.";
+            return "A level annuity paying A each year for n years at annual yield y has present value A(1-(1+y)^(-n))/y. This is the sum of the n discounted payments after factoring out A.";
           }
 
           if (question.category === "Coupon bond pricing") {
@@ -6512,7 +7801,7 @@
         }
 
         if (question.topicId === "ito") {
-          return "These cards use Ito's lemma under geometric Brownian motion. If dS/S = mu dt + sigma dW and X = S^k, then dX/X = (k mu + 0.5 k(k-1) sigma^2)dt + k sigma dW.\n\nThe signed diffusion coefficient is k sigma, but if the question asks for volatility magnitude you should report |k| sigma. That one power rule already covers squaring, cubing, square roots, reciprocals, and most other mental-math transforms. The log case is the special identity d ln S = (mu - 0.5 sigma^2)dt + sigma dW.";
+          return "If dS/S = mu dt + sigma dW and X = S^k, Ito's lemma gives dX/X = (k mu + 0.5 k(k-1) sigma^2)dt + k sigma dW. The signed diffusion coefficient is k sigma; the volatility magnitude is |k| sigma. For X = ln S, use d ln S = (mu - 0.5 sigma^2)dt + sigma dW.";
         }
 
         if (question.topicId === "stopping") {
@@ -6564,7 +7853,7 @@
         }
 
         if (question.topicId === "eigenvalues") {
-          return "These cards are about the transition matrix P of the simple random walk Markov chain on the ring. Since one step averages the two neighbors, (Pf)(j) = (f(j - 1) + f(j + 1)) / 2.\n\nTesting the Fourier mode f_k(j) = e^(2 pi i k j / n) gives eigenvalue cos(2 pi k / n). So the second-largest transition-matrix eigenvalue comes from k = 1, and the spectral gap is 1 minus that number.";
+          return "For simple random walk on a ring, (Pf)(j) = (f(j - 1) + f(j + 1)) / 2. Substituting the Fourier mode f_k(j) = e^(2 pi i k j / n) gives eigenvalue cos(2 pi k / n). The second-largest eigenvalue comes from k = 1, and the spectral gap is 1 - cos(2 pi / n).";
         }
 
         if (question.topicId === "greenBook") {
@@ -6589,7 +7878,7 @@
           }
 
           if (question.category === "Classic puzzle: exceed-one variance") {
-            return "These cards use the same stopping-time object in two different ways. For the draw count N, the tail identity P(N > n) = 1/n! makes the moments accessible through tail-sum formulas. For the final overshoot sum S, the clean route is a renewal recursion in the remaining gap to 1.\n\nThat is why the two variance cards feel different even though they come from the same experiment: one is driven by exact factorial tails, the other by a Blackwell-Girshick style integral recursion.";
+            return "For the stopping count N, use P(N > n) = 1/n! with the tail-sum formulas for E[N] and E[N^2]. For the final overshoot sum S, write renewal recursions for its first and second moments as functions of the remaining gap to 1.";
           }
 
           if (question.category === "Classic puzzle: noodle loops") {
@@ -6609,7 +7898,7 @@
           }
 
           if (question.category === "Classic puzzle: return probability") {
-            return "These cards are about the return probability choose(2n, n) / 2^(2n), not the raw central binomial coefficient itself. Stirling gives choose(2n, n) ~= 4^n / sqrt(pi n), and dividing by 2^(2n) = 4^n leaves the clean heuristic 1 / sqrt(pi n).\n\nSo the fast mental move is: count balanced paths with choose(2n, n), then notice that the 4^n total step sequences cancel the 4^n in the Stirling approximation.";
+            return "Returning to the origin after 2n steps requires exactly n upward and n downward steps, so the probability is choose(2n,n) / 2^(2n). Stirling's approximation gives choose(2n,n) ≈ 4^n / sqrt(pi n); dividing by 2^(2n) = 4^n leaves 1 / sqrt(pi n).";
           }
 
           if (question.category === "Classic puzzle: collisions") {
@@ -6641,7 +7930,7 @@
           }
 
           if (question.category === "Classic puzzle: coupon interval") {
-            return "These interval cards use a rough Gaussian summary of the coupon-collector stopping time. First compute the mean nH_n. Then compute the variance n^2 sum(1/i^2) - nH_n, or use the fast approximation 1.65n^2 - n(ln n + 1/2), and take a square root.\n\nAfter that, the mental move is just endpoint = mean plus or minus z times standard deviation. Use z = 1 for a one-sigma band and z ≈ 1.96, or just 2, for a rough central 95% band.";
+            return "For the coupon-collector stopping time, compute mean nH_n and variance n^2 sum(1/i^2) - nH_n, or approximate the variance by 1.65n^2 - n(ln n + 1/2). Take the square root for the standard deviation. Use endpoints mean ± z times standard deviation, with z = 1 for a one-standard-deviation interval and z ≈ 1.96 for an approximate central 95% interval.";
           }
         }
 
@@ -6654,55 +7943,52 @@
           state.timerId = null;
         }
 
-        hideLearningGuide();
-        hideUserCenter();
+        state.playView = "setup";
         setSessionSummaryOpen(false);
-        elements.setupScreen.classList.remove("is-hidden");
-        elements.sessionScreen.classList.add("is-hidden");
-        elements.resultsScreen.classList.add("is-hidden");
+        setWorkspace("play", { scroll: false });
         clearInlineErrors();
       }
 
       function showLearningGuide() {
-        hideUserCenter();
-        elements.learningGuide.classList.remove("is-hidden");
-        window.requestAnimationFrame(() => {
-          elements.learningGuide.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        setWorkspace("learn");
       }
 
       function hideLearningGuide() {
-        elements.learningGuide.classList.add("is-hidden");
+        if (state.activeWorkspace === "learn") {
+          setWorkspace("play");
+        }
       }
 
       function showUserCenter() {
-        hideLearningGuide();
-        elements.userCenter.classList.remove("is-hidden");
-        window.requestAnimationFrame(() => {
-          elements.userCenter.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        setWorkspace("user");
       }
 
       function hideUserCenter() {
-        elements.userCenter.classList.add("is-hidden");
+        if (state.activeWorkspace === "user") {
+          setWorkspace("play");
+        }
+      }
+
+      function showCreateCenter() {
+        setWorkspace("create");
+      }
+
+      function hideCreateCenter() {
+        if (state.activeWorkspace === "create") {
+          setWorkspace("play");
+        }
       }
 
       function showSessionScreen() {
-        hideLearningGuide();
-        hideUserCenter();
-        elements.setupScreen.classList.add("is-hidden");
-        elements.sessionScreen.classList.remove("is-hidden");
-        elements.resultsScreen.classList.add("is-hidden");
+        state.playView = "session";
+        setWorkspace("play", { scroll: false });
         setSessionSummaryOpen(state.summaryOpen);
       }
 
       function showResultsScreen() {
-        hideLearningGuide();
-        hideUserCenter();
+        state.playView = "results";
         setSessionSummaryOpen(false);
-        elements.setupScreen.classList.add("is-hidden");
-        elements.sessionScreen.classList.add("is-hidden");
-        elements.resultsScreen.classList.remove("is-hidden");
+        setWorkspace("play", { scroll: false });
         elements.progressFill.style.width = "100%";
       }
 
@@ -6793,7 +8079,10 @@
         const difficulty = elements.difficultySelect.value || DEFAULT_DIFFICULTY;
         const difficultyCopy = difficulty === "all" ? "a mixed difficulty" : difficulty === "freddybean" ? "Freddybean difficulty" : `${formatDifficultyLabel(difficulty).toLowerCase()} difficulty`;
         const personalDeckOnly = elements.personalDeckOnly.checked;
-        const sourceCopy = personalDeckOnly ? "from your personal deck" : "from the full deck";
+        const customCardsOnly = elements.customCardsOnly.checked;
+        const sourceCopy = personalDeckOnly
+          ? (customCardsOnly ? "from your personal deck plus custom cards" : "from your personal deck")
+          : (customCardsOnly ? "from the full deck plus custom cards" : "from the full deck");
         state.selectedTopics = selected;
         state.difficulty = difficulty;
         elements.topicCount.textContent = `${selected.length} topic${selected.length === 1 ? "" : "s"} selected. The session will draw ${safeCount} card${safeCount === 1 ? "" : "s"} at ${difficultyCopy} ${sourceCopy} and rebalance across the topics you keep checked.`;
@@ -6817,6 +8106,10 @@
       }
 
       function buildSessionDeck(selectedTopicIds, sessionLength, difficulty, options = {}) {
+        const customPools = options.customCardsOnly
+          ? buildCustomTemplateQuestionsByTopic(selectedTopicIds, sessionLength, difficulty)
+          : {};
+
         if (options.personalDeckOnly) {
           const pool = getStoredPersonalDeck().filter((question) => {
             if (!selectedTopicIds.includes(question.topicId)) {
@@ -6830,14 +8123,16 @@
             }
             return true;
           });
+          const customPool = Object.values(customPools).flat();
+          const combinedPool = customPool.length > 0 ? [...pool, ...customPool] : pool;
 
-          if (pool.length === 0) {
+          if (combinedPool.length === 0) {
             return [];
           }
 
           const deck = [];
           while (deck.length < sessionLength) {
-            deck.push(cloneQuestionSnapshot(pool[Math.floor(Math.random() * pool.length)]));
+            deck.push(cloneQuestionSnapshot(combinedPool[Math.floor(Math.random() * combinedPool.length)]));
           }
           return shuffle(deck);
         }
@@ -6855,10 +8150,12 @@
               ? basePool.filter(isFreddybeanQuestion)
               : basePool.filter((question) => question.difficulty === difficulty);
           const generatedPool = runtimePools[topicId] || [];
-          if (filteredPool.length > 0 || generatedPool.length > 0) {
+          const customPool = customPools[topicId] || [];
+          if (filteredPool.length > 0 || generatedPool.length > 0 || customPool.length > 0) {
             eligiblePools[topicId] = {
               base: filteredPool,
               generated: generatedPool,
+              custom: customPool,
             };
           }
         }
@@ -6875,12 +8172,15 @@
 
           for (const topicId of topicCycle) {
             const pool = eligiblePools[topicId];
-            if (!pool || (pool.base.length === 0 && pool.generated.length === 0)) {
+            if (!pool || (pool.base.length === 0 && pool.generated.length === 0 && pool.custom.length === 0)) {
               continue;
             }
 
-            const useGenerated = pool.generated.length > 0 && (pool.base.length === 0 || Math.random() < 0.6);
-            const sourcePool = useGenerated ? pool.generated : pool.base;
+            const choices = [];
+            if (pool.base.length > 0) choices.push(pool.base);
+            if (pool.generated.length > 0) choices.push(pool.generated);
+            if (pool.custom.length > 0) choices.push(pool.custom);
+            const sourcePool = choices[Math.floor(Math.random() * choices.length)];
             const question = { ...sourcePool[Math.floor(Math.random() * sourcePool.length)] };
             deck.push(question);
 
@@ -6891,6 +8191,59 @@
         }
 
         return shuffle(deck);
+      }
+
+      function buildCustomTemplateQuestionsByTopic(selectedTopicIds, sessionLength, difficulty) {
+        const templates = getStoredCustomTemplates().filter((template) => {
+          if (!selectedTopicIds.includes(template.topicId)) {
+            return false;
+          }
+          if (difficulty === "freddybean") {
+            return template.difficulty === "easy";
+          }
+          if (difficulty !== "all" && template.difficulty !== difficulty) {
+            return false;
+          }
+          return true;
+        });
+        if (templates.length === 0) {
+          return {};
+        }
+
+        const perTopicCount = Math.max(6, Math.ceil(sessionLength / Math.max(1, selectedTopicIds.length)));
+        const out = {};
+
+        for (const topicId of selectedTopicIds) {
+          const topicTemplates = templates.filter((template) => template.topicId === topicId);
+          if (topicTemplates.length === 0) {
+            continue;
+          }
+          const validTemplates = topicTemplates.filter((template) => {
+            try {
+              instantiateCustomQuestion(template, false);
+              return true;
+            } catch (_error) {
+              return false;
+            }
+          });
+          if (validTemplates.length === 0) {
+            continue;
+          }
+          const questions = [];
+          while (questions.length < perTopicCount) {
+            const template = validTemplates[Math.floor(Math.random() * validTemplates.length)];
+            try {
+              questions.push(instantiateCustomQuestion(template, template.randomized));
+            } catch (_error) {
+              break;
+            }
+          }
+          if (questions.length > 0) {
+            out[topicId] = questions;
+          }
+        }
+
+        return out;
       }
 
       function buildRuntimeGeneratedQuestionsByTopic(selectedTopicIds, sessionLength, difficulty) {
@@ -16299,7 +17652,7 @@
                 answer: Math.sqrt(rootValue) - Math.log2(logValue),
                 mentalAnswer: approxSqrtMental(rootValue) - Math.log2(logValue),
                 absTolerance: 0.14,
-                explanation: "The point is to blend two separate anchors without losing track of signs.",
+                explanation: "Estimate the square root from a nearby perfect square, estimate the base-2 logarithm from nearby powers of 2, and subtract the logarithm from the root estimate.",
                 difficulty: logValue <= 20 ? "medium" : "hard",
               }),
             );
@@ -18476,29 +19829,29 @@
 
         questions.push(createQuestion({
           topicId: "fisherInfo",
-          category: "MLE asymptotic s.e.",
-          prompt: "You observe 64 iid Poisson(4) variables. Estimate the asymptotic standard error of the MLE of lambda.",
-          hint: "Asymptotic s.e. is about 1 / sqrt(I_n), or equivalently sqrt(lambda / n) here.",
+          category: "MLE standard error",
+          prompt: "You observe 64 iid Poisson(4) variables. Using the large-sample MLE formula, estimate the standard error of lambda-hat.",
+          hint: "Use the large-sample MLE standard-error formula 1 / sqrt(I_n), or equivalently sqrt(lambda / n) here.",
           inputMode: "number",
           formatHint: "standard error",
           answer: Math.sqrt(4 / 64),
           mentalAnswer: Math.sqrt(4 / 64),
           absTolerance: 0.01,
-          explanation: "For Poisson(lambda), the MLE variance scale is lambda/n. Here that is 4/64 = 1/16, so the asymptotic standard error is 1/4 = 0.25.",
+          explanation: "For Poisson(lambda), the large-sample variance scale of lambda-hat is lambda/n. Here that is 4/64 = 1/16, so the large-sample standard error is sqrt(1/16) = 1/4 = 0.25.",
           difficulty: "easy",
         }));
 
         questions.push(createQuestion({
           topicId: "fisherInfo",
-          category: "MLE asymptotic s.e.",
-          prompt: "You observe 36 iid Normal(mu, 9) variables with variance known. Estimate the asymptotic standard error of the MLE of mu.",
+          category: "MLE standard error",
+          prompt: "You observe 36 iid Normal(mu, 9) variables with variance known. Using the large-sample MLE formula, estimate the standard error of mu-hat.",
           hint: "For the normal mean with known variance, the MLE standard error is sigma / sqrt(n).",
           inputMode: "number",
           formatHint: "standard error",
           answer: Math.sqrt(9 / 36),
           mentalAnswer: Math.sqrt(9 / 36),
           absTolerance: 0.01,
-          explanation: "Total information is 36/9 = 4, so the asymptotic variance is 1/4 and the standard error is 1/2 = 0.5.",
+          explanation: "Total information is 36/9 = 4, so the large-sample variance scale is 1/4 and the standard error is sqrt(1/4) = 1/2 = 0.5.",
           difficulty: "easy",
         }));
 
@@ -18542,15 +19895,15 @@
             }));
             questions.push(createQuestion({
               topicId: "fisherInfo",
-              category: "MLE asymptotic s.e.",
-              prompt: `You observe ${n} iid Bernoulli(${pText}) variables. Estimate the asymptotic standard error of the MLE of p.`,
-              hint: "Take the reciprocal square root of total information, or use sqrt(p(1-p)/n).",
+              category: "MLE standard error",
+              prompt: `You observe ${n} iid Bernoulli(${pText}) variables. Using the large-sample MLE formula, estimate the standard error of p-hat.`,
+              hint: "Use the large-sample standard-error formula sqrt(p(1-p)/n), or equivalently take the reciprocal square root of total information.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.01,
-              explanation: `The asymptotic variance scale is p(1-p)/n = ${formatNumber(crlb, 6)}, so the asymptotic standard error is ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The large-sample variance scale of p-hat is p(1-p)/n = ${formatNumber(crlb, 6)}, so the large-sample standard error is sqrt(${formatNumber(crlb, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: n >= 40 ? "medium" : "easy",
             }));
           }
@@ -18590,15 +19943,15 @@
             }));
             questions.push(createQuestion({
               topicId: "fisherInfo",
-              category: "MLE asymptotic s.e.",
-              prompt: `You observe ${n} iid Poisson(${lambda}) variables. Estimate the asymptotic standard error of the MLE of lambda.`,
-              hint: "Use sqrt(lambda / n), or take 1 / sqrt(total information).",
+              category: "MLE standard error",
+              prompt: `You observe ${n} iid Poisson(${lambda}) variables. Using the large-sample MLE formula, estimate the standard error of lambda-hat.`,
+              hint: "Use the large-sample standard-error formula sqrt(lambda / n), or take 1 / sqrt(total information).",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.01,
-              explanation: `Total information is ${formatNumber(totalInfo, 6)}, so the asymptotic standard error is 1 / sqrt(${formatNumber(totalInfo, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `Total information is ${formatNumber(totalInfo, 6)}, so the large-sample standard error is 1 / sqrt(${formatNumber(totalInfo, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "easy",
             }));
           }
@@ -18638,15 +19991,15 @@
             }));
             questions.push(createQuestion({
               topicId: "fisherInfo",
-              category: "MLE asymptotic s.e.",
-              prompt: `You observe ${n} iid Exponential(rate ${lambda}) variables. Estimate the asymptotic standard error of the MLE of lambda.`,
-              hint: "Use lambda / sqrt(n), or take the reciprocal square root of total information.",
+              category: "MLE standard error",
+              prompt: `You observe ${n} iid Exponential(rate ${lambda}) variables. Using the large-sample MLE formula, estimate the standard error of lambda-hat.`,
+              hint: "Use the large-sample standard-error formula lambda / sqrt(n), or take the reciprocal square root of total information.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.02,
-              explanation: `The asymptotic variance scale is lambda^2 / n = ${formatNumber(crlb, 6)}, so the standard error is lambda / sqrt(n) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The large-sample variance scale of lambda-hat is lambda^2 / n = ${formatNumber(crlb, 6)}, so the standard error is lambda / sqrt(n) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "medium",
             }));
           }
@@ -18687,15 +20040,15 @@
             }));
             questions.push(createQuestion({
               topicId: "fisherInfo",
-              category: "MLE asymptotic s.e.",
-              prompt: `You observe ${n} iid Normal(mu, ${variance}) variables with variance known. Estimate the asymptotic standard error of the MLE of mu.`,
+              category: "MLE standard error",
+              prompt: `You observe ${n} iid Normal(mu, ${variance}) variables with variance known. Using the large-sample MLE formula, estimate the standard error of mu-hat.`,
               hint: "Use sigma / sqrt(n).",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.02,
-              explanation: `The asymptotic standard error is sigma / sqrt(n) = ${formatNumber(sigma, 6)} / sqrt(${n}) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The large-sample standard error is sigma / sqrt(n) = ${formatNumber(sigma, 6)} / sqrt(${n}) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "easy",
             }));
           }
@@ -18735,15 +20088,15 @@
             }));
             questions.push(createQuestion({
               topicId: "fisherInfo",
-              category: "MLE asymptotic s.e.",
-              prompt: `You observe ${n} iid Normal(0, v) variables with mean known, where v = sigma^2 is the parameter. Estimate the asymptotic standard error of the MLE of v when v = ${variance}.`,
-              hint: "Use v sqrt(2/n), or take the reciprocal square root of total information.",
+              category: "MLE standard error",
+              prompt: `You observe ${n} iid Normal(0, v) variables with mean known, where v = sigma^2 is the parameter and v = ${variance}. Using the large-sample MLE formula, estimate the standard error of v-hat.`,
+              hint: "Use the large-sample standard-error formula v sqrt(2/n), or take the reciprocal square root of total information.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.05,
-              explanation: `The asymptotic variance scale is 2v^2 / n = ${formatNumber(crlb, 6)}, so the standard error is ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The large-sample variance scale of v-hat is 2v^2 / n = ${formatNumber(crlb, 6)}, so the standard error is ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "hard",
             }));
           }
@@ -18782,8 +20135,8 @@
           }));
           questions.push(createQuestion({
             topicId: "fisherInfo",
-            category: "MLE asymptotic s.e.",
-            prompt: `Independent observations have laws ${variances.map((variance) => `N(mu, ${variance})`).join(", ")} with those variances known. Estimate the asymptotic standard error of the efficient estimator of mu.`,
+            category: "MLE standard error",
+            prompt: `Independent observations have laws ${variances.map((variance) => `N(mu, ${variance})`).join(", ")} with those variances known. Using the large-sample Fisher-information formula, estimate the standard error of an efficient estimator of mu.`,
             hint: "Take the reciprocal square root of the total information.",
             inputMode: "number",
             formatHint: "standard error",
@@ -19725,6 +21078,317 @@
         return 10 * magnitude;
       }
 
+      const customTemplateReservedNames = new Set(["sqrt", "pi", "e"]);
+
+      function escapeRegex(text) {
+        return String(text || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function rewriteLatexFractions(text, numeratorPrefix, separator, denominatorSuffix) {
+        let out = String(text || "");
+        const pattern = /\\frac\{([^{}]*)\}\{([^{}]*)\}/;
+        while (pattern.test(out)) {
+          out = out.replace(pattern, `${numeratorPrefix}$1${separator}$2${denominatorSuffix}`);
+        }
+        return out;
+      }
+
+      function rewriteLatexSqrts(text, prefix, suffix) {
+        let out = String(text || "");
+        const pattern = /\\sqrt\{([^{}]*)\}/;
+        while (pattern.test(out)) {
+          out = out.replace(pattern, `${prefix}$1${suffix}`);
+        }
+        return out;
+      }
+
+      function normalizeMathExpressionForEvaluation(text) {
+        let out = String(text || "");
+        out = out.replace(/\$/g, "").replace(/\\left/g, "").replace(/\\right/g, "");
+        out = out.replace(/\\cdot/g, "*").replace(/\\times/g, "*").replace(/×/g, "*");
+        out = out.replace(/[−–]/g, "-");
+        [
+          ["\\pi", "pi"],
+          ["\\mu", "mu"],
+          ["\\sigma", "sigma"],
+          ["\\lambda", "lambda"],
+          ["\\theta", "theta"],
+          ["\\alpha", "alpha"],
+          ["\\beta", "beta"],
+          ["\\gamma", "gamma"],
+          ["\\rho", "rho"],
+          ["\\tau", "tau"],
+        ].forEach(([from, to]) => {
+          out = out.split(from).join(to);
+        });
+        out = rewriteLatexFractions(out, "(", ")/(", ")");
+        out = rewriteLatexSqrts(out, "sqrt(", ")");
+        out = out.replace(/\{/g, "(").replace(/\}/g, ")");
+        return out;
+      }
+
+      function renderMathText(text) {
+        let out = String(text || "");
+        out = out.replace(/\$/g, "").replace(/\\left/g, "").replace(/\\right/g, "");
+        [
+          ["\\lambda", "λ"],
+          ["\\sigma", "σ"],
+          ["\\mu", "μ"],
+          ["\\theta", "θ"],
+          ["\\alpha", "α"],
+          ["\\beta", "β"],
+          ["\\gamma", "γ"],
+          ["\\rho", "ρ"],
+          ["\\tau", "τ"],
+          ["\\pi", "π"],
+          ["\\cdot", "·"],
+          ["\\times", "×"],
+          ["\\leq", "≤"],
+          ["\\geq", "≥"],
+          ["\\neq", "≠"],
+          ["\\approx", "≈"],
+          ["\\infty", "∞"],
+        ].forEach(([from, to]) => {
+          out = out.split(from).join(to);
+        });
+        out = rewriteLatexFractions(out, "(", ")/(", ")");
+        out = rewriteLatexSqrts(out, "√(", ")");
+        out = out.replace(/\{/g, "(").replace(/\}/g, ")");
+        return out;
+      }
+
+      function extractCustomTemplateVariableNames(promptTemplate) {
+        const regex = /\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/g;
+        const names = [];
+        let match;
+        while ((match = regex.exec(String(promptTemplate || "")))) {
+          const name = match[1].toLowerCase();
+          if (!names.includes(name)) {
+            names.push(name);
+          }
+        }
+        return names;
+      }
+
+      function extractFormulaVariableNames(expressions) {
+        const names = [];
+        (Array.isArray(expressions) ? expressions : []).forEach((expression) => {
+          const normalized = normalizeMathExpressionForEvaluation(expression);
+          const matches = normalized.match(/[A-Za-z][A-Za-z0-9_]*/g) || [];
+          matches.forEach((name) => {
+            const lowered = name.toLowerCase();
+            if (!customTemplateReservedNames.has(lowered) && !names.includes(lowered)) {
+              names.push(lowered);
+            }
+          });
+        });
+        return names;
+      }
+
+      function replacePromptVariables(promptTemplate, values) {
+        let output = String(promptTemplate || "");
+        Object.entries(values || {})
+          .sort((left, right) => right[0].length - left[0].length)
+          .forEach(([name, value]) => {
+            output = output.replace(new RegExp(`\\{\\{\\s*${escapeRegex(name)}\\s*\\}\\}`, "gi"), formatTemplateValue(value));
+          });
+        return output;
+      }
+
+      function substituteVariablesInExpression(expression, values) {
+        let output = normalizeMathExpressionForEvaluation(expression);
+        Object.entries(values || {})
+          .sort((left, right) => right[0].length - left[0].length)
+          .forEach(([name, value]) => {
+            const regex = new RegExp(`(^|[^A-Za-z0-9_])(${escapeRegex(name)})(?=$|[^A-Za-z0-9_])`, "gi");
+            output = output.replace(regex, (_match, prefix) => `${prefix}${formatTemplateValue(value)}`);
+          });
+        return output;
+      }
+
+      function formatTemplateValue(value) {
+        return Math.abs(Math.round(value) - value) < 1e-9 ? formatNumber(Math.round(value), 0) : formatNumber(value, 6);
+      }
+
+      function customFormatHint(inputMode) {
+        switch (inputMode) {
+          case "probability": return "probability";
+          case "percent": return "percent";
+          case "count": return "count";
+          case "variance": return "variance";
+          case "correlation": return "correlation";
+          case "dollars": return "dollar value";
+          case "steps": return "steps";
+          default: return "estimate";
+        }
+      }
+
+      function formatSingleCustomAnswer(value, inputMode) {
+        if (inputMode === "probability") {
+          return `${formatNumber(value, 4)} (${formatPercent(value)})`;
+        }
+        if (inputMode === "percent") {
+          return `${formatNumber(value, 3)}%`;
+        }
+        return formatNumber(value, 4);
+      }
+
+      function parseVariableValueSpec(rawSpec) {
+        const spec = String(rawSpec || "").trim();
+        if (!spec) {
+          throw new Error("Each variable needs a non-empty set or range.");
+        }
+        const rangeMatch = spec.match(/^\s*(-?\d+(?:\.\d+)?)\s*\.\.\s*(-?\d+(?:\.\d+)?)(?:\s+step\s+(-?\d+(?:\.\d+)?))?(?:\s+skip\s+(.+))?\s*$/i);
+        if (rangeMatch) {
+          const start = Number(rangeMatch[1]);
+          const end = Number(rangeMatch[2]);
+          const explicitStep = rangeMatch[3] === undefined ? null : Number(rangeMatch[3]);
+          const skipPart = rangeMatch[4] || "";
+          if (!Number.isFinite(start) || !Number.isFinite(end)) {
+            throw new Error("Range endpoints must be numeric.");
+          }
+          const stepMagnitude = explicitStep === null ? (start <= end ? 1 : -1) : explicitStep;
+          if (!Number.isFinite(stepMagnitude) || stepMagnitude === 0) {
+            throw new Error("Range step cannot be zero.");
+          }
+          const step = start <= end ? Math.abs(stepMagnitude) : -Math.abs(stepMagnitude);
+          const skipValues = skipPart
+            ? skipPart.split(",").map((chunk) => {
+                const value = Number(chunk.trim());
+                if (!Number.isFinite(value)) {
+                  throw new Error("Skip values must be numeric.");
+                }
+                return value;
+              })
+            : [];
+          const values = [];
+          const epsilon = 1e-9;
+          for (let current = start; step > 0 ? current <= end + epsilon : current >= end - epsilon; current += step) {
+            if (!skipValues.some((value) => Math.abs(value - current) < 1e-9)) {
+              values.push(Number(formatNumber(current, 12)));
+            }
+          }
+          if (values.length === 0) {
+            throw new Error("That variable range produces no usable values.");
+          }
+          return values;
+        }
+
+        const values = spec.split(",").map((chunk) => {
+          const value = Number(chunk.trim());
+          if (!Number.isFinite(value)) {
+            throw new Error("Set values must be comma-separated numbers.");
+          }
+          return value;
+        });
+        if (values.length === 0) {
+          throw new Error("Each variable needs at least one possible value.");
+        }
+        return values;
+      }
+
+      function parseVariableDomains(variableSpecText, requiredVariableNames) {
+        const required = [...new Set((requiredVariableNames || []).map((name) => String(name || "").toLowerCase()))].filter(Boolean).sort();
+        if (required.length === 0) {
+          return {};
+        }
+        const domains = {};
+        String(variableSpecText || "")
+          .split(/\n+/)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .forEach((line) => {
+            const pieces = line.split("=");
+            if (pieces.length < 2) {
+              throw new Error("Use one variable per line in the form name = values.");
+            }
+            const name = pieces.shift().trim().toLowerCase();
+            if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(name)) {
+              throw new Error("Variable names must start with a letter and then use letters, digits, or underscores.");
+            }
+            domains[name] = parseVariableValueSpec(pieces.join("="));
+          });
+        required.forEach((name) => {
+          if (!domains[name]) {
+            throw new Error(`Add a value line for variable ${name}.`);
+          }
+        });
+        return domains;
+      }
+
+      function renderedCustomTemplateText(templateText, values) {
+        const trimmed = String(templateText || "").trim();
+        if (!trimmed) {
+          return null;
+        }
+        return renderMathText(replacePromptVariables(trimmed, values));
+      }
+
+      function instantiateCustomQuestion(templateInput, useRandomValues) {
+        const template = normalizeCustomTemplateRecord(templateInput);
+        if (!template) {
+          throw new Error("The custom card is missing a prompt or an accepted interval.");
+        }
+        const promptVariables = extractCustomTemplateVariableNames(template.promptTemplate);
+        const extraTextVariables = [
+          ...extractCustomTemplateVariableNames(template.hintTemplate || ""),
+          ...extractCustomTemplateVariableNames(template.solutionTemplate || ""),
+        ];
+        const formulaVariables = extractFormulaVariableNames([template.lowerExpression, template.upperExpression]);
+        const requiredVariables = [...new Set([...promptVariables, ...extraTextVariables, ...formulaVariables])].sort();
+        const variableDomains = parseVariableDomains(template.variableSpecText, requiredVariables);
+        const chosenValues = {};
+        requiredVariables.forEach((name) => {
+          const domain = variableDomains[name];
+          if (!Array.isArray(domain) || domain.length === 0) {
+            throw new Error(`Variable ${name} has no usable values.`);
+          }
+          chosenValues[name] = useRandomValues ? domain[Math.floor(Math.random() * domain.length)] : domain[0];
+        });
+        const lowerValue = parseMathExpression(substituteVariablesInExpression(template.lowerExpression, chosenValues));
+        const upperValue = parseMathExpression(substituteVariablesInExpression(template.upperExpression, chosenValues));
+        if (!Number.isFinite(lowerValue)) {
+          throw new Error("The lower endpoint formula could not be evaluated.");
+        }
+        if (!Number.isFinite(upperValue)) {
+          throw new Error("The upper endpoint formula could not be evaluated.");
+        }
+        const acceptedLower = Math.min(lowerValue, upperValue);
+        const acceptedUpper = Math.max(lowerValue, upperValue);
+        const renderedPrompt = renderMathText(replacePromptVariables(template.promptTemplate, chosenValues));
+        const renderedCustomHint = renderedCustomTemplateText(template.hintTemplate, chosenValues);
+        const renderedCustomSolution = renderedCustomTemplateText(template.solutionTemplate, chosenValues);
+        const variableSummary = Object.keys(chosenValues).length === 0
+          ? "This custom card does not use random variables."
+          : Object.entries(chosenValues).sort((left, right) => left[0].localeCompare(right[0])).map(([name, value]) => `${name} = ${formatTemplateValue(value)}`).join(", ");
+        const midpoint = (acceptedLower + acceptedUpper) / 2;
+        return {
+          topicId: template.topicId,
+          category: "Custom card",
+          prompt: renderedPrompt,
+          hint: renderedCustomHint || "no hint provided for this custom card",
+          inputMode: template.inputMode,
+          formatHint: customFormatHint(template.inputMode),
+          answer: midpoint,
+          mentalAnswer: midpoint,
+          absTolerance: 0,
+          relTolerance: 0,
+          explanation: Object.keys(chosenValues).length === 0
+            ? `Evaluate the lower and upper endpoint formulas directly. Any answer between ${formatSingleCustomAnswer(acceptedLower, template.inputMode)} and ${formatSingleCustomAnswer(acceptedUpper, template.inputMode)}, inclusive, is accepted.`
+            : `For this sample, ${variableSummary}. Evaluating the two endpoint formulas gives an accepted interval from ${formatSingleCustomAnswer(acceptedLower, template.inputMode)} to ${formatSingleCustomAnswer(acceptedUpper, template.inputMode)}, inclusive.`,
+          workedSolution: renderedCustomSolution || "no solution text provided for this custom card",
+          methodExplanation: "Custom-card grading evaluates the lower and upper endpoint formulas after substituting the sampled variable values. Any response between those two computed endpoints, inclusive, is counted as correct.",
+          difficulty: template.difficulty,
+          source: "custom-template",
+          visual: null,
+          problemKey: `custom:${template.id}:${hashString(`${renderedPrompt}||${formatNumber(acceptedLower, 8)}||${formatNumber(acceptedUpper, 8)}`)}`,
+          runtimeFamily: null,
+          acceptedLower,
+          acceptedUpper,
+          customTemplateId: template.id,
+        };
+      }
+
       function parseMathExpression(text) {
         const normalized = text.trim().replace(/\s+/g, "").toLowerCase();
         if (!normalized) {
@@ -19954,9 +21618,43 @@
         return value;
       }
 
-      function isApproxCorrect(question, parsedAnswer) {
+      function parseAnswerCandidates(rawInput, inputMode) {
+        const trimmed = rawInput.trim().replace(/,/g, "");
+        if (!trimmed) {
+          return [];
+        }
+
+        const hasPercent = trimmed.endsWith("%");
+        const numericText = hasPercent ? trimmed.slice(0, -1).trim() : trimmed;
+        const value = parseMathExpression(numericText);
+        if (!Number.isFinite(value)) {
+          return [];
+        }
+
+        if (inputMode === "probability") {
+          return [hasPercent || Math.abs(value) > 1 ? value / 100 : value];
+        }
+
+        if (inputMode === "percent") {
+          const candidates = [];
+          if (hasPercent) {
+            candidates.push(value);
+          } else {
+            candidates.push(Math.abs(value) < 1 ? value * 100 : value);
+            if (Math.abs(value) <= 2) {
+              candidates.push(value * 100);
+            }
+          }
+          return candidates.filter((candidate, index, values) => values.findIndex((other) => Math.abs(other - candidate) < 1e-9) === index);
+        }
+
+        return [value];
+      }
+
+      function isApproxCorrect(question, parsedAnswer, rawInput = "") {
         const { lower, upper } = getAcceptedBounds(question);
-        return parsedAnswer >= lower && parsedAnswer <= upper;
+        const candidates = rawInput ? parseAnswerCandidates(rawInput, question.inputMode) : [parsedAnswer];
+        return candidates.some((candidate) => Number.isFinite(candidate) && candidate >= lower && candidate <= upper);
       }
 
       function computeTolerance(question) {
@@ -19969,6 +21667,13 @@
       }
 
       function getAcceptedBounds(question) {
+        if (Number.isFinite(question.acceptedLower) && Number.isFinite(question.acceptedUpper)) {
+          return {
+            lower: Math.min(Number(question.acceptedLower), Number(question.acceptedUpper)),
+            upper: Math.max(Number(question.acceptedLower), Number(question.acceptedUpper)),
+          };
+        }
+
         const tolerance = computeTolerance(question);
         const answers = getReferenceAnswers(question);
         const lowerRaw = Math.min(...answers) - tolerance;
@@ -20002,6 +21707,9 @@
       }
 
       function formatAnswer(question) {
+        if (question.source === "custom-template" && Number.isFinite(question.acceptedLower) && Number.isFinite(question.acceptedUpper)) {
+          return getAcceptedRange(question);
+        }
         return formatSingleAnswer(question, question.answer);
       }
 
@@ -20038,7 +21746,7 @@
         }
 
         if (entry.question.inputMode === "percent") {
-          return `${entry.rawInput} -> ${formatNumber(entry.parsedAnswer, 3)}%`;
+          return entry.rawInput;
         }
 
         return `${entry.rawInput} -> ${formatNumber(entry.parsedAnswer, 4)}`;
