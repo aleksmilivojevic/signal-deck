@@ -1,0 +1,713 @@
+
+<div class="panel-heading">
+<div>
+<p class="section-tag">Learning Guide</p>
+<h2>Common techniques</h2>
+</div>
+</div>
+<div class="hero-actions">
+<button class="button button--ghost" id="close-learning-guide" type="button">Hide learning guide</button>
+</div>
+<div class="learning-grid">
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Logs, Roots, and Exponents</span></summary><div class="guide-topic-body">
+<p>Choose a nearby point where the function is easy to evaluate, then use one or two terms of a local expansion. Use <code>ln(1+u) ≈ u - u²/2</code> when <code>u</code> is small, <code>sqrt(a+h) ≈ sqrt(a) + h/(2sqrt(a))</code> when <code>a</code> is a nearby perfect square, <code>e^u ≈ 1 + u + u²/2</code> when <code>u</code> is small, and <code>log₂(x) = ln(x)/ln(2)</code> for base-2 logs.</p>
+<div class="guide-example">
+<strong>Examples:</strong> to estimate <code>ln(1.08)</code>, write it as <code>ln(1+0.08)</code> and use <code>0.08 - 0.08²/2 = 0.0768</code>. To estimate <code>sqrt(50)</code>, anchor at <code>49</code> and use <code>sqrt(49+1) ≈ 7 + 1/(2·7) = 7.07</code>. To estimate <code>log₂(10)</code>, compute <code>ln(10)/ln(2) ≈ 2.303/0.693 ≈ 3.32</code>.
+            </div>
+<details class="guide-details">
+<summary>Why this works</summary>
+<p>This is the Taylor-expansion idea. If <code>f</code> is smooth and <code>h</code> is small, then <code>f(a+h) = f(a) + h f'(a) + O(h²)</code>. The first-order term gives the quick estimate; the second-order term tells you whether that estimate tends to be slightly high or slightly low.</p>
+<p>For <code>ln(1+u)</code>, the second-order correction is negative, so the linear estimate <code>u</code> overshoots. For <code>e^u</code>, the second-order correction is positive, so the linear estimate <code>1+u</code> undershoots. For square roots, the derivative <code>1/(2sqrt(a))</code> explains why moving from <code>49</code> to <code>50</code> adds about <code>1/14</code>, not about <code>1</code>.</p>
+<p>Mixed cards are not a separate theory. They just ask you to approximate each component with the correct local rule, then combine the results while keeping track of sign and scale.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Normal Tails</span></summary><div class="guide-topic-body">
+<p>Throughout this deck, an “upper-tail anchor” means a statement of the form <code>P(Z &gt; z) ≈ α</code> for <code>Z ~ N(0,1)</code>. The anchors worth memorizing are explicit probability statements: <code>P(Z &gt; 1.28) ≈ 0.10</code>, <code>P(Z &gt; 1.64) ≈ 0.05</code>, <code>P(Z &gt; 1.96) ≈ 0.025</code>, and <code>P(Z &gt; 2.33) ≈ 0.01</code>. By symmetry, <code>P(Z &lt; -1.28) ≈ 0.10</code> and similarly for the others.</p>
+<div class="guide-example">
+<strong>Example:</strong> if the prompt asks for <code>P(Z &gt; 1.64)</code>, use the memorized one-sided tail and answer about <code>0.05</code>. If the prompt asks for <code>P(|Z| &gt; 1.64)</code>, double that and answer about <code>0.10</code>. If the prompt asks for <code>P(|Z| &lt; 1.64)</code>, subtract both tails from 1 and answer about <code>0.90</code>.
+            </div>
+<details class="guide-details">
+<summary>How to read these statements correctly</summary>
+<p>A statement like <code>P(Z &gt; 1.64) ≈ 0.05</code> is a one-sided upper-tail statement. It does <strong>not</strong> mean <code>P(|Z| &gt; 1.64)</code>; that two-sided probability is about <code>0.10</code>. Likewise, <code>P(Z &lt; 1.64)</code> is about <code>0.95</code>, because it is the complement of the upper tail.</p>
+<p>If the prompt gives a probability and asks for <code>z</code>, you are solving a quantile problem. For example, “find <code>z</code> such that <code>P(Z &gt; z) ≈ 0.05</code>” means “find the number whose one-sided upper tail is about five percent,” which gives <code>z ≈ 1.64</code>.</p>
+<p>This is why a short table is enough. Once you translate the question into upper tail, lower tail, or central probability, the rest is symmetry and complementation.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Expected Max of Normals</span></summary><div class="guide-topic-body">
+<p>Let <code>M_n = max(Z₁, ..., Z_n)</code> for iid <code>Z_i ~ N(0,1)</code>. The exact distribution is <code>P(M_n ≤ x) = Φ(x)^n</code>. The first mental anchor is the level <code>u_n</code> that solves <code>P(Z &gt; u_n) ≈ 1/n</code>. This means that among <code>n</code> independent standard-normal draws, the expected number of draws above <code>u_n</code> is about 1. That level is a location estimate for the maximum, not the exact mean <code>E[M_n]</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> if <code>n = 20</code>, then <code>1/n = 0.05</code>. The matching one-sided upper-tail normal level is about <code>u_{20} ≈ 1.64</code>, because <code>P(Z &gt; 1.64) ≈ 0.05</code>. At that threshold,
+              <code>P(M_{20} ≤ 1.64) = (0.95)^{20} ≈ e^{-1} ≈ 0.37</code>,
+              so <code>P(M_{20} &gt; 1.64) ≈ 0.63</code>. This shows what the anchor means: it is the point where the maximum has become quite likely to exceed the threshold, not a claim that the mean equals <code>1.64</code>.
+            </div>
+<details class="guide-details">
+<summary>Why this works</summary>
+<p>Write <code>p = P(Z &gt; x)</code>. Then <code>P(M_n ≤ x) = (1-p)^n</code>. When <code>p</code> is small, <code>(1-p)^n ≈ e^{-np}</code>. So the level where <code>np ≈ 1</code> is the level where <code>P(M_n ≤ x)</code> is about <code>e^{-1}</code>. That is the mathematical reason the “one expected exceedance” level is the correct first anchor.</p>
+<p>This still does not equal the expectation. The quantity <code>E[M_n]</code> depends on the whole upper tail of the distribution of <code>M_n</code>, not just the single level where exceedances become order one. There is still substantial mass above <code>u_n</code>, so the actual expected maximum is somewhat larger.</p>
+<p>For <code>n = 2</code>, there is an exact identity worth memorizing. Since
+              <code>max(Z₁,Z₂) = (Z₁ + Z₂ + |Z₁-Z₂|)/2</code>
+              and <code>E[Z₁+Z₂]=0</code>, we get
+              <code>E[max(Z₁,Z₂)] = E|Z₁-Z₂|/2</code>.
+              Because <code>Z₁-Z₂ ~ N(0,2)</code>, we have
+              <code>E|Z₁-Z₂| = sqrt(2)·sqrt(2/pi) = 2/sqrt(pi)</code>.
+              Therefore
+              <code>E[max(Z₁,Z₂)] = 1/sqrt(pi) ≈ 0.5642</code>,
+              and by symmetry
+              <code>E[min(Z₁,Z₂)] = -1/sqrt(pi)</code>.</p>
+<p>A sharper large-<code>n</code> refinement is <code>E[M_n] ≈ u_n + γ a_n</code>, where <code>a_n ≈ 1/(n φ(u_n))</code> and <code>γ ≈ 0.577</code>. For a fast estimate, first find the <code>1/n</code> upper-tail quantile; the expected maximum is slightly larger.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Discrete Extremes and Full Sets</span></summary><div class="guide-topic-body">
+<p>The same tail-threshold idea works for discrete variables. For maxima, solve <code>n P(X ≥ k) ≈ 1</code>. For minima, solve <code>n P(X ≤ k) ≈ 1</code> or, when you have many category counts, center each count at its mean and use a left-tail normal anchor. Geometric tails are exact and Poisson counts are often well-approximated by normals with mean and variance <code>λ</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> for <code>max</code> of 16 geometric(1/2) variables, use <code>2^{-(k-1)} ≈ 1/16</code>, so <code>k ≈ 5</code>. For 160 fair 20-sided dice, each face count has mean <code>8</code> and standard deviation about <code>2.76</code>, so the expected number of removable full sets is roughly <code>8 - 1.64 × 2.76 ≈ 3.5</code>.
+            </div>
+<details class="guide-details">
+<summary>Why this works</summary>
+<p>For maxima and minima, the first useful question is: where does the extreme stop being rare? That is exactly what the threshold rules <code>n P(X ≥ k) ≈ 1</code> and <code>n P(X ≤ k) ≈ 1</code> are measuring.</p>
+<p>For the dice-set questions, the number of full sets is the minimum of the face counts. Those counts are dependent because they sum to the total number of dice, but after centering at the mean and scaling by the standard deviation, a normal extreme-value estimate still gives a good mental approximation for where the minimum usually lands.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Cards and Sampling</span></summary><div class="guide-topic-body">
+<p>Deck and urn questions often reduce to indicator variables, symmetry, or simple without-replacement counting. If the question asks for an expected number of marked objects, try one indicator per object and add. If it conditions on part of the sample already seen, translate that condition into exact remaining counts.</p>
+<div class="guide-example">
+<strong>Examples:</strong> expected fixed points in a 52-card shuffle is <code>52 × (1/52) = 1</code>, and if 10 draws from a red-blue urn contain 6 red and 4 blue, the next-draw blue probability is just <code>6/10</code> from what remains.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Indicators are especially strong when the objects are exchangeable. That is why fixed points, expected aces, color changes, and occupied faces all collapse quickly.</p>
+<p>For order questions such as the first ace position, think of the special cards as a uniformly random subset of positions. Then symmetry or order-statistic formulas often replace any heavy combinatorics.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Conditional Probability and Bayes Updates</span></summary><div class="guide-topic-body">
+<p>Let <code>h</code> denote the hidden state, such as the selected coin, urn, or disease status. For each possible state, compute <code>P(h) P(data | h)</code>, then divide by the sum over all states. Thus the posterior probability is proportional to prior probability times likelihood.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if one of three coins with head probabilities <code>1/4</code>, <code>1/2</code>, and <code>3/4</code> is chosen uniformly and you observe <code>HH</code>, then the posterior weights are proportional to <code>(1/4)^2</code>, <code>(1/2)^2</code>, and <code>(3/4)^2</code>, namely <code>1 : 4 : 9</code>. So the probability the next toss is heads is the posterior weighted average
+              <code>(1/4)(1/14) + (1/2)(4/14) + (3/4)(9/14) = 9/14</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Step 1: list the hidden states. Step 2: for each state, compute the likelihood of the observed data under that state. If tosses are conditionally iid given the chosen coin, the likelihood is just <code>p^{#H}(1-p)^{#T}</code>. If draws are without replacement from a chosen urn, the likelihood uses the changing remaining composition. Step 3: multiply prior by likelihood. Step 4: divide by the total to get posterior probabilities.</p>
+<p>If the prompt then asks for a future event, do one more averaging step. For example, if a coin with head probability <code>p_i</code> has posterior weight <code>w_i</code>, then the posterior predictive probability of heads next is <code>Σ w_i p_i</code>. If the prompt instead asks which hidden state is most likely, stop after the posterior calculation.</p>
+<p>Some “classic” conditional-probability questions are really sample-space questions rather than Bayes updates. The two-child puzzle is the standard warning sign: “the older child is a boy” leaves two equally likely families <code>{BB, BG}</code>, so <code>P(BB)=1/2</code>; “at least one child is a boy” leaves three equally likely families <code>{BB, BG, GB}</code>, so <code>P(BB)=1/3</code>. The conditioning statement matters because it changes which outcomes remain and how they are weighted.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Expected Value by Conditioning</span></summary><div class="guide-topic-body">
+<p>When an expected-value question looks messy, first ask whether symmetry already fixes the answer. If not, condition on the first meaningful reveal, solve the smaller continuation problem, and average back up.</p>
+<div class="guide-example">
+<strong>Examples:</strong> with one free reroll of a fair die, the continuation value is <code>3.5</code>, so you keep <code>4, 5, 6</code>. For the first ace in a shuffled deck, symmetry says the 4 ace positions form a random 4-subset of <code>{1, ..., 52}</code>, so the expected first ace position is <code>(52 + 1)/(4 + 1) = 10.6</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Linearity of expectation is the default tool when the quantity is a count. Symmetry is the default tool when every object has the same chance to be the special one. Conditioning is the default tool when the next reveal turns the problem into a smaller copy of itself.</p>
+<p>That covers a lot of the database: cards, urns, coupon questions, stopping rules, and many “fair price” interview problems are all one of those three moves in disguise.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Random Walks on the Integers</span></summary><div class="guide-topic-body">
+<p>For gambler’s ruin on <code>{0, 1, ..., N}</code>, the symmetric hit probability is <code>x / N</code> and the expected exit time is <code>x(N - x)</code>. For a biased walk that moves right with probability <code>p</code> and left with probability <code>q = 1-p</code>, the upper-hit probability becomes <code>(1 - (q/p)^x)/(1 - (q/p)^N)</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> start at <code>x = 3</code> with barriers at <code>0</code> and <code>8</code>. The expected exit time is <code>3 × 5 = 15</code>. If the walk is biased with <code>p = 0.6</code>, <code>q = 0.4</code>, and starts at <code>x = 2</code> on <code>{0,1,…,5}</code>, then the chance of hitting <code>5</code> before <code>0</code> is <code>(1 - (2/3)^2)/(1 - (2/3)^5)</code>.
+            </div>
+<details class="guide-details">
+<summary>Why this works</summary>
+<p>If <code>h(i)</code> is the probability of hitting <code>N</code> before <code>0</code> from state <code>i</code>, conditioning on the first step gives <code>h(i) = (h(i-1) + h(i+1)) / 2</code> with boundary values <code>h(0) = 0</code> and <code>h(N) = 1</code>. The only discrete-harmonic solution with those boundaries is linear, so <code>h(i) = i / N</code>.</p>
+<p>For the expected exit time <code>t(i)</code>, the same first-step conditioning gives <code>t(i) = 1 + (t(i-1) + t(i+1)) / 2</code> with <code>t(0) = t(N) = 0</code>. That forces the second difference to be constant, so <code>t(i)</code> must be quadratic. Solving the boundary-value problem gives <code>t(i) = i(N - i)</code>.</p>
+<p>In the biased case, the recurrence becomes <code>h(i) = p h(i+1) + q h(i-1)</code>. The general solution is <code>A + B(q/p)^i</code>, and the boundary values <code>h(0)=0</code>, <code>h(N)=1</code> force <code>h(i) = (1 - (q/p)^i)/(1 - (q/p)^N)</code>. When <code>p = q = 1/2</code>, that formula limits back to <code>i/N</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Hitting-Time Variance</span></summary><div class="guide-topic-body">
+<p>For the same walk on <code>{0, 1, ..., N}</code>, the exit-time variance is <code>x(N - x)(N² - 2 - 2x(N - x)) / 3</code>. The mental shortcut is to compute <code>a = x(N - x)</code> first, then plug into <code>a(N² - 2 - 2a)/3</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> if the walk starts at <code>x = 3</code> and stops at <code>0</code> or <code>8</code>, then <code>a = 15</code>, so <code>Var(τ) = 15(64 - 2 - 30)/3 = 160</code>.
+            </div>
+<details class="guide-details">
+<summary>Where the quartic martingale enters</summary>
+<p>The quadratic martingale <code>X_t² - t</code> is enough to get <code>E[τ] = x(N - x)</code>. To get the second moment of the stopping time, you need one more layer: stop the quartic martingale <code>X_t^4 - 6tX_t² + 3t² + 2t</code> at the exit time <code>τ</code>.</p>
+<p>At time <code>τ</code>, the walk sits at <code>0</code> or <code>N</code>, so the stopped identities involve only boundary values, <code>E[τ]</code>, and <code>E[τ²]</code>. Solving those equations gives <code>E[τ²] = x(N - x)(N² - 2 + x(N - x))/3</code>. Subtracting <code>E[τ]²</code> then yields <code>Var(τ) = x(N - x)(N² - 2 - 2x(N - x))/3</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Rings and Regular Polygons</span></summary><div class="guide-topic-body">
+<p>A walk on a regular polygon is a walk on a ring graph. If the polygon has an even number of vertices and you start at vertex <code>A</code>, then “the vertex opposite <code>A</code>” means the unique vertex <code>n/2</code> edges away from <code>A</code>. If a prompt says “a specific marked vertex <code>B</code> that is <code>d</code> edges away from <code>A</code>,” that means one designated target vertex, not either of the two symmetric choices.</p>
+<div class="guide-example">
+<strong>Example:</strong> on a regular octagon, the unique vertex opposite <code>A</code> is 4 edges away, so the expected time to hit it from <code>A</code> is <code>4(8 - 4) = 16</code>.
+            </div>
+<details class="guide-details">
+<summary>Why d(n - d)?</summary>
+<p>A regular <code>n</code>-gon gives the cycle graph with <code>n</code> edges. If <code>A</code> and <code>B</code> are at graph distance <code>d</code>, then the two arcs from <code>A</code> to <code>B</code> have lengths <code>d</code> and <code>n - d</code>. In the electrical-network picture, those are parallel resistors, so the effective resistance is <code>d(n - d) / n</code>.</p>
+<p>The commute-time identity says <code>H(A,B) + H(B,A) = 2m R_eff(A,B)</code>, where <code>m</code> is the number of edges. Here <code>m = n</code>, so the commute time is <code>2d(n - d)</code>. The cycle is symmetric under swapping <code>A</code> and <code>B</code>, so <code>H(A,B) = H(B,A)</code>. Therefore each one-way hitting time is <code>d(n - d)</code>.</p>
+<p>For probability cards, keep the labels straight. Let <code>A</code> be the bad boundary and <code>O</code> the unique vertex opposite <code>A</code> on an even <code>n</code>-gon. If the walk starts at the specific vertex lying <code>i</code> edges from <code>A</code> along one chosen arc from <code>A</code> to <code>O</code>, folding the cycle turns the problem into gambler’s ruin on <code>{0,1,…,d}</code>, where <code>d = n/2</code>. The probability of hitting <code>O</code> before <code>A</code> is then exactly <code>i/d</code>. In particular, if you start at the specific neighbor of <code>A</code> on that arc, the probability is <code>1/d</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Markov Chain Spectra on Rings</span></summary><div class="guide-topic-body">
+<p>These spectrum cards are about the <strong>transition matrix</strong> of the simple random walk Markov chain. On an <code>n</code>-vertex ring, one step averages the two neighbors, and that averaging rule produces eigenvalues <code>cos(2πk/n)</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> on an 8-vertex ring, the second-largest transition-matrix eigenvalue is <code>cos(2π/8) = cos(π/4) ≈ 0.707</code>, so the spectral gap is about <code>1 - 0.707 = 0.293</code>.
+            </div>
+<details class="guide-details">
+<summary>Where the formula comes from</summary>
+<p>If <code>P</code> is the transition matrix, then <code>(Pf)(j) = (f(j-1) + f(j+1)) / 2</code> because the walk moves left or right with probability <code>1/2</code>. Now test the Fourier mode <code>f_k(j) = e^{2πikj/n}</code>.</p>
+<p>Applying <code>P</code> gives <code>(Pf_k)(j) = (e^{-2πik/n} + e^{2πik/n}) f_k(j) / 2 = cos(2πk/n) f_k(j)</code>. So each Fourier mode is an eigenvector, and its eigenvalue is exactly <code>cos(2πk/n)</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Sharpe from a PnL Graph</span></summary><div class="guide-topic-body">
+<p>If a graph shows cumulative PnL values <code>C_0, C_1, ..., C_m</code> at equally spaced times, recover each period's PnL as <code>R_i = C_i - C_{i-1}</code>. The period Sharpe ratio is <code>mean(R_i) / sd(R_i)</code>. For annualized Sharpe, multiply by <code>sqrt(periods per year)</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> if monthly cumulative PnL is <code>0, 2, 2, 4, 4, 6</code>, then the monthly increments are <code>2, 0, 2, 0, 2</code>. Their mean is <code>(2+0+2+0+2)/5 = 1.2</code>. Their standard deviation is about <code>0.98</code>. So the monthly Sharpe is about <code>1.2/0.98 ≈ 1.22</code>. If the prompt asks for annualized Sharpe, multiply by <code>sqrt(12)</code> to get about <code>4.2</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Step 1: convert cumulative PnL into period increments. Step 2: compute or estimate the average increment. Step 3: compute or estimate the standard deviation of the increments. Step 4: divide mean by standard deviation. Step 5: annualize only if the prompt explicitly asks for it.</p>
+<p>On an easier marked chart, you can read off enough increments to estimate them directly. On a dense chart, the intended judgment is visual: a steeper average slope means larger mean increment, and a rougher path around that trend means larger standard deviation. In that dense case, you are estimating the ratio “drift per period divided by wiggle per period,” not reconstructing every single increment exactly.</p>
+<p>If the graph is plotted in dollars, percent of capital, or some other linear unit, the Sharpe is unchanged by rescaling the vertical axis, because both the numerator and denominator scale by the same factor.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Sharpe and Return Probabilities</span></summary><div class="guide-topic-body">
+<p>If a return <code>R</code> has Sharpe ratio <code>S</code> and standard deviation <code>σ</code> for a given period, then its mean return for that same period is <code>μ = Sσ</code>. After that, there are two different kinds of questions. If the prompt gives a distributional model, such as approximate normality, compute a z-score and use that model. If the prompt gives no distribution, use a bound that depends only on mean and variance.</p>
+<div class="guide-example">
+<strong>Example:</strong> if monthly Sharpe is <code>0.5</code> and monthly volatility is <code>2%</code>, then the monthly mean is <code>μ = 0.5 × 2% = 1%</code>. If the prompt says returns are approximately normal, then
+              <code>P(R &gt; 3%) = P((R-μ)/σ &gt; (3%-1%)/2%) = P(Z &gt; 1)</code>,
+              which is about <code>0.16</code>. If no distribution is given and the prompt asks for a bound on <code>P(R &lt; 0)</code>, then the relevant distance below the mean is <code>a = μ</code>, and Cantelli gives
+              <code>P(R-μ ≤ -a) ≤ σ²/(σ²+a²)</code>.
+            </div>
+<details class="guide-details">
+<summary>Which probability statement you are actually bounding</summary>
+<p>If the prompt asks for the probability of a negative return and the return has mean <code>μ &gt; 0</code>, then you are bounding
+              <code>P(R &lt; 0) = P(R-μ ≤ -μ)</code>.
+              Cantelli therefore gives
+              <code>P(R &lt; 0) ≤ σ²/(σ² + μ²)</code>.
+              If you rewrite <code>μ = Sσ</code>, this becomes
+              <code>P(R &lt; 0) ≤ 1/(1+S²)</code>.
+              That is the clean mental formula when only Sharpe is given.</p>
+<p>If the prompt instead asks about exceeding some target <code>k</code>, write the event as <code>R-μ ≥ k-μ</code> or <code>R-μ ≤ k-μ</code> and then choose the correct one-sided bound. Normality gives a sharper answer when it is allowed, because you can compute the actual z-score rather than only a worst-case bound.</p>
+<p>Chebyshev is two-sided and therefore weaker when the question is one-sided. Markov applies only to nonnegative random variables. So for signed returns with unknown distribution, Cantelli is usually the intended bound.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Moments, Covariance, and MGF</span></summary><div class="guide-topic-body">
+<p>This cluster of cards asks for one of four things: a second moment, a variance, a covariance or correlation, or an mgf value. The key identities are explicit. For second moments use <code>E[X²] = Var(X) + (E[X])²</code>. For sums of independent variables add variances. For covariance use <code>Cov(X,Y) = E[XY] - E[X]E[Y]</code>. For mgfs use <code>M_X(t) = E[e^{tX}]</code> and either recognize the family or substitute the given <code>t</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if <code>H ~ Binomial(10,1/2)</code>, then <code>E[H]=5</code> and <code>Var(H)=10·(1/2)(1/2)=2.5</code>, so <code>E[H²]=2.5+25=27.5</code>. If <code>N₁</code> and <code>N₂</code> count 1s and 2s in <code>n</code> fair six-sided dice, then they come from a multinomial split, so <code>Cov(N₁,N₂)=-n(1/6)(1/6)=-n/36</code>. If <code>X ~ Poisson(3)</code>, then <code>M_X(t)=exp(3(e^t-1))</code>, so <code>M_X(ln 2)=exp(3(2-1))=e^3</code>.
+            </div>
+<details class="guide-details">
+<summary>Precise workflow</summary>
+<p>For a variance question, first decide whether the pieces are independent. If they are, add variances. If they come from sampling without replacement, expect a finite-population correction. If they are counts from categories that must sum to a fixed total, expect negative covariance between different categories.</p>
+<p>For covariance, ask whether the two variables share randomness. If they do, covariance is often the variance of the shared component after centering. If they split a fixed total, covariance is often negative. If they come from disjoint independent pieces, covariance is zero.</p>
+<p>For mgfs, either recognize the standard formula directly or plug the requested <code>t</code> into the known mgf. If the prompt asks for mean or variance and gives an mgf, differentiate at zero. If it asks for a plug-in value like <code>M_X(\ln 2)</code>, simplify <code>e^{\ln 2}=2</code> immediately.</p>
+</details>
+</div></details>
+<details class="guide-card guide-card--wide guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Basic Review Distributions</span></summary><div class="guide-topic-body">
+<p>Each row gives the mean <code>E[X]</code>, variance <code>Var(X)</code>, third raw moment <code>E[X^3]</code>, and fourth raw moment <code>E[X^4]</code> when they exist. An entry marked “does not exist” means the defining integral or sum diverges.</p>
+<div class="guide-example">
+<strong>Examples:</strong> for <code>U(0,1)</code>, <code>E[X^k] = 1/(k+1)</code>; for standard normal, odd moments are <code>0</code> and even moments are <code>(k-1)!!</code>; for <code>Poisson(λ)</code>, mean and variance are both <code>λ</code>; for <code>Lognormal(μ,σ²)</code>, <code>E[X] = e^{μ + σ²/2}</code>.
+            </div>
+<div class="guide-table-wrap">
+<table class="guide-table">
+<thead>
+<tr>
+<th>Distribution</th>
+<th>Mean</th>
+<th>Variance</th>
+<th>Third raw moment</th>
+<th>Fourth raw moment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Uniform(0,1)</code></td>
+<td><code>1/2</code></td>
+<td><code>1/12</code></td>
+<td><code>1/4</code></td>
+<td><code>1/5</code></td>
+</tr>
+<tr>
+<td><code>N(0,1)</code></td>
+<td><code>0</code></td>
+<td><code>1</code></td>
+<td><code>0</code></td>
+<td><code>3</code></td>
+</tr>
+<tr>
+<td><code>Poisson(λ)</code></td>
+<td><code>λ</code></td>
+<td><code>λ</code></td>
+<td><code>λ + 3λ² + λ³</code></td>
+<td><code>λ + 7λ² + 6λ³ + λ⁴</code></td>
+</tr>
+<tr>
+<td><code>Binomial(n,p)</code></td>
+<td><code>np</code></td>
+<td><code>np(1-p)</code></td>
+<td><code>np + 3n(n-1)p² + n(n-1)(n-2)p³</code></td>
+<td><code>via factorial moments</code></td>
+</tr>
+<tr>
+<td><code>Geometric(p)</code> on <code>{1,2,...}</code></td>
+<td><code>1/p</code></td>
+<td><code>(1-p)/p²</code></td>
+<td><code>(1+4q+q²)/p³</code></td>
+<td><code>(1+11q+11q²+q³)/p⁴</code></td>
+</tr>
+<tr>
+<td><code>Exponential(λ)</code></td>
+<td><code>1/λ</code></td>
+<td><code>1/λ²</code></td>
+<td><code>6/λ³</code></td>
+<td><code>24/λ⁴</code></td>
+</tr>
+<tr>
+<td><code>Laplace(μ,b)</code></td>
+<td><code>μ</code></td>
+<td><code>2b²</code></td>
+<td><code>μ³ + 6μb²</code></td>
+<td><code>μ⁴ + 12μ²b² + 24b⁴</code></td>
+</tr>
+<tr>
+<td><code>Lognormal(μ,σ²)</code></td>
+<td><code>e^(μ+σ²/2)</code></td>
+<td><code>(e^(σ²)-1)e^(2μ+σ²)</code></td>
+<td><code>e^(3μ+9σ²/2)</code></td>
+<td><code>e^(4μ+8σ²)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="guide-details">
+<summary>How to use the table correctly</summary>
+<p>First identify exactly which quantity the problem asks for: mean, variance, or a raw moment such as <code>E[X^3]</code> or <code>E[X^4]</code>. Do not mix raw moments with central moments. For example, the table entry <code>3</code> for the standard normal fourth raw moment means <code>E[X^4]=3</code>, not “kurtosis equals 3” in some loose verbal sense.</p>
+<p>Second, check whether the moment exists. For heavy-tailed families this is part of the problem. Cauchy has no finite mean or variance. Pareto has a finite mean only when <code>α &gt; 1</code> and a finite variance only when <code>α &gt; 2</code>. Student <code>t_ν</code> has finite variance only when <code>ν &gt; 2</code>. The <code>F_{d₁,d₂}</code> distribution has finite mean only when <code>d₂ &gt; 2</code> and finite variance only when <code>d₂ &gt; 4</code>.</p>
+<p>Third, remember the structural families. Exponential is a gamma special case, chi-square is a gamma special case, and lognormal is the exponential of a normal. Those relationships let you reconstruct formulas if you forget one.</p>
+</details>
+</div></details>
+<details class="guide-card guide-card--wide guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">MGF Quick Table</span></summary><div class="guide-topic-body">
+<p>This table states the moment generating function <code>M_X(t) = E[e^{tX}]</code> and the set of <code>t</code> values for which that expectation is finite. The domain matters. An mgf formula is not just an algebraic expression; it is valid only where the expectation exists.</p>
+<div class="guide-table-wrap">
+<table class="guide-table">
+<thead>
+<tr>
+<th>Distribution</th>
+<th>MGF <code>M_X(t)</code></th>
+<th>Domain / note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>N(μ,σ²)</code></td>
+<td><code>exp(μt + σ²t²/2)</code></td>
+<td>all <code>t</code></td>
+</tr>
+<tr>
+<td><code>Poisson(λ)</code></td>
+<td><code>exp(λ(e^t - 1))</code></td>
+<td>all <code>t</code></td>
+</tr>
+<tr>
+<td><code>Binomial(n,p)</code></td>
+<td><code>(1-p + pe^t)^n</code></td>
+<td>all <code>t</code></td>
+</tr>
+<tr>
+<td><code>Geometric(p)</code> on <code>{1,2,...}</code></td>
+<td><code>pe^t / (1-(1-p)e^t)</code></td>
+<td><code>t &lt; -ln(1-p)</code></td>
+</tr>
+<tr>
+<td><code>Exponential(λ)</code></td>
+<td><code>λ / (λ-t)</code></td>
+<td><code>t &lt; λ</code></td>
+</tr>
+<tr>
+<td><code>Gamma(k,θ)</code></td>
+<td><code>(1-θt)^(-k)</code></td>
+<td><code>t &lt; 1/θ</code></td>
+</tr>
+<tr>
+<td><code>Laplace(μ,b)</code></td>
+<td><code>exp(μt)/(1-b²t²)</code></td>
+<td><code>|t| &lt; 1/b</code></td>
+</tr>
+<tr>
+<td><code>Uniform(a,b)</code></td>
+<td><code>(e^{tb}-e^{ta})/(t(b-a))</code></td>
+<td>all <code>t</code>, extend continuously at <code>t=0</code></td>
+</tr>
+<tr>
+<td><code>Lognormal</code></td>
+<td>no finite mgf for <code>t &gt; 0</code></td>
+<td>Laplace transform exists for <code>t &lt; 0</code></td>
+</tr>
+<tr>
+<td><code>Cauchy</code></td>
+<td>does not exist</td>
+<td>heavy tails</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="guide-details">
+<summary>How to use this table</summary>
+<p>If the card asks for a plug-in value such as <code>M_X(\ln 2)</code>, substitute that value of <code>t</code> and simplify. The simplification <code>e^{\ln m}=m</code> is especially useful for Poisson and binomial mgfs.</p>
+<p>If the card asks you to identify the distribution from an mgf, look at the exact form. A quadratic exponent <code>exp(μt + σ²t²/2)</code> is normal. A term <code>e^t - 1</code> signals Poisson. A power of a linear denominator signals gamma-family. If no finite mgf exists for positive <code>t</code>, that is itself meaningful information about tail behavior.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Moments and MGF Workflow</span></summary><div class="guide-topic-body">
+<p>To calculate a moment, differentiate the mgf at zero, use a known formula for the distribution family, rewrite the variable as a transform of a simpler one, or use symmetry to show that an odd moment is zero.</p>
+<div class="guide-example">
+<strong>Examples:</strong> for <code>X ~ N(0,1)</code>, odd moments vanish by symmetry and <code>E[X^{2m}] = (2m-1)!!</code>. For a lognormal <code>X = e^Y</code> with <code>Y ~ N(μ,σ²)</code>, raw moments come from <code>E[X^r] = E[e^{rY}] = exp(rμ + 0.5r²σ²)</code>. For Poisson or binomial, the mgf or factorial-moment route is usually faster than summing the pmf directly.</div>
+<details class="guide-details">
+<summary>Step-by-step workflow</summary>
+<p>Step 1: decide what quantity is being asked for. Mean is <code>E[X]</code>, variance is <code>E[X²]-E[X]^2</code>, and a “fourth moment” question usually means the raw moment <code>E[X^4]</code> unless the prompt explicitly says central moment.</p>
+<p>Step 2: choose the right route. If an mgf is known and easy, differentiate it at zero. If the distribution is a transform, use the transform directly. For example, if <code>X = e^Y</code> with <code>Y ~ N(μ,σ²)</code>, then
+              <code>E[X^r] = E[e^{rY}] = exp(rμ + 0.5r²σ²)</code>.
+              That immediately gives
+              <code>E[X] = exp(μ + σ²/2)</code> and
+              <code>E[X²] = exp(2μ + 2σ²)</code>,
+              so
+              <code>Var(X) = (e^{σ²}-1)e^{2μ+σ²}</code>.</p>
+<p>Step 3: check symmetry or existence. For distributions symmetric about 0, odd raw moments vanish. For heavy-tailed families, verify that the requested moment exists before trying to compute it.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Distribution Relationships</span></summary><div class="guide-topic-body">
+<p>Sums of Bernoulli variables produce binomial counts, rare-event binomials converge to Poisson laws, normalized independent gamma variables produce beta laws, and the quotient of two independent standard normals is Cauchy.</p>
+<div class="guide-example">
+<strong>Examples:</strong> <code>Binomial(n,p)</code> becomes <code>Poisson(λ)</code> when <code>n</code> is large, <code>p</code> is small, and <code>np = λ</code>; exponential is the continuous analogue of geometric waiting time; the <code>k</code>-th order statistic of uniform draws is beta; and if <code>X</code> and <code>Y</code> are iid standard normal, then <code>X/Y</code> is standard Cauchy.
+            </div>
+<details class="guide-details">
+<summary>Exact statements</summary>
+<p><code>Binomial → Poisson</code>: if <code>X_n ~ Binomial(n,p_n)</code> with <code>n p_n → λ</code> and <code>p_n → 0</code>, then <code>X_n</code> is approximately <code>Poisson(λ)</code>. This is the “many tiny independent chances” regime.</p>
+<p><code>Geometric ↔ Exponential</code>: geometric is the discrete memoryless waiting-time law, exponential is the continuous memoryless waiting-time law. Under a small time-step limit, a geometric waiting time rescales to an exponential one.</p>
+<p><code>Uniform → Beta</code>: if <code>U_{(r)}</code> is the <code>r</code>-th order statistic from <code>n</code> iid <code>Uniform(0,1)</code> draws, then <code>U_{(r)} ~ Beta(r, n-r+1)</code>. This is why <code>E[U_{(r)}] = r/(n+1)</code>.</p>
+<p><code>Beta ↔ Gamma</code>: if <code>G₁ ~ Gamma(a,θ)</code> and <code>G₂ ~ Gamma(b,θ)</code> are independent with the same scale parameter, then <code>G₁/(G₁+G₂) ~ Beta(a,b)</code>.</p>
+<p><code>Gamma ↔ Exponential</code>: <code>Exponential(λ)</code> is the same as <code>Gamma(shape=1, rate=λ)</code>. More generally, the sum of <code>k</code> independent <code>Exponential(λ)</code> variables is <code>Gamma(shape=k, rate=λ)</code>.</p>
+<p><code>Poisson ↔ Exponential ↔ Gamma</code>: in a Poisson process with rate <code>λ</code>, the count in time <code>t</code> is <code>Poisson(λt)</code>, the waiting time to the first arrival is <code>Exponential(λ)</code>, and the waiting time to the <code>k</code>-th arrival is <code>Gamma(shape=k, rate=λ)</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Birthday Matches</span></summary><div class="guide-topic-body">
+<p>There are two nearby but different birthday expectations. The expected number of matching pairs in a group of <code>n</code> is <code>choose(n, 2) / 365</code>. The expected number of people who have at least one match is <code>n(1 - (364/365)^(n-1))</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> with <code>25</code> people, the expected number of matching pairs is <code>300 / 365 ≈ 0.822</code>, while the expected number of people who would raise their hands because someone else shares their birthday is about <code>1.59</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the formulas differ</summary>
+<p>For matching pairs, put an indicator on each unordered pair of people. Each pair matches with probability <code>1/365</code>, and there are <code>choose(n, 2)</code> such pairs, so linearity gives the expectation immediately.</p>
+<p>For raised hands, fix one person and ask for the chance that at least one of the other <code>n - 1</code> people shares their birthday. That probability is <code>1 - (364/365)^(n-1)</code>, and summing that same expectation over all people gives the hand count.</p>
+<p>If four people share one birthday, that produces <code>6</code> matching pairs but only <code>4</code> raised hands, so the two quantities are measuring different things.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Symmetry Tricks</span></summary><div class="guide-topic-body">
+<p>Some interview questions look computational until you spot a symmetry. If one player gets one extra fair coin toss after an otherwise symmetric contest, that extra toss is just a fair tiebreaker. If you need three equally likely outcomes from fair coins, use two-flip rounds and restart on one bad pattern.</p>
+<div class="guide-example">
+<strong>Examples:</strong> getting more heads in <code>5</code> fair tosses than someone else gets in <code>4</code> fair tosses has probability <code>1/2</code>. Choosing fairly among three children via <code>HH</code>, <code>HT</code>, <code>TH</code>, and restart-on-<code>TT</code> takes an expected <code>8/3</code> flips.
+            </div>
+<details class="guide-details">
+<summary>Why these shortcuts work</summary>
+<p>For the <code>5</code>-versus-<code>4</code> coin game, imagine both players first toss <code>4</code> coins. The game is completely symmetric up to that point. If they tie, the extra fifth toss is simply a fair tiebreaker for the player with the extra coin.</p>
+<p>For the three-child selection trick, two fair flips create four equally likely outcomes. Three outcomes are useful and one means “start over,” so each round succeeds with probability <code>3/4</code> and costs <code>2</code> flips. That gives expected flips <code>2 / (3/4) = 8/3</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Circle and Modulo Tricks</span></summary><div class="guide-topic-body">
+<p>Circle problems often hide a semicircle criterion, and divisibility questions with many fair dice often hide modular uniformity. These are both places where one structural observation can replace a long count.</p>
+<div class="guide-example">
+<strong>Examples:</strong> three random points on a circle contain the center in their triangle with probability <code>1/4</code>. The sum of <code>10</code> fair six-sided dice is divisible by <code>6</code> with probability exactly <code>1/6</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the clean answers appear</summary>
+<p>The center lies inside the triangle exactly when the three chosen points are not all contained in any semicircle. The complement event has probability <code>3/4</code>, leaving the desired probability <code>1/4</code>.</p>
+<p>For fair six-sided dice, each die is uniform modulo <code>6</code>, since the faces correspond to the residues <code>1,2,3,4,5,0</code> equally often. Adding an independent uniform residue modulo <code>6</code> keeps the sum uniform modulo <code>6</code>, so every residue class occurs with probability <code>1/6</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Regression and Bayesian Updates</span></summary><div class="guide-topic-body">
+<p>In simple linear regression, the slope is <code>β₁ = ρ σ_Y / σ_X</code> and the intercept is <code>β₀ = ȳ - β₁ x̄</code>. If the variables are standardized, the slope is just the correlation. In that same one-factor world, <code>R² = ρ²</code>, the explained variance is <code>ρ² Var(Y)</code>, and the residual variance is <code>(1 - ρ²) Var(Y)</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if <code>Corr(X,Y)=0.6</code>, <code>sd(X)=2</code>, and <code>sd(Y)=5</code>, then the slope of <code>Y</code> on <code>X</code> is <code>0.6 × 5 / 2 = 1.5</code>. If <code>Var(Y)=25</code>, then the residual variance is <code>25(1 - 0.36)=16</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the regression formulas stay simple</summary>
+<p>Least squares is geometry in disguise. The fitted line chooses coefficients so the residual vector is orthogonal to the span of the regressors. In simple regression that orthogonality condition collapses to the familiar slope formula based on covariance divided by variance, which is why correlation and standard deviations are enough to recover the slope mentally.</p>
+<p>Normal-error regression MLE is the same problem because the Gaussian log-likelihood is a constant minus a multiple of the sum of squared residuals. So maximizing likelihood and minimizing squared error are literally the same optimization. Through the origin, that gives <code>beta-hat = sum x_i y_i / sum x_i²</code>. When the <code>x_i</code> are centered, the intercept falls out as <code>y-bar</code>.</p>
+<p>Laplace-error regression changes only one ingredient: squared residuals become absolute residuals. That is why medians and weighted medians appear. The log-likelihood becomes a constant minus a multiple of <code>sum |residual|</code>, so the best-fit coefficient is whichever value balances total weight on both sides instead of balancing squared deviations.</p>
+<p>For the Bayesian cards here, the intended model is explicit regression: <code>β ~ N(m₀, τ²)</code> and <code>y_i = β x_i + ε_i</code> with independent <code>ε_i ~ N(0, σ²)</code>. In that one-parameter Gaussian regression, the posterior variance is <code>1 / (1/τ² + Σx_i²/σ²)</code>, and the posterior mean is that variance times <code>m₀/τ² + Σx_i y_i / σ²</code>.</p>
+<p>So the Bayesian regression cards are really sufficient-statistic cards: once you know <code>Σx_i²</code> and <code>Σx_i y_i</code>, you already know the entire posterior for <code>β</code>. If all <code>x_i = 1</code>, the model reduces to a noisy-mean update, and the posterior mean becomes a precision-weighted average of the prior mean and the sample mean.</p>
+<p>That is also where shrinkage comes from. Noisy data means small data precision, so the posterior stays closer to the prior. Precise data means large data precision, so the posterior moves toward the regression estimate. For prediction, regression-to-the-mean is still the mental anchor: if <code>X</code> is <code>z</code> standard deviations above its mean, the fitted <code>Y</code> is only <code>ρz</code> standard deviations above its own mean.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Order Statistics</span></summary><div class="guide-topic-body">
+<p>For <code>Uniform(0,1)</code> draws, the expected <code>r</code>-th smallest value is <code>r/(n+1)</code>. That means the expected largest is <code>n/(n+1)</code>, the expected second-largest is <code>(n-1)/(n+1)</code>, and so on. For fair <code>m</code>-sided dice, a fast mental approximation is the same continuous rule scaled to <code>{1, ..., m}</code>: use <code>((n-j+1)/(n+1))(m+1)</code> for the <code>j</code>-th largest.</p>
+<div class="guide-example">
+<strong>Examples:</strong> among 5 uniform draws, the expected second-largest is <code>4/6 = 2/3</code>. Among 5 rolls of a fair 20-sided die, the expected second-largest is roughly <code>(4/6) × 21 = 14</code>. The minimum of <code>n</code> uniforms has variance <code>n/((n+1)^2(n+2))</code>.
+            </div>
+<details class="guide-details">
+<summary>Why these formulas are so structured</summary>
+<p>For <code>Uniform(0,1)</code>, the order statistics carve the unit interval into <code>n + 1</code> exchangeable spacings. By symmetry, each spacing has expected length <code>1/(n+1)</code>. Summing the first <code>r</code> spacings gives the expected <code>r</code>-th smallest value <code>r/(n+1)</code>. That is why the formula is exact and so clean.</p>
+<p>For discrete dice, exact expectations come from survival probabilities: the <code>j</code>-th largest roll is at least <code>k</code> exactly when at least <code>j</code> rolls land in <code>{k, k+1, ..., m}</code>. The site computes that exact discrete answer, but the mental shortcut treats the die as a continuous uniform grid, which is why the accepted range covers both.</p>
+<p>Exponentials are special because the ordered gaps are explicit. If <code>X_(1) &lt; ... &lt; X_(n)</code> are the sorted values, then <code>X_(1)</code> has mean <code>1/(nλ)</code>, the next gap <code>X_(2)-X_(1)</code> has mean <code>1/((n-1)λ)</code>, and in general the gaps are independent exponentials with rates <code>nλ,(n-1)λ,...,λ</code>. So
+              <code>E[X_(n)] = 1/(nλ) + 1/((n-1)λ) + ... + 1/λ = H_n/λ</code>.
+              More generally, the <code>j</code>-th largest value is <code>X_(n-j+1)</code>, so
+              <code>E[X_(n-j+1)] = (1/λ)\sum_{m=j}^n 1/m</code>.
+              For mental math, replace <code>H_n</code> by <code>ln n + γ</code>.</p>
+<p>The minimum of <code>n</code> uniforms is Beta(<code>1,n</code>), so <code>E[min] = 1/(n+1)</code> and <code>Var(min) = n/((n+1)^2(n+2))</code>. Broken-stick spacings are the same exchangeability idea in disguise: if you cut <code>[0,1]</code> at random, the <code>m</code> segment lengths form a symmetric Dirichlet vector, so the expected <code>j</code>-th largest spacing is <code>(1/m)∑_{k=j}^m 1/k</code>.</p>
+<p>The polygon version of the broken-stick problem is just the “largest piece” test: the pieces can form a polygon exactly when no piece exceeds <code>1/2</code>, since the total length is 1. And for the random-interval cards, all intervals intersect exactly when the middle cut between the <code>n</code>-th and <code>(n+1)</code>-st ordered endpoints is crossed by every pair, which is why the answer becomes a pure counting ratio <code>2^n/(2n choose n)</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Kelly and Hedge Ratios</span></summary><div class="guide-topic-body">
+<p>Kelly sizing and minimum-variance hedging are both “optimize a quadratic-looking expression” problems, but they optimize different things. Kelly maximizes expected log-growth. Hedge ratios minimize return variance.</p>
+<div class="guide-example">
+<strong>Examples:</strong> for a bet that wins <code>b</code> dollars with probability <code>p</code> and loses <code>1</code> dollar otherwise, the Kelly fraction is <code>(bp-q)/b</code>. If you hedge <code>R_A</code> with <code>R_A - hR_B</code>, the variance-minimizing choice is <code>h^* = Cov(R_A,R_B)/Var(R_B) = ρσ_A/σ_B</code>.
+            </div>
+<details class="guide-details">
+<summary>Why these formulas are so short</summary>
+<p>For Kelly, if you bet fraction <code>f</code>, the one-step log-growth is <code>p ln(1 + bf) + q ln(1 - f)</code>. Differentiate and set to zero: <code>pb/(1+bf) - q/(1-f) = 0</code>. Solving gives <code>f^* = (bp-q)/b</code>. In the percentage-return version with upside <code>u</code> and downside <code>d</code>, the same derivative gives <code>f^* = (pu-qd)/(ud)</code>.</p>
+<p>For hedging, expand <code>Var(R_A - hR_B) = Var(R_A) - 2hCov(R_A,R_B) + h^2 Var(R_B)</code>. Differentiate with respect to <code>h</code> and set the derivative to zero. That gives <code>h^* = Cov(R_A,R_B)/Var(R_B)</code>. If the prompt gives correlation and volatilities instead, substitute <code>Cov = ρσ_Aσ_B</code> to get <code>h^* = ρσ_A/σ_B</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Estimation and MLE</span></summary><div class="guide-topic-body">
+<p>Most one-parameter MLE problems collapse to one of a few memorized templates: Bernoulli and binomial give sample proportion, Poisson gives sample mean, exponential rate gives reciprocal sample mean, normal mean gives sample mean, uniform upper-endpoint gives sample maximum, and Laplace location gives sample median.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if 14 of 20 coin flips are heads, <code>p-hat = 14/20 = 0.7</code>. If exponential waiting times average <code>2.5</code>, then the rate MLE is <code>1/2.5 = 0.4</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the same few summaries keep appearing</summary>
+<p>MLE is about finding the parameter value that makes the observed sample most plausible. Once you take logs, the pieces that do not depend on the parameter disappear, and the whole problem often collapses to one statistic. For Bernoulli data it is the number of successes, for Poisson data it is the total count, for exponentials it is the total waiting time, and for a uniform endpoint it is the sample maximum because smaller endpoints make the sample impossible.</p>
+<p>That is also why medians show up for Laplace models. The Laplace log-likelihood is proportional to minus total absolute deviation, so maximizing it means choosing the point that minimizes absolute deviations. In one dimension, that minimizer is the median.</p>
+<p>In the regression versions, the same principle survives with more structure. Normal errors lead to squared-loss minimization, hence least squares. Laplace errors lead to absolute-loss minimization, hence medians or weighted medians after rescaling. The important habit is to ask what summary statistic the log-likelihood is really paying attention to.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fisher Information</span></summary><div class="guide-topic-body">
+<p>Fisher information is the amount of local curvature in the log-likelihood with respect to the parameter. For one observation, it is <code>I_1(θ) = E[(∂_θ ℓ)^2]</code>, or equivalently <code>I_1(θ) = -E[∂_θ² ℓ]</code> when the regularity conditions are valid. For <code>n</code> independent observations, information adds: <code>I_n(θ) = n I_1(θ)</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> one <code>Bernoulli(p)</code> observation has information <code>1 / (p(1-p))</code>, so at <code>p = 1/2</code> that is <code>4</code>. For <code>n</code> iid <code>Poisson(λ)</code> observations, total information is <code>n/λ</code>, so the large-sample standard error scale for <code>λ̂</code> is about <code>√(λ/n)</code>. For <code>X_i ∼ N(μ,σ^2)</code> with known <code>σ^2</code>, information is <code>n/σ^2</code>, so the natural scale for estimating <code>μ</code> is <code>σ/√(n)</code>.</div>
+<div class="guide-fact-grid">
+<article class="guide-fact-card">
+<h4><code>Bernoulli(p)</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(p)=1/(p(1-p))</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">n iid</span><span class="guide-fact-value"><code>I_n(p)=n/(p(1-p))</code></span></div>
+</div>
+</article>
+<article class="guide-fact-card">
+<h4><code>Binomial(m,p)</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(p)=m/(p(1-p))</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">Idea</span><span class="guide-fact-value">same Bernoulli curvature, multiplied by <code>m</code></span></div>
+</div>
+</article>
+<article class="guide-fact-card">
+<h4><code>Poisson(λ)</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(λ)=1/λ</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">n iid</span><span class="guide-fact-value"><code>I_n(λ)=n/λ</code></span></div>
+</div>
+</article>
+<article class="guide-fact-card">
+<h4><code>Exponential(rate λ)</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(λ)=1/λ^2</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">n iid</span><span class="guide-fact-value"><code>I_n(λ)=n/λ^2</code></span></div>
+</div>
+</article>
+<article class="guide-fact-card">
+<h4><code>N(μ,σ^2)</code> with known <code>σ^2</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(μ)=1/σ^2</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">n iid</span><span class="guide-fact-value"><code>I_n(μ)=n/σ^2</code></span></div>
+</div>
+</article>
+<article class="guide-fact-card">
+<h4><code>N(μ,v)</code> with known <code>μ</code>, parameter <code>v=σ^2</code></h4>
+<div class="guide-fact-list">
+<div class="guide-fact-row"><span class="guide-fact-label">One observation</span><span class="guide-fact-value"><code>I_1(v)=1/(2v^2)</code></span></div>
+<div class="guide-fact-row"><span class="guide-fact-label">n iid</span><span class="guide-fact-value"><code>I_n(v)=n/(2v^2)</code></span></div>
+</div>
+</article>
+</div>
+<details class="guide-details">
+<summary>Workflow and interpretation</summary>
+<p>Start from one observation. Differentiate the log-likelihood with respect to the parameter, then square and take expectation, or take the negative expected second derivative. For mental math, the second-derivative route is often shorter.</p>
+<p>The core one-observation formulas worth knowing are:
+              <code>Bernoulli(p): 1/(p(1-p))</code>,
+              <code>Binomial(m,p): m/(p(1-p))</code>,
+              <code>Poisson(λ): 1/λ</code>,
+              <code>Exponential(rate λ): 1/λ^2</code>,
+              <code>Geometric(p)</code> on <code>{1,2,…}</code>: <code>1/(p^2(1-p))</code>,
+              <code>N(μ,σ^2)</code> for <code>μ</code> with known variance: <code>1/σ^2</code>,
+              and <code>N(μ,v)</code> for <code>v=σ^2</code> with known mean: <code>1/(2v^2)</code>.</p>
+<p>Once you have <code>I_n(θ)</code>, there are three common outputs. The information itself is <code>I_n(θ)</code>. The Cramér–Rao lower bound for an unbiased estimator is <code>1/I_n(θ)</code>. The asymptotic MLE standard-error scale is <code>1/sqrt(I_n(θ))</code>. Those are different quantities and should not be conflated.</p>
+<p>For normal observations with a common mean but unequal known variances, information still adds one piece at a time: if <code>X_i ∼ N(μ,σ_i^2)</code> independently, then <code>I(μ) = ∑ 1/σ_i^2</code>. So precise observations count more than noisy ones, and the efficient estimator is the inverse-variance weighted average.</p>
+<p>The interpretation is: larger information means steeper likelihood curvature, which means the data pin down the parameter more tightly. That is why the variance lower bound shrinks as information grows.</p>
+<p><strong>Worked example:</strong> suppose <code>X_1,…,X_{25}</code> are iid <code>Bernoulli(1/4)</code>. One observation has information
+              <code>I_1(p)=1/(p(1-p))=1/((1/4)(3/4))=16/3</code>.
+              So total information is
+              <code>I_{25}(p)=25 · 16/3 = 400/3</code>.
+              The Cramér–Rao lower bound is the reciprocal:
+              <code>Var(p̂) ≥ 1/I_{25}(p)=3/400=0.0075</code>.
+              If the prompt instead asked for the large-sample MLE standard error, take a square root and get
+              <code>√(3/400) ≈ 0.0866</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Cramér–Rao and Rao–Blackwell</span></summary><div class="guide-topic-body">
+<p>Cramér–Rao and Rao–Blackwell answer different questions. Cramér–Rao says: among unbiased estimators, variance cannot go below a certain bound. Rao–Blackwell says: given an unbiased estimator, conditioning it on a sufficient statistic produces another unbiased estimator with variance no larger.</p>
+<div class="guide-example">
+<strong>Example:</strong> if <code>X_1,…,X_n ∼ Bernoulli(p)</code>, then <code>X_1</code> by itself is an unbiased estimator of <code>p</code>, but the sufficient statistic is <code>T = ∑ X_i</code>. Conditioning gives
+              <code>E[X_1 | T] = T/n = X̄</code>.
+              So Rao–Blackwell turns a noisy one-sample estimator into the sample mean, which has lower variance and in fact hits the Cramér–Rao bound <code>p(1-p)/n</code>.</div>
+<details class="guide-details">
+<summary>Why Rao–Blackwell matters</summary>
+<p>Suppose <code>U</code> is any unbiased estimator of <code>θ</code> and <code>T</code> is a sufficient statistic. Then
+              <code>U^*(T) = E[U | T]</code>
+              has the same expectation as <code>U</code> but variance no larger. The reason is the law of total variance:
+              <code>Var(U) = E[Var(U | T)] + Var(E[U | T])</code>.
+              The first term is nonnegative, so replacing <code>U</code> by <code>E[U | T]</code> can only improve or tie the variance.</p>
+<p>Sufficiency means that once you know <code>T</code>, the rest of the sample carries no additional information about the parameter. So any remaining randomness in an estimator beyond <code>T</code> is just noise. Rao–Blackwell removes that noise by averaging over all samples with the same sufficient statistic.</p>
+<p>This is the constructive counterpart to Cramér–Rao. The bound tells you what variance is impossible to beat; Rao–Blackwell tells you how to systematically improve a bad unbiased estimator. When the sufficient statistic is also complete, Lehmann–Scheffé says the Rao–Blackwellized estimator is the unique UMVU estimator.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Options and Put-Call Parity</span></summary><div class="guide-topic-body">
+<p>For European options on a non-dividend stock, the core identity is <code>C - P = S - K e^{-rT}</code>. At zero rates this becomes <code>C - P = S - K</code>. Many interview questions are really just this identity in disguise, or a one-step binomial valuation, or the short-dated at-the-money heuristic <code>call ≈ 0.4 S σ sqrt(T)</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if <code>S = 100</code>, <code>K = 95</code>, and a call costs <code>8</code> with zero rates, then the put is about <code>3</code>. If <code>S = K = 100</code>, <code>σ = 40%</code>, and <code>T = 0.25</code>, an at-the-money call is roughly <code>0.4 × 100 × 0.4 × 0.5 = 8</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>Before doing anything else, ask whether the problem is really a parity problem. If call and put share the same strike and expiry, <code>C - P</code> behaves like a forward, so missing prices, implied spot values, and synthetic positions often become one-line calculations.</p>
+<p>Cash-flow discounting is the same idea with no optionality attached. Under a continuously compounded risk-free rate <code>r</code>, <code>K</code> dollars paid at time <code>T</code> is worth <code>K e^{-rT}</code> today, and <code>X</code> dollars today grows to <code>X e^{rT}</code> by time <code>T</code>. For small <code>rT</code>, the quick check is <code>e^{-rT} ≈ 1 - rT</code> and <code>e^{rT} ≈ 1 + rT</code>.</p>
+<p>For rough pricing, separate intrinsic value from time value. Near expiry, deep in-the-money calls are close to <code>S - K e^{-rT}</code>, deep out-of-the-money calls are near zero, and short-dated at-the-money options live on the scale <code>S σ sqrt(T)</code> with the constant about <code>0.4</code> for a call and about <code>0.8</code> for a straddle.</p>
+<p>In one-step trees, the fair option price is just the discounted risk-neutral expected payoff. With zero rates and a symmetric up/down tree around today’s price, that often collapses to a plain average of the terminal payoffs.</p>
+<p>Digital calls are closely tied to tight call spreads. A narrow call spread divided by its strike width behaves like a digital payoff, which is why a fast market estimate for a 1-dollar digital is often just <code>(C(K) - C(K + h)) / h</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fixed Income and Present Value</span></summary><div class="guide-topic-body">
+<p>Most fixed-income mental-math questions are present-value questions in disguise. Discount each cash flow, add them up, and use quick anchors like <code>e^{-rT} ≈ 1 - rT</code> for small <code>rT</code>. Coupon bonds are just bundles of discounted coupons plus discounted principal.</p>
+<div class="guide-example">
+<strong>Examples:</strong> a zero-coupon payment of <code>100</code> in 2 years at a continuously compounded <code>5%</code> rate is worth <code>100e^{-0.1} ≈ 90.5</code>. A perpetual bond paying <code>6</code> each year at yield <code>4%</code> is worth about <code>6/0.04 = 150</code>.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>The first split is between continuous-compounding and simple discrete discounting. Under continuous compounding, each payment <code>C_t</code> at time <code>t</code> contributes <code>C_t e^{-rt}</code>. Under annual compounding at yield <code>y</code>, it contributes <code>C_t/(1+y)^t</code>. Once the compounding convention is clear, everything else is just cash-flow bookkeeping.</p>
+<p>A coupon bond with face value <code>F</code>, coupon <code>cF</code>, maturity <code>n</code>, and annual yield <code>y</code> is worth <code>∑_{t=1}^n cF/(1+y)^t + F/(1+y)^n</code>. If the coupon rate equals the yield, the price sits near par. If coupon is above yield, price is above par; if coupon is below yield, price is below par.</p>
+<p>An annuity is the same geometric-sum idea with equal cash flows. The level-payment present value is <code>A(1-(1+y)^{-n})/y</code>. A perpetuity or consol is the infinite-horizon limit <code>A/y</code>. Many interview fixed-income questions reduce to recognizing which of those templates the cash-flow stream matches.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Greeks and Hedges</span></summary><div class="guide-topic-body">
+<p>Delta is the first thing to estimate mentally. At the-money call delta is around <code>0.5</code>, deep in-the-money call delta is near <code>1</code>, deep out-of-the-money call delta is near <code>0</code>, and put delta is just call delta minus <code>1</code>. For fast hedge questions, multiply option delta by contract size and number of contracts.</p>
+<div class="guide-example">
+<strong>Examples:</strong> <code>100</code> call contracts with delta <code>0.52</code> and contract size <code>100</code> carry delta about <code>5200</code>, so you short about <code>5200</code> shares to hedge. If a call has delta <code>0.62</code>, the matching put delta is about <code>-0.38</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the quick rules work</summary>
+<p>In Black-Scholes, call delta is <code>N(d₁)</code>. So if <code>d₁</code> is around <code>0</code>, delta is around <code>0.5</code>; if <code>d₁</code> is large positive, delta approaches <code>1</code>; if large negative, it approaches <code>0</code>. Put delta follows from parity: <code>Δ_put = Δ_call - 1</code>.</p>
+<p>Vega is largest for at-the-money options because that is where changing volatility moves the most probability mass across the strike. A good mental scale is <code>vega ≈ 0.4 S sqrt(T)</code> for a full 100-vol-point move, or multiply by <code>0.01</code> for a one-vol-point move.</p>
+<p>Gamma and vega are positive for long vanilla options, while theta is usually negative. Those sign rules matter because many hedge questions are really asking whether you are long or short convexity, or whether a portfolio’s delta will rise or fall after a move.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Ito and GBM</span></summary><div class="guide-topic-body">
+<p>For a transformed geometric Brownian motion, begin with:
+              <code>dS/S = μ dt + σ dW</code>.
+              If the transform is a power, write it explicitly as <code>X = S^k</code>. Then the transformed process satisfies
+              <code>dX/X = (kμ + 0.5k(k-1)σ²) dt + kσ dW</code>.
+              If the transform is logarithmic, use
+              <code>d ln S = (μ - 0.5σ²) dt + σ dW</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> if <code>dS/S = 8% dt + 30% dW</code> and <code>X = S²</code>, then <code>k=2</code>, so
+              <code>dX/X = (2·8% + 0.5·2·1·30%^2)dt + 2·30%dW</code>.
+              Therefore the proportional drift is <code>16% + 9% = 25%</code> and the proportional volatility is <code>60%</code>. If <code>X = ln S</code>, then the drift is <code>8% - 0.5·30%^2 = 3.5%</code> and the volatility is <code>30%</code>.
+            </div>
+<details class="guide-details">
+<summary>Why the power rule is so convenient</summary>
+<p>Ito’s lemma says <code>df(S) = f'(S)dS + 0.5 f''(S)(dS)²</code>. For GBM, <code>(dS)² = σ² S² dt</code>. If <code>f(S) = S^k</code>, then <code>f'(S) = kS^{k-1}</code> and <code>f''(S) = k(k-1)S^{k-2}</code>, so both terms stay proportional to <code>S^k</code>.</p>
+<p>The signed diffusion coefficient in <code>dX/X</code> is <code>kσ</code>. The volatility magnitude is <code>|k|σ</code>. Those are different when <code>k &lt; 0</code>. For example, if <code>X = 1/S</code>, then the diffusion term is <code>-σ dW</code>, but the volatility is still <code>σ</code>.</p>
+<p>For <code>X = S^k</code>, use the power-transform formula above. For <code>X = ln S</code>, use its separate formula. Then select the requested drift coefficient or volatility magnitude and substitute the given values.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Stopping and Martingales</span></summary><div class="guide-topic-body">
+<p>One-step stopping problems are threshold problems: compare what you can lock in right now to the continuation value of using the option to keep going. Martingale stopping problems are different: if the process is fair, optional stopping says timing alone does not create expected value.</p>
+<div class="guide-example">
+<strong>Examples:</strong> with one free die reroll, the continuation value is <code>3.5</code>, so keep <code>4, 5, 6</code>. For a symmetric stock that moves up or down by 1 each minute, the expected sale price stays at the current price under any bounded stopping rule.
+            </div>
+<details class="guide-details">
+<summary>Exact workflow</summary>
+<p>If you get exactly one chance to continue, compute the continuation value first and keep only outcomes above it. That turns many interview stopping questions into simple compare-against-a-threshold drills.</p>
+<p>If the underlying process is a martingale, separate the question of variance reduction from the question of expected value. Stopping can change the distribution, but under the standard fair bounded setup it does not change the mean.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Noodles</span></summary><div class="guide-topic-body">
+<p>If you have <code>n</code> noodles and randomly pair all loose ends, the expected number of loops is <code>1 + 1/3 + 1/5 + ... + 1/(2n - 1)</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> for <code>4</code> noodles, the expectation is <code>1 + 1/3 + 1/5 + 1/7 ≈ 1.676</code>.
+            </div>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Runs</span></summary><div class="guide-topic-body">
+<p>For <code>n</code> fair coin flips, the expected total number of runs is <code>(n + 1) / 2</code>. A good mental rule for the longest run of heads is that it sits around <code>log₂ n</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> in <code>20</code> flips, the expected number of runs is <code>10.5</code>. In <code>64</code> flips, the longest head run is mentally around <code>6</code>.
+            </div>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Return to Origin via Stirling</span></summary><div class="guide-topic-body">
+<p>For a simple symmetric random walk, the probability of being back at the origin after <code>2n</code> steps is <code>choose(2n, n) / 2^(2n)</code>. Stirling turns that into the fast mental heuristic <code>1 / sqrt(pi n)</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> after <code>20</code> steps, a walk returns to the origin with probability <code>choose(20, 10) / 2^20 ≈ 1 / sqrt(10 pi) ≈ 0.178</code>.
+            </div>
+<details class="guide-details">
+<summary>Where the approximation comes from</summary>
+<p>Start from <code>choose(2n, n) = (2n)! / (n!)²</code> and apply Stirling’s formula <code>m! ≈ sqrt(2 pi m) (m/e)^m</code>. The exponential pieces simplify cleanly: <code>(2n/e)^(2n)</code> divided by <code>(n/e)^(2n)</code> leaves <code>2^(2n) = 4^n</code>.</p>
+<p>The square-root terms leave the only surviving denominator: <code>sqrt(4 pi n) / (2 pi n) = 1 / sqrt(pi n)</code>. So <code>choose(2n, n)</code> is approximately <code>4^n / sqrt(pi n)</code>. After dividing by <code>2^(2n) = 4^n</code>, the return probability becomes about <code>1 / sqrt(pi n)</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">First Collision Time</span></summary><div class="guide-topic-body">
+<p>If you keep drawing uniformly from <code>{1, ..., n}</code> with replacement, the expected time until the first repeated value is about <code>sqrt(pi n / 2)</code>. The cruder but very useful scale heuristic is that collisions start to appear when <code>k² / (2n)</code> gets near <code>1</code>, so the answer should live on the order of <code>sqrt(n)</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> for <code>n = 365</code>, the estimate is <code>sqrt(pi × 365 / 2) ≈ 23.9</code>, which is the usual birthday-paradox scale.
+            </div>
+<details class="guide-details">
+<summary>Why the square-root law appears</summary>
+<p>The probability of no collision in the first <code>k</code> draws is
+              <code>(1)(1 - 1/n)(1 - 2/n)...(1 - (k-1)/n)</code>. When <code>k</code> is much smaller than <code>n</code>, take logs and use <code>ln(1 - u) ≈ -u</code> to get
+              <code>P(no collision by k) ≈ exp(-k(k-1)/(2n))</code>.</p>
+<p>That shows the transition from “unlikely collision” to “likely collision” happens when <code>k(k-1)/(2n)</code> is around <code>1</code>, which already gives the right mental scale <code>k ≈ sqrt(2n)</code>. To get the expectation, sum the tail probabilities or approximate by an integral:
+              <code>E[T] ≈ ∫₀^∞ exp(-x²/(2n)) dx = sqrt(pi n / 2)</code>.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Waiting for a Streak</span></summary><div class="guide-topic-body">
+<p>For any fair-coin pattern <code>w</code>, the expected waiting time until you first see it is <code>sum 2^k</code> over all lengths <code>k</code> for which the first <code>k</code> symbols of <code>w</code> equal the last <code>k</code> symbols of <code>w</code>. This is the standard martingale / betting-system result. Runs of heads are just the special case where every prefix is also a suffix, so <code>HHH</code> gives <code>2 + 4 + 8 = 14</code>.</p>
+<div class="guide-example">
+<strong>Examples:</strong> for <code>HTH</code>, the matching prefix/suffix lengths are <code>1</code> and <code>3</code>, so the mean wait is <code>2 + 8 = 10</code>. For <code>HTHT</code>, the matching lengths are <code>2</code> and <code>4</code>, so the mean wait is <code>4 + 16 = 20</code>.
+            </div>
+<details class="guide-details">
+<summary>Why overlap lengths appear</summary>
+<p>The clean proof starts a new bettor on every flip. Each bettor bets sequentially on the letters of the target pattern and doubles their stake whenever they survive one more step. With fair-coin payouts, the total wealth process is a martingale.</p>
+<p>At the stopping time when the pattern first appears, exactly the bettors whose starting positions align with a prefix-suffix overlap are still alive. Their payouts are <code>2^k</code> for the overlap lengths <code>k</code>, so optional stopping turns the expected waiting time into the sum of those powers of 2.</p>
+</details>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Permutations and Coupons</span></summary><div class="guide-topic-body">
+<p>Several classics live here. The expected number of cycles in a random permutation of <code>n</code> items is <code>H_n</code>, the expected number of fixed points is <code>1</code>, the derangement probability is
+              <code>\sum_{k=0}^n (-1)^k/k!</code>
+              and is close to <code>1/e</code> for moderate <code>n</code>, and the expected time to collect <code>n</code> equally likely coupon types is <code>n H_n</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> for <code>4</code> coupon types, the expected collection time is <code>4(1 + 1/2 + 1/3 + 1/4) ≈ 8.33</code>.
+            </div>
+</div></details>
+<details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Classic Puzzles: Coupon Collector Variance and Intervals</span></summary><div class="guide-topic-body">
+<p>Write the full collection time as a sum of stage times. Once you have already seen <code>n - i</code> coupon types, the chance that the next draw gives a new type is <code>i / n</code>. So the time spent in that stage is geometric with mean <code>n / i</code> and variance <code>(1 - i/n) / (i/n)^2 = n²/i² - n/i</code>.</p>
+<p>Adding the stage variances gives
+              <code>Var(T_n) = n² sum(1/i²) - n H_n</code>. For mental math at moderate or large <code>n</code>, a fast shortcut is
+              <code>Var(T_n) ≈ (pi²/6)n² - n(ln n + 1/2) ≈ 1.65 n² - n(ln n + 1/2)</code>.
+              The first term is the main scale: the standard deviation is on the order of <code>1.28n</code>.</p>
+<div class="guide-example">
+<strong>Example:</strong> for <code>n = 20</code>, the mean is <code>20H_20 ≈ 71.95</code>. The exact variance is about <code>566.51</code>, so the standard deviation is about <code>23.80</code>. A rough central <code>95%</code> interval from the mean-variance heuristic is
+              <code>71.95 ± 1.96 × 23.80 ≈ [25.3, 118.6]</code>.
+            </div>
+<details class="guide-details">
+<summary>Where the variance formula comes from</summary>
+<p>Let <code>X_i</code> be the number of draws needed to go from <code>n-i</code> seen coupon types to <code>n-i+1</code> seen coupon types. Then <code>X_i</code> is geometric with success probability <code>p_i = i/n</code>, and the whole stopping time is
+              <code>T_n = X_n + X_{n-1} + ... + X_1</code>.</p>
+<p>Because each stage starts fresh after the previous success, those geometric stage times are independent. Therefore
+              <code>Var(T_n) = sum Var(X_i)</code>. For a geometric random variable on <code>{1,2,3,...}</code>, the variance is <code>(1-p)/p²</code>, so
+              <code>Var(X_i) = (1 - i/n)/(i/n)² = n²/i² - n/i</code>.
+              Summing over <code>i = 1, ..., n</code> gives
+              <code>n² sum(1/i²) - n sum(1/i) = n² sum(1/i²) - nH_n</code>.</p>
+</details>
+<details class="guide-details">
+<summary>How to use it for intervals</summary>
+<p>The coupon-collector distribution is skewed, so a normal interval is only a rough heuristic, not an exact theorem. But as a fast mental summary, it is often good enough to use
+              <code>T_n ≈ mean ± z × sd</code> with mean <code>nH_n</code> and standard deviation <code>sqrt(Var(T_n))</code>.</p>
+<p>So a one-sigma band uses <code>z = 1</code>, and a rough central <code>95%</code> band uses <code>z ≈ 1.96</code>. In practice, many interview-style estimates round that to about <code>2</code>.</p>
+</details>
+</div></details>
+</div>
