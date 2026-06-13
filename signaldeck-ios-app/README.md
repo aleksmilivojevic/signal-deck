@@ -1,5 +1,7 @@
 # Signal Deck for iPhone
 
+Coming soon the app store possibly - but until then:
+
 Signal Deck is a SwiftUI probability, statistics, and quantitative-finance quiz app. It includes configurable quizzes, generated question variants, a learning center, custom cards, personal decks, quiz history, recovery codes, and trophies.
 
 ## Requirements
@@ -18,8 +20,6 @@ Signal Deck is a SwiftUI probability, statistics, and quantitative-finance quiz 
 6. Replace `com.example.signaldeck` with a bundle identifier unique to you.
 7. Select an iPhone simulator or connected iPhone.
 8. Press **Run**.
-
-No API key, server, package installation, or network connection is required for the app's bundled quiz and learning content.
 
 ## Project structure
 
