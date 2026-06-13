@@ -2444,6 +2444,14 @@
         justify-content: center;
       }
 
+      .custom-learning-workshop {
+        align-self: stretch;
+      }
+
+      .custom-learning-workshop textarea {
+        min-height: 11rem;
+      }
+
       .topic-grid {
         display: grid;
         gap: 0.8rem;
@@ -2601,6 +2609,41 @@
       }
 
       @media (max-width: 640px) {
+        #user-center,
+        #user-center .user-grid,
+        #user-center .field-card,
+        #user-center .user-list,
+        #user-center .user-card,
+        #user-center .setup-grid {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        #user-center .field-card,
+        #user-center .user-card {
+          overflow-wrap: anywhere;
+        }
+
+        #user-center .topic-toolbar,
+        #user-center .user-row-head,
+        #user-center .recovery-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        #user-center .recovery-actions .button {
+          width: 100%;
+          min-width: 0;
+        }
+
+        #user-center textarea,
+        #user-center input {
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+        }
+
         .session-options-grid {
           grid-template-columns: 1fr;
         }
@@ -3538,7 +3581,7 @@
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Fisher Information</span></summary><div class="guide-topic-body">
 <p>Fisher information is the amount of local curvature in the log-likelihood with respect to the parameter. For one observation, it is <code>I_1(θ) = E[(∂_θ ℓ)^2]</code>, or equivalently <code>I_1(θ) = -E[∂_θ² ℓ]</code> when the regularity conditions are valid. For <code>n</code> independent observations, information adds: <code>I_n(θ) = n I_1(θ)</code>.</p>
 <div class="guide-example">
-<strong>Examples:</strong> one <code>Bernoulli(p)</code> observation has information <code>1 / (p(1-p))</code>, so at <code>p = 1/2</code> that is <code>4</code>. For <code>n</code> iid <code>Poisson(λ)</code> observations, total information is <code>n/λ</code>, so the large-sample standard error scale for <code>λ̂</code> is about <code>√(λ/n)</code>. For <code>X_i ∼ N(μ,σ^2)</code> with known <code>σ^2</code>, information is <code>n/σ^2</code>, so the natural scale for estimating <code>μ</code> is <code>σ/√(n)</code>.</div>
+<strong>Examples:</strong> one <code>Bernoulli(p)</code> observation has information <code>1 / (p(1-p))</code>, so at <code>p = 1/2</code> that is <code>4</code>. For <code>n</code> iid <code>Poisson(λ)</code> observations, <code>λ̂ = X̄</code> has the exact variance <code>λ/n</code> and exact standard deviation <code>√(λ/n)</code>. For <code>X_i ∼ N(μ,σ^2)</code> with known <code>σ^2</code>, <code>μ̂ = X̄</code> has the exact variance <code>σ^2/n</code> and exact standard deviation <code>σ/√n</code>.</div>
 <div class="guide-fact-grid">
 <article class="guide-fact-card">
 <h4><code>Bernoulli(p)</code></h4>
@@ -3603,8 +3646,9 @@
               <code>I_{25}(p)=25 · 16/3 = 400/3</code>.
               The Cramér–Rao lower bound is the reciprocal:
               <code>Var(p̂) ≥ 1/I_{25}(p)=3/400=0.0075</code>.
-              If the prompt instead asked for the large-sample MLE standard error, take a square root and get
-              <code>√(3/400) ≈ 0.0866</code>.</p>
+              The sample proportion <code>p̂ = X̄</code> attains this bound exactly, so
+              <code>Var(p̂)=3/400</code> and
+              <code>SD(p̂)=√(3/400) ≈ 0.0866</code>. A normal approximation to the distribution of <code>p̂</code> is a separate large-sample step; the variance identity itself is exact.</p>
 </details>
 </div></details>
 <details class="guide-card guide-topic-card"><summary class="guide-topic-summary"><span class="guide-topic-title">Cramér–Rao and Rao–Blackwell</span></summary><div class="guide-topic-body">
@@ -3798,21 +3842,23 @@ For the quadratic-variation term, only the Brownian part survives, so
 </details>
 <details class="guide-details">
 <summary>Fisher / large-sample MLE example: Bernoulli standard error</summary>
-<p>Suppose <code>X_1, ..., X_100</code> are iid <code>Bernoulli(p)</code>, and the prompt says to use the large-sample MLE formula at <code>p = 0.4</code>. The MLE is
-<code>p-hat = sample proportion</code>. For large samples,
-<code>Var(p-hat) ≈ p(1-p)/n</code>.</p>
+<p>Suppose <code>X_1, ..., X_100</code> are iid <code>Bernoulli(p)</code> with <code>p = 0.4</code>. The MLE is
+<code>p-hat = sample proportion</code>. For every sample size,
+<code>Var(p-hat) = p(1-p)/n</code> exactly.</p>
 <p>Plug in the given numbers:
-<code>Var(p-hat) ≈ 0.4 × 0.6 / 100 = 0.24 / 100 = 0.0024</code>.</p>
-<p>The standard error is the square root:
-<code>SE(p-hat) ≈ sqrt(0.0024) ≈ 0.049</code>.</p>
+<code>Var(p-hat) = 0.4 × 0.6 / 100 = 0.24 / 100 = 0.0024</code>.</p>
+<p>The exact standard deviation is the square root:
+<code>SD(p-hat) = sqrt(0.0024) ≈ 0.049</code>.
+The final decimal is approximate only because it rounds the square root.</p>
 <p>The same answer can be written from Fisher information. One Bernoulli observation has information
 <code>I_1(p) = 1 / (p(1-p))</code>.
 So for <code>n = 100</code>,
 <code>I_n(p) = 100 / (0.4 × 0.6) = 416.67</code>.
-The Cramer-Rao / large-sample variance scale is then
-<code>1 / I_n(p) ≈ 0.0024</code>,
-and the standard error is again
-<code>1 / sqrt(I_n(p)) ≈ 0.049</code>.</p>
+The Cramer-Rao bound is then
+<code>1 / I_n(p) = 0.0024</code>.
+The sample proportion attains this bound exactly, and its standard deviation is
+<code>1 / sqrt(I_n(p)) = sqrt(0.0024) ≈ 0.049</code>.
+Only a subsequent normal approximation to the sampling distribution would require a large-sample qualification.</p>
 </details>
 <details class="guide-details">
 <summary>Sharpe / Cantelli example: bound probability of a negative return</summary>
@@ -4038,7 +4084,7 @@ we obtain
 <code>Var(X) ≈ 1.4623 - 1.3364 = 0.1259</code>.</p>
 </details>
 </div></details>
-<details class="guide-card guide-card--wide guide-topic-card" open><summary class="guide-topic-summary"><span class="guide-topic-title">Your Custom Learning Topics</span></summary><div class="guide-topic-body">
+<details class="guide-card guide-card--wide guide-topic-card custom-learning-workshop" open><summary class="guide-topic-summary"><span class="guide-topic-title">Custom Learning Topics</span></summary><div class="guide-topic-body">
 <p>Create your own Learn-topic pills here. Use <code>$...$</code>, <code>\(...\)</code>, <code>\[...\]</code>, or backticks for highlighted math-style snippets. These topics stay in local storage and ride along with recovery when present.</p>
 <div class="guide-details">
 <label class="field-label" for="custom-learning-topic-title">Topic title</label>
@@ -4229,7 +4275,7 @@ we obtain
         { id: "randomWalks", label: "Random walks on Z", description: "Gambler's ruin, exit time, hitting-time variance, and return-probability shortcuts.", meta: "1D walks / ruin" },
         { id: "polygons", label: "Symmetric polygons", description: "Cycle walks and regular-polygon geometry with closed-form anchors.", meta: "n-gons" },
         { id: "eigenvalues", label: "Markov chain spectra", description: "Transition-matrix eigenvalues and spectral gaps for simple random walks on rings.", meta: "transition matrix" },
-        { id: "greenBook", label: "Classic puzzles", description: "Noodles, runs, streaks, permutations, derangements, and coupon-collector staples.", meta: "classic puzzles" },
+        { id: "classicPuzzles", label: "Classic puzzles", description: "Noodles, runs, streaks, permutations, derangements, and coupon-collector staples.", meta: "classic puzzles" },
         { id: "miscCustom", label: "Miscellaneous custom cards", description: "A catch-all topic for saved custom cards that do not fit the built-in categories.", meta: "custom catch-all" },
       ];
 
@@ -7080,7 +7126,7 @@ we obtain
         if (question.topicId === "options") {
           return buildOptionsHint(question);
         }
-        if (question.topicId === "greenBook") {
+        if (question.topicId === "classicPuzzles") {
           return buildClassicPuzzleHint(question);
         }
         const base = ensureSentence(question.hint || "");
@@ -7189,7 +7235,7 @@ we obtain
           return buildPolygonWalkWorkedExplanation(question);
         }
 
-        if (question.topicId === "greenBook" && (
+        if (question.topicId === "classicPuzzles" && (
           question.category === "Classic puzzle: coupons" ||
           question.category === "Classic puzzle: coupon variance" ||
           question.category === "Classic puzzle: coupon interval"
@@ -7221,7 +7267,7 @@ we obtain
           return buildATMOptionWorkedExplanation(question);
         }
 
-        if (question.topicId === "greenBook" && question.category === "Classic puzzle: derangements") {
+        if (question.topicId === "classicPuzzles" && question.category === "Classic puzzle: derangements") {
           return buildDerangementWorkedExplanation(question);
         }
 
@@ -8072,7 +8118,7 @@ we obtain
           return "For simple random walk on a ring, (Pf)(j) = (f(j - 1) + f(j + 1)) / 2. Substituting the Fourier mode f_k(j) = e^(2 pi i k j / n) gives eigenvalue cos(2 pi k / n). The second-largest eigenvalue comes from k = 1, and the spectral gap is 1 - cos(2 pi / n).";
         }
 
-        if (question.topicId === "greenBook") {
+        if (question.topicId === "classicPuzzles") {
           if (question.category === "Classic puzzle: random cuts") {
             return "Each new chord adds one more piece than the number of times it intersects earlier chords. So the whole problem is: how many old chords does the new chord cross on average?\n\nTwo random chords intersect exactly when their four endpoints alternate around the circle, which happens with probability 1/3. That makes the expected increment on cut k equal to 1 + (k-1)/3.";
           }
@@ -8475,7 +8521,7 @@ we obtain
             questions = tagRuntimeFamily(buildRuntimeKellyQuestions(perTopicCount), "kelly");
           } else if (topicId === "sharpeGraph") {
             questions = tagRuntimeFamily(buildRuntimeSharpeQuestions(perTopicCount), "sharpe");
-          } else if (topicId === "greenBook") {
+          } else if (topicId === "classicPuzzles") {
             questions = tagRuntimeFamily(buildRuntimeCouponQuestions(perTopicCount), "coupon");
           } else if (topicId === "randomWalks") {
             questions = tagRuntimeFamily(buildRuntimeAsymmetricRuinQuestions(perTopicCount), "asymmetricRuin");
@@ -8706,7 +8752,7 @@ we obtain
 
           if (mode === "mean") {
             questions.push(createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: coupons",
               prompt: `Each draw lands uniformly on one of ${n} coupon types. Estimate the expected number of draws needed to collect all ${n} types.`,
               hint: "Break the process into stages and add n / i over the unseen counts i.",
@@ -8726,7 +8772,7 @@ we obtain
             const answer = couponCollectorVariance(n);
             const mentalAnswer = n <= 12 ? answer : couponCollectorVarianceApproximation(n);
             questions.push(createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: coupon variance",
               prompt: `Each draw lands uniformly on one of ${n} coupon types. Estimate the variance of the draw count needed to collect all ${n} types.`,
               hint: "Use T_n as a sum of geometric stage times and add the stage variances.",
@@ -8746,7 +8792,7 @@ we obtain
           const z = Math.random() < 0.5 ? 1 : 1.96;
           const side = Math.random() < 0.5 ? "lower" : "upper";
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: coupon interval",
             prompt: `Each draw lands uniformly on one of ${n} coupon types. Using the coupon-collector mean and variance, estimate the ${side} end of a rough ${z === 1 ? "one-sigma" : "95%"} interval for the draw count needed to collect all ${n} types.`,
             hint: "Use mean nH_n and sd = sqrt(Var(T_n)), then take mean ± z sd.",
@@ -8941,7 +8987,7 @@ we obtain
           randomWalks: [...buildRandomWalkQuestions(), ...buildExpandedRandomWalkQuestions(), ...buildMassiveRandomWalkQuestions(), ...buildUltraRandomWalkQuestions(), ...buildAdditionalRandomWalkQuestions(), ...buildGeneratedAsymmetricRuinQuestions()],
           polygons: [...buildPolygonQuestions(), ...buildExpandedPolygonQuestions(), ...buildMassivePolygonQuestions()],
           eigenvalues: [...buildEigenvalueQuestions(), ...buildExpandedEigenvalueQuestions(), ...buildMassiveEigenvalueQuestions()],
-          greenBook: [...buildGreenBookQuestions(), ...buildExpandedGreenBookQuestions(), ...buildMassiveGreenBookQuestions(), ...buildAdditionalGreenBookQuestions()],
+          classicPuzzles: [...buildClassicPuzzleQuestions(), ...buildExpandedClassicPuzzleQuestions(), ...buildMassiveClassicPuzzleQuestions(), ...buildAdditionalClassicPuzzleQuestions()],
         };
       }
 
@@ -10177,7 +10223,7 @@ we obtain
             absTolerance: 0.01,
             explanation: "The exact binomial tail is a bit under 3%. The quick normal route uses z = (219.5 - 200) / 10 = 1.95, which gives an upper tail around 2.6%.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "normal",
@@ -10191,7 +10237,7 @@ we obtain
             absTolerance: 0.015,
             explanation: "Let W = X + Y - Z. Then Var(W) = 1 + 1 + 1 + 2(0.5) - 2(0.5) - 2(0.5) = 2, so W ~ N(0, 2). The target probability is P(W > 2) = P(N(0,1) > sqrt(2)), about 7.9%.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
         ];
 
@@ -10755,7 +10801,7 @@ we obtain
             absTolerance: 0.004,
             explanation: "The chance is (4/52)(3/51) = 12/2652 = 1/221, about 0.45%.",
             difficulty: "easy",
-            source: "Interview puzzle, Q4.19",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "cardsSampling",
@@ -10769,7 +10815,7 @@ we obtain
             absTolerance: 0.05,
             explanation: "Dynamic programming gives the exact value 17/6 ≈ 2.833. The optimal rule is always to guess the more numerous remaining color; ties are neutral by symmetry.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "cardsSampling",
@@ -10782,7 +10828,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "Only the relative order of water, earth, and fire matters. You win exactly when fire is last among those three symbols, which happens with probability 1/3.",
             difficulty: "medium",
-            source: "Interview puzzle, Q4.30",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10795,7 +10841,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "After both players toss 4 coins, the situation is symmetric. If those 4-vs-4 totals tie, the fifth toss is just a fair tiebreaker for the 5-coin player, so the overall win probability is exactly 1/2.",
             difficulty: "medium",
-            source: "Interview puzzle, Q4.7",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10808,7 +10854,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "The Binomial(3, 1/2) probabilities are 1, 3, 3, and 1 over 8, so the match probability is (1^2 + 3^2 + 3^2 + 1^2) / 8^2 = 20/64 = 5/16.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10821,7 +10867,7 @@ we obtain
             absTolerance: 0.02,
             explanation: "Each die is uniform modulo 6, and the sum of independent uniform residues modulo 6 is still uniform. So every residue class, including 0 mod 6, has probability 1/6.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10835,7 +10881,7 @@ we obtain
             absTolerance: 0.01,
             explanation: "Count ordered endpoint pairs with the same parity, because only then their midpoint is an integer. Correcting the all-equal overcount leaves 560 favorable ordered triples out of 20^3, so the probability is 560/8000 = 0.07.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10849,7 +10895,7 @@ we obtain
             absTolerance: 0.03,
             explanation: "The posterior is proportional to 1 × 1/100 for the two-headed coin versus 2^(-7) × 99/100 for the fair-coin case. So the probability is 1 / (1 + 99/128) = 128/227 ≈ 0.564.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10863,7 +10909,7 @@ we obtain
             absTolerance: 0.03,
             explanation: "Ten fair heads cost a factor of 1/1024, which is almost the same size as the 1-in-1000 prior on the two-headed coin. So the posterior lands just above 1/2, specifically about 0.506.",
             difficulty: "medium",
-            source: "Interview puzzle, Q4.29",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10877,7 +10923,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "Use death-rate weights 0.5 × 1, 0.3 × 2, and 0.2 × 4, which are 0.5, 0.6, and 0.8. The heavy-smoker posterior is 0.8 / (0.5 + 0.6 + 0.8) = 8/19 ≈ 0.421.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "momentsMgf",
@@ -10891,7 +10937,7 @@ we obtain
             absTolerance: 0.03,
             explanation: "For the 3x3 correlation matrix, the determinant must be nonnegative. With the two known correlations both 0.9, that condition reduces to (c - 0.62)(c - 1) ≤ 0, so the smallest feasible Corr(X,Z) is 0.62.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "ev",
@@ -10905,7 +10951,7 @@ we obtain
             absTolerance: 0.04,
             explanation: "The prime wins are 2, 3, 5, and 7, totaling 17. The non-prime losses are 1/2, 2, 3, 4, 4.5, and 5, totaling 19. Divide 17 - 19 by 10 to get -0.2.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "ev",
@@ -10918,7 +10964,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "At even odds, the Kelly fraction is p - q = 0.6 - 0.4 = 0.2.",
             difficulty: "easy",
-            source: "Wilmott FAQ (Kelly criterion)",
+            source: "Kelly-sizing reference",
           }),
           createQuestion({
             topicId: "ev",
@@ -10931,7 +10977,7 @@ we obtain
             absTolerance: 0.02,
             explanation: "At even odds, the Kelly fraction is p - q = 0.55 - 0.45 = 0.1.",
             difficulty: "easy",
-            source: "Wilmott FAQ (Kelly criterion)",
+            source: "Kelly-sizing reference",
           }),
           createQuestion({
             topicId: "stopping",
@@ -10944,7 +10990,7 @@ we obtain
             absTolerance: 0.03,
             explanation: "The average of 1 through 6 is 3.5, so that is the fair price.",
             difficulty: "easy",
-            source: "Interview puzzle, Q4.6",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "stopping",
@@ -10958,7 +11004,7 @@ we obtain
             absTolerance: 0.06,
             explanation: "On roll 2, keep 4, 5, or 6 and continue on 1, 2, or 3, so the continuation value from roll 1 is 4.25. Therefore on roll 1 you keep 5 or 6 and continue otherwise, giving overall value 14/3 ≈ 4.67.",
             difficulty: "hard",
-            source: "Interview puzzle, Q4.8",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "stopping",
@@ -10971,7 +11017,7 @@ we obtain
             absTolerance: 0.04,
             explanation: "Once 1 is excluded as the terminal face, the ending value is uniform on {2,3,4,5,6}. Their average is 20/5 = 4.",
             difficulty: "easy",
-            source: "Interview puzzle, Q4.18",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "stopping",
@@ -10985,7 +11031,7 @@ we obtain
             absTolerance: 0.03,
             explanation: "After the first click, only 4 chamber positions remain possible for the current alignment, and only 1 of those leads to a bullet next if the cylinder is not respun. So survival probability is 3/4.",
             difficulty: "hard",
-            source: "Interview puzzle, Q4.28",
+            source: "Classic puzzle collection",
           }),
           ...buildSourcedSupplementalQuestionVariations(),
         ];
@@ -11382,7 +11428,7 @@ we obtain
             absTolerance: 0.025,
             explanation: "A classic fact is that the center fails to lie inside exactly when all three points fit inside some semicircle. That complement event has probability 3/4, so the desired probability is 1/4.",
             difficulty: "medium",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
             topicId: "polygons",
@@ -11396,7 +11442,7 @@ we obtain
             absTolerance: 0.05,
             explanation: "The expected chord length on the unit circle is 4/pi, about 1.273.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
         ];
 
@@ -11485,7 +11531,7 @@ we obtain
         ];
       }
 
-      function buildGreenBookQuestions() {
+      function buildClassicPuzzleQuestions() {
         const longestRun16 = expectedLongestHeadsRunFair(16);
         const longestRun32 = expectedLongestHeadsRunFair(32);
         const longestRun64 = expectedLongestHeadsRunFair(64);
@@ -11493,7 +11539,7 @@ we obtain
 
         return [
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: noodle loops",
             prompt: "You have 3 noodles and randomly tie together all 6 loose ends in pairs. Estimate the expected number of loops formed.",
             hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -11505,7 +11551,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: noodle loops",
             prompt: "You have 4 noodles and randomly tie together all 8 loose ends in pairs. Estimate the expected number of loops formed.",
             hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -11517,7 +11563,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: noodle loops",
             prompt: "You have 6 noodles and randomly tie together all 12 loose ends in pairs. Estimate the expected number of loops formed.",
             hint: "For n noodles, the expected number of loops is 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -11529,7 +11575,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: runs",
             prompt: "You flip a fair coin 10 times. Estimate the expected total number of runs.",
             hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
@@ -11541,7 +11587,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: runs",
             prompt: "You flip a fair coin 21 times. Estimate the expected total number of runs.",
             hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
@@ -11553,7 +11599,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: runs",
             prompt: "You flip a fair coin 20 times. Estimate the expected number of runs of heads.",
             hint: "For n fair flips, the expected number of head-runs is (n + 1) / 4.",
@@ -11565,7 +11611,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: longest run",
             prompt: "You flip a fair coin 16 times. Estimate the expected length of the longest run of heads.",
             hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
@@ -11578,7 +11624,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: longest run",
             prompt: "You flip a fair coin 32 times. Estimate the expected length of the longest run of heads.",
             hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
@@ -11591,7 +11637,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: longest run",
             prompt: "You flip a fair coin 64 times. Estimate the expected length of the longest run of heads.",
             hint: "A strong mental anchor is log2(n); the exact value is a bit below that for moderate n.",
@@ -11604,7 +11650,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HHH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
@@ -11616,7 +11662,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HHHH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix. For all-heads patterns, every prefix overlaps.",
@@ -11628,7 +11674,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HTH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
@@ -11640,7 +11686,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HHTT.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
@@ -11652,7 +11698,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HHTH.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
@@ -11664,7 +11710,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HTHT.",
             hint: "Sum 2^k over overlap lengths k where the k-prefix equals the k-suffix.",
@@ -11676,7 +11722,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: return probability",
             prompt: "A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after 16 steps.",
             hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n) with n = 8.",
@@ -11690,7 +11736,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: return probability",
             prompt: "A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after 20 steps.",
             hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n) with n = 10.",
@@ -11704,7 +11750,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: collisions",
             prompt: "You keep drawing uniformly from {1, ..., 52} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.",
             hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
@@ -11717,7 +11763,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: collisions",
             prompt: "You keep drawing uniformly from {1, ..., 365} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.",
             hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
@@ -11730,7 +11776,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: permutations",
             prompt: "A uniformly random permutation of 6 items is drawn. Estimate the expected number of cycles.",
             hint: "The expected number of cycles in a random permutation of n items is H_n.",
@@ -11742,7 +11788,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: records",
             prompt: "A random ordering of 8 distinct numbers is revealed left to right. Estimate the expected number of record highs you will see.",
             hint: "Each position is a record with probability 1 / k, so the expectation is H_n.",
@@ -11754,7 +11800,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: fixed points",
             prompt: "A uniformly random permutation of 10 items is drawn. Estimate the expected number of fixed points.",
             hint: "Each item stays fixed with probability 1 / n, so the expectation adds to 1.",
@@ -11766,7 +11812,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: derangements",
             prompt: "A uniformly random permutation of 8 items is drawn. Estimate the probability that no item stays fixed.",
             hint: "The no-fixed-point probability is close to 1 / e; for n = 8 the exact value is already very close.",
@@ -11779,7 +11825,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: coupons",
             prompt: "Each draw lands uniformly on one of 4 coupon types. Estimate the expected number of draws needed to collect all 4 types.",
             hint: "Coupon collector gives nH_n.",
@@ -11791,7 +11837,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: coupons",
             prompt: "Each draw lands uniformly on one of 5 coupon types. Estimate the expected number of draws needed to collect all 5 types.",
             hint: "Coupon collector gives nH_n.",
@@ -11803,7 +11849,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: birthdays",
             prompt: "There are 25 people at a party. Estimate the expected number of matching birthday pairs.",
             hint: "Use one indicator for each unordered pair.",
@@ -11814,10 +11860,10 @@ we obtain
             absTolerance: 0.05,
             explanation: "There are choose(25, 2) = 300 pairs, and each specific pair matches with probability 1/365. So the expectation is 300/365 ≈ 0.822.",
             difficulty: "medium",
-            source: "Interview puzzle, Q1.36",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: birthdays",
             prompt: "There are 25 people at a party. Everyone who shares a birthday with at least one other person raises a hand. Estimate the expected number of hands raised.",
             hint: "Fix one person and ask for the probability that at least one of the other 24 people matches their birthday.",
@@ -11828,10 +11874,10 @@ we obtain
             absTolerance: 0.08,
             explanation: "For a fixed person, the chance nobody else matches them is (364/365)^24, so the chance they raise a hand is 1 - (364/365)^24. Multiply by 25 to get about 1.59.",
             difficulty: "hard",
-            source: "Interview puzzle, Q1.37",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: fair selection",
             prompt: "You want to choose uniformly among 3 children using only a fair coin, by assigning outcomes and restarting on one bad pattern. Estimate the expected number of flips needed.",
             hint: "Use two flips per round, with 3 useful outcomes and 1 restart outcome.",
@@ -11842,10 +11888,10 @@ we obtain
             absTolerance: 0.05,
             explanation: "Two flips generate four equally likely outcomes. Use HH, HT, and TH for the three children and restart on TT. Each round takes 2 flips and succeeds with probability 3/4, so the expected number of flips is 2 / (3/4) = 8/3.",
             difficulty: "medium",
-            source: "Interview puzzle, Q4.12-Q4.14",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: arrangements",
             prompt: "Three people choose seats uniformly on an 8-seat round table. Estimate the probability that no two of them sit next to each other.",
             hint: "Count 3-seat subsets on the circle with no adjacent seats, then divide by all choose(8, 3) seat sets.",
@@ -11856,10 +11902,10 @@ we obtain
             absTolerance: 0.02,
             explanation: "There are choose(8, 3) = 56 seat triples in total. The non-adjacent triples on an 8-cycle number 16, giving probability 16/56 = 2/7 ≈ 0.286.",
             difficulty: "hard",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: arrangements",
             prompt: "Seven people A, B, C, D, E, F, and G sit uniformly in 7 of the 10 seats around a rectangular table with 5 seats on each long side. Estimate the probability that A and B sit directly opposite each other.",
             hint: "After A sits, exactly 1 of the remaining 9 open seats faces A.",
@@ -11869,10 +11915,10 @@ we obtain
             absTolerance: 0.02,
             explanation: "Condition on A's seat first. Of the 9 remaining open seats, exactly 1 sits directly opposite A, so B is opposite A with probability 1/9.",
             difficulty: "easy",
-            source: "allSIG interview collection",
+            source: "Classic puzzle collection",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: arithmetic",
             prompt: "One bell rings 5 times per minute and another rings 4 times per minute, each at evenly spaced intervals. They ring together now. Estimate how long until they next ring together.",
             hint: "Convert the ringing rates into the time between rings, then take the least common multiple.",
@@ -11882,9 +11928,9 @@ we obtain
             absTolerance: 0.5,
             explanation: "Five times per minute means every 12 seconds, and four times per minute means every 15 seconds. The next common ringing time is lcm(12, 15) = 60 seconds.",
             difficulty: "easy",
-            source: "Interview puzzle, Q1.3",
+            source: "Classic puzzle collection",
           }),
-          ...buildSourcedGreenBookQuestionVariations(),
+          ...buildSourcedClassicPuzzleQuestionVariations(),
         ];
       }
 
@@ -11908,7 +11954,7 @@ we obtain
               absTolerance: flips >= 1000 ? 0.008 : 0.012,
               explanation: `Approximate Binomial(${flips}, 1/2) by a normal with mean ${mean} and standard deviation ${formatNumber(standardDeviation, 4)}. Using the continuity correction gives z ≈ ${formatNumber(continuityZ, 3)}.`,
               difficulty: "hard",
-              source: "allSIG-inspired normal family",
+              source: "Normal-distribution drill family",
             }),
           );
         }
@@ -11929,7 +11975,7 @@ we obtain
               absTolerance: 0.015,
               explanation: `Let W = X + Y - Z. Then Var(W) = 3 - 2ρ = ${formatNumber(variance, 4)}, so the event becomes P(N(0,1) > ${formatNumber(z, 4)}).`,
               difficulty: "hard",
-              source: "allSIG-inspired normal family",
+              source: "Normal-distribution drill family",
             }),
           );
         }
@@ -11954,7 +12000,7 @@ we obtain
               absTolerance: 0.004,
               explanation: "For any fixed rank, the chance is (4/52)(3/51) = 1/221.",
               difficulty: "easy",
-              source: "Interview-puzzle card family",
+              source: "Card-probability drill family",
             }),
           );
         }
@@ -11973,7 +12019,7 @@ we obtain
               absTolerance: 0.05,
               explanation: "The optimal policy is to guess the majority color among the remaining balls. Dynamic programming then gives the exact expected score.",
               difficulty: redCount + blueCount >= 6 ? "hard" : "medium",
-              source: "allSIG-inspired guessing family",
+              source: "Estimation drill family",
             }),
           );
         }
@@ -11991,7 +12037,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "After both players toss the same number of coins, symmetry makes the contest fair. If those totals tie, the extra toss is a fair tiebreaker, so the overall probability is exactly 1/2.",
               difficulty: "medium",
-              source: "Interview-puzzle symmetry family",
+              source: "Symmetry drill family",
             }),
           );
         }
@@ -12010,7 +12056,7 @@ we obtain
               absTolerance: 0.02,
               explanation: `The exact probability is Σ_k P(H = k)^2 = choose(${2 * tosses}, ${tosses}) / 4^${tosses}.`,
               difficulty: tosses >= 6 ? "hard" : "medium",
-              source: "allSIG-inspired coin family",
+              source: "Coin-probability drill family",
             }),
           );
         }
@@ -12028,7 +12074,7 @@ we obtain
               absTolerance: 0.02,
               explanation: `Each die is uniform modulo ${sides}, and summing independent uniform residues preserves uniformity. So every residue class has probability 1/${sides}.`,
               difficulty: "medium",
-              source: "allSIG-inspired modulo family",
+              source: "Modular-arithmetic drill family",
             }),
           );
         }
@@ -12047,7 +12093,7 @@ we obtain
               absTolerance: 0.01,
               explanation: "Count ordered endpoint pairs with the same parity so the midpoint is integral, then correct the all-equal overcount.",
               difficulty: "hard",
-              source: "allSIG-inspired arithmetic family",
+              source: "Arithmetic drill family",
             }),
           );
         }
@@ -12066,7 +12112,7 @@ we obtain
               absTolerance: 0.025,
               explanation: "The posterior is proportional to 1 for the two-headed coin versus fairCoinCount/2^heads for the fair-coin possibility.",
               difficulty: "medium",
-              source: "Interview-puzzle Bayes family",
+              source: "Bayesian drill family",
             }),
           );
         }
@@ -12092,7 +12138,7 @@ we obtain
               absTolerance: 0.025,
               explanation: "Posterior group probabilities are proportional to prior mass times death rate.",
               difficulty: "medium",
-              source: "allSIG-inspired Bayes family",
+              source: "Bayesian drill family",
             }),
           );
         }
@@ -12111,7 +12157,7 @@ we obtain
               absTolerance: 0.03,
               explanation: "Set the 3x3 correlation-matrix determinant to zero to find the lower endpoint of the feasible range.",
               difficulty: "hard",
-              source: "allSIG-inspired correlation family",
+              source: "Correlation drill family",
             }),
           );
         }
@@ -12135,7 +12181,7 @@ we obtain
               absTolerance: 0.05,
               explanation: "Average the signed payoff over the uniform support.",
               difficulty: upper >= 15 ? "hard" : "medium",
-              source: "allSIG-inspired expected-value family",
+              source: "Expected-value drill family",
             }),
           );
         }
@@ -12154,7 +12200,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "At even odds, the Kelly stake is p - (1 - p) = 2p - 1.",
               difficulty: "easy",
-              source: "Wilmott-inspired Kelly family",
+              source: "Kelly-sizing drill family",
             }),
           );
         }
@@ -12173,7 +12219,7 @@ we obtain
               absTolerance: 0.04,
               explanation: "The fair price is the average of 1 through the top face.",
               difficulty: "easy",
-              source: "Interview-puzzle die family",
+              source: "Dice-probability drill family",
             }),
           );
         }
@@ -12192,7 +12238,7 @@ we obtain
               absTolerance: sides >= 10 ? 0.08 : 0.06,
               explanation: "Backward induction gives a stopping threshold on roll 2, then a higher threshold on roll 1.",
               difficulty: sides >= 10 ? "hard" : "medium",
-              source: "Interview-puzzle stopping family",
+              source: "Stopping-time drill family",
             }),
           );
         }
@@ -12211,7 +12257,7 @@ we obtain
               absTolerance: 0.05,
               explanation: "Once the game ends, the terminal face is uniform on {2, ..., top face}.",
               difficulty: "easy",
-              source: "Interview-puzzle die family",
+              source: "Dice-probability drill family",
             }),
           );
         }
@@ -12230,7 +12276,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "After the first click, there are chambers - 2 possible safe alignments left, and exactly one of them puts the next trigger on a bullet.",
               difficulty: "hard",
-              source: "Interview-puzzle Russian-roulette family",
+              source: "Conditional-survival drill family",
             }),
           );
           questions.push(
@@ -12246,7 +12292,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "After a fresh spin, only the raw live-chamber fraction matters.",
               difficulty: "medium",
-              source: "Interview-puzzle Russian-roulette family",
+              source: "Conditional-survival drill family",
             }),
           );
         }
@@ -12271,7 +12317,7 @@ we obtain
               absTolerance: 0.04,
               explanation: "Under zero rates, solve for the risk-neutral up probability q from today's stock price. If only the up state finishes above the strike, the digital price is q.",
               difficulty: "medium",
-              source: "Interview-puzzle digital-option family",
+              source: "Digital-option drill family",
             }),
           );
         }
@@ -12290,7 +12336,7 @@ we obtain
               absTolerance: 0.05,
               explanation: "A tight call spread divided by strike width is the standard discrete approximation to a digital call payoff.",
               difficulty: "medium",
-              source: "Wilmott-inspired digital-call-spread family",
+              source: "Digital-call-spread drill family",
             }),
           );
         }
@@ -12298,13 +12344,13 @@ we obtain
         return questions;
       }
 
-      function buildSourcedGreenBookQuestionVariations() {
+      function buildSourcedClassicPuzzleQuestionVariations() {
         const questions = [];
 
         for (const groupSize of [15, 20, 23, 30, 40, 50]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: birthdays",
               prompt: `There are ${groupSize} people at a party. Estimate the expected number of matching birthday pairs.`,
               hint: "Use one indicator for each unordered pair.",
@@ -12315,12 +12361,12 @@ we obtain
               absTolerance: 0.06,
               explanation: `There are choose(${groupSize}, 2) pairs, and each pair matches with probability 1/365.`,
               difficulty: "medium",
-              source: "Interview-puzzle birthday family",
+              source: "Birthday-probability drill family",
             }),
           );
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: birthdays",
               prompt: `There are ${groupSize} people at a party. Everyone who shares a birthday with at least one other person raises a hand. Estimate the expected number of hands raised.`,
               hint: "Fix one person and ask for the probability at least one of the other people matches their birthday.",
@@ -12331,7 +12377,7 @@ we obtain
               absTolerance: 0.08,
               explanation: "For each person separately, the chance of raising a hand is 1 minus the probability that nobody else shares their birthday.",
               difficulty: "hard",
-              source: "Interview-puzzle birthday family",
+              source: "Birthday-probability drill family",
             }),
           );
         }
@@ -12339,7 +12385,7 @@ we obtain
         for (const seats of [10, 12, 14]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: arrangements",
               prompt: `Three people choose seats uniformly on a ${seats}-seat round table. Estimate the probability that no two of them sit next to each other.`,
               hint: "Count 3-seat subsets on the cycle with no adjacent seats, then divide by all choose(n,3) seat sets.",
@@ -12350,7 +12396,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "For seat subsets on a cycle, the no-adjacency count has a clean combinatorial formula.",
               difficulty: "hard",
-              source: "allSIG-inspired seating family",
+              source: "Seating-probability drill family",
             }),
           );
         }
@@ -12358,7 +12404,7 @@ we obtain
         for (const longSideSeats of [4, 6, 7, 8]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: arrangements",
               prompt: `People A and B sit uniformly in 2 of the ${2 * longSideSeats} seats around a rectangular table with ${longSideSeats} seats on each long side. Estimate the probability that A and B sit directly opposite each other.`,
               hint: "After A sits, exactly one of the remaining seats is directly opposite.",
@@ -12369,7 +12415,7 @@ we obtain
               absTolerance: 0.02,
               explanation: "Condition on A's seat. Among the remaining seats, exactly one is directly opposite A.",
               difficulty: "easy",
-              source: "allSIG-inspired seating family",
+              source: "Seating-probability drill family",
             }),
           );
         }
@@ -12377,7 +12423,7 @@ we obtain
         for (const [rateA, rateB] of [[6, 4], [8, 6], [9, 6], [10, 4], [12, 8]]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: arithmetic",
               prompt: `One bell rings ${rateA} times per minute and another rings ${rateB} times per minute, each at evenly spaced intervals. They ring together now. Estimate how long until they next ring together.`,
               hint: "Convert the rates into equally spaced ringing intervals and take the least common multiple.",
@@ -12388,7 +12434,7 @@ we obtain
               absTolerance: 0.5,
               explanation: "If the bells ring a and b times per minute, the next common ringing time is 60 / gcd(a, b) seconds.",
               difficulty: "easy",
-              source: "Interview-puzzle arithmetic family",
+              source: "Arithmetic drill family",
             }),
           );
         }
@@ -12413,7 +12459,7 @@ we obtain
               absTolerance: 0.08,
               explanation: "Expected chord length scales linearly with the circle's radius.",
               difficulty: "medium",
-              source: "allSIG-inspired circle family",
+              source: "Geometric-probability drill family",
             }),
           );
         }
@@ -12430,7 +12476,7 @@ we obtain
             absTolerance: 0.02,
             explanation: "For inscribed triangles, 'acute' is equivalent to the center lying inside the triangle, so the same classic answer 1/4 applies.",
             difficulty: "medium",
-            source: "allSIG-inspired circle family",
+            source: "Geometric-probability drill family",
           }),
         );
 
@@ -13537,13 +13583,13 @@ we obtain
         ];
       }
 
-      function buildExpandedGreenBookQuestions() {
+      function buildExpandedClassicPuzzleQuestions() {
         const longestRun128 = expectedLongestHeadsRunFair(128);
         const derangementProbability10 = subfactorial(10) / factorial(10);
 
         return [
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: noodle loops",
             prompt: "You have 5 noodles and randomly tie together all 10 loose ends in pairs. Estimate the expected number of loops formed.",
             hint: "Use 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -13555,7 +13601,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: noodle loops",
             prompt: "You have 8 noodles and randomly tie together all 16 loose ends in pairs. Estimate the expected number of loops formed.",
             hint: "Use 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -13567,7 +13613,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: runs",
             prompt: "You flip a fair coin 40 times. Estimate the expected total number of runs.",
             hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
@@ -13579,7 +13625,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: runs",
             prompt: "You flip a fair coin 40 times. Estimate the expected number of runs of heads.",
             hint: "For n fair flips, the expected number of head-runs is (n + 1) / 4.",
@@ -13591,7 +13637,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: longest run",
             prompt: "You flip a fair coin 128 times. Estimate the expected length of the longest run of heads.",
             hint: "A strong mental anchor is log base 2 of n.",
@@ -13604,7 +13650,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HH.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13616,7 +13662,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HT.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13628,7 +13674,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see THT.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13640,7 +13686,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see THH.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13652,7 +13698,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HTT.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13664,7 +13710,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see TTHH.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13676,7 +13722,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see HTHH.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13688,7 +13734,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: streak waiting time",
             prompt: "Estimate the expected number of fair-coin flips until you first see THHT.",
             hint: "Sum 2^k over overlap lengths where prefix equals suffix.",
@@ -13700,7 +13746,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: permutations",
             prompt: "A uniformly random permutation of 10 items is drawn. Estimate the expected number of cycles.",
             hint: "Use the harmonic number H_n.",
@@ -13712,7 +13758,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: records",
             prompt: "A random ordering of 12 distinct numbers is revealed left to right. Estimate the expected number of record highs you will see.",
             hint: "The expected number of records is H_n.",
@@ -13724,7 +13770,7 @@ we obtain
             difficulty: "medium",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: fixed points",
             prompt: "A uniformly random permutation of 25 items is drawn. Estimate the expected number of fixed points.",
             hint: "The expectation is always 1.",
@@ -13736,7 +13782,7 @@ we obtain
             difficulty: "easy",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: derangements",
             prompt: "A uniformly random permutation of 10 items is drawn. Estimate the probability that no item stays fixed.",
             hint: "Use the mental anchor 1/e.",
@@ -13749,7 +13795,7 @@ we obtain
             difficulty: "hard",
           }),
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: coupons",
             prompt: "Each draw lands uniformly on one of 6 coupon types. Estimate the expected number of draws needed to collect all 6 types.",
             hint: "Coupon collector gives nH_n.",
@@ -14027,7 +14073,7 @@ we obtain
             mentalAnswer: 1 / 3,
             explanation: "Solve 100 = 120q + 90(1 - q), which gives q = 1/3. A digital call pays 1 only in the up state, so its price is q = 1/3.",
             difficulty: "medium",
-            source: "Interview puzzle, digital-option sequence",
+            source: "Digital-option sequence",
           },
         ];
 
@@ -14144,7 +14190,7 @@ we obtain
             absTolerance: 0.05,
             explanation: "Use (C(100) - C(101)) / (101 - 100) = 8.4 - 7.8 = 0.6. That tight call spread is the standard mental proxy for a digital call.",
             difficulty: "medium",
-            source: "Wilmott FAQ / digital-call-spread heuristic",
+            source: "Digital-call-spread reference",
           }),
         ];
 
@@ -15963,13 +16009,13 @@ we obtain
         return questions;
       }
 
-      function buildMassiveGreenBookQuestions() {
+      function buildMassiveClassicPuzzleQuestions() {
         const questions = [];
 
         for (const noodles of [2, 3, 4, 5, 6, 7, 8, 10, 12]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: noodle loops",
               prompt: `You have ${noodles} noodles and randomly tie together all ${2 * noodles} loose ends in pairs. Estimate the expected number of loops formed.`,
               hint: "Use 1 + 1/3 + 1/5 + ... + 1/(2n - 1).",
@@ -15987,7 +16033,7 @@ we obtain
         for (const n of [8, 12, 16, 24, 32, 50, 64, 100, 200]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: runs",
               prompt: `You flip a fair coin ${n} times. Estimate the expected total number of runs.`,
               hint: "For n fair flips, the expected total number of runs is (n + 1) / 2.",
@@ -16003,7 +16049,7 @@ we obtain
 
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: runs",
               prompt: `You flip a fair coin ${n} times. Estimate the expected number of runs of heads.`,
               hint: "For n fair flips, the expected number of head-runs is (n + 1) / 4.",
@@ -16021,7 +16067,7 @@ we obtain
         for (const n of [8, 12, 24, 48, 96, 128, 256, 512]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: longest run",
               prompt: `You flip a fair coin ${n} times. Estimate the expected length of the longest run of heads.`,
               hint: "A strong mental anchor is log base 2 of n.",
@@ -16039,7 +16085,7 @@ we obtain
         for (const pattern of ["HH", "HT", "TH", "TT", "HHH", "HTH", "THT", "HTT", "THH", "HHT", "TTH", "HTHT", "THTH", "HHHT", "HHTH", "HTHH", "THHH", "HHTH", "TTHH", "HHTT", "HTTH", "THHT", "TTHT", "THTT", "HTHHT", "HTHTH", "HHTHH", "THHTH", "THTHH", "HHTHT"]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: streak waiting time",
               prompt: `Estimate the expected number of fair-coin flips until you first see ${pattern}.`,
               hint: "Sum 2^k over all overlap lengths whose prefix equals suffix.",
@@ -16057,7 +16103,7 @@ we obtain
         for (const n of [4, 5, 6, 8, 10, 12, 16]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: return probability",
               prompt: `A simple symmetric random walk starts at 0. Estimate the probability it is back at the origin after ${2 * n} steps.`,
               hint: "Use choose(2n, n) / 2^(2n) ~= 1 / sqrt(pi n).",
@@ -16074,7 +16120,7 @@ we obtain
 
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: collisions",
               prompt: `You keep drawing uniformly from {1, ..., ${n * n}} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.`,
               hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2) with the domain size in place of n.",
@@ -16092,7 +16138,7 @@ we obtain
         for (const domainSize of [20, 50, 100, 200, 365, 500, 1000]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: collisions",
               prompt: `You keep drawing uniformly from {1, ..., ${domainSize}} with replacement until a value appears for the second time. Estimate the expected draw on which the first repeat appears.`,
               hint: "Use the birthday heuristic E[T] ~= sqrt(pi n / 2).",
@@ -16110,7 +16156,7 @@ we obtain
         for (const n of [4, 5, 6, 7, 8, 10, 12, 15, 20]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: permutations",
               prompt: `A uniformly random permutation of ${n} items is drawn. Estimate the expected number of cycles.`,
               hint: "Use the harmonic number H_n.",
@@ -16128,7 +16174,7 @@ we obtain
         for (const n of [5, 6, 7, 9, 10, 12, 15, 20, 30]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: records",
               prompt: `A random ordering of ${n} distinct numbers is revealed left to right. Estimate the expected number of record highs you will see.`,
               hint: "Each position is a record with probability 1/k, so the expectation is H_n.",
@@ -16146,7 +16192,7 @@ we obtain
         for (const n of [5, 8, 10, 20, 50, 100]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: fixed points",
               prompt: `A uniformly random permutation of ${n} items is drawn. Estimate the expected number of fixed points.`,
               hint: "The expectation is always 1.",
@@ -16164,7 +16210,7 @@ we obtain
         for (const n of [5, 6, 7, 8, 10, 12, 15, 20]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: derangements",
               prompt: `A uniformly random permutation of ${n} items is drawn. Estimate the probability that no item stays fixed.`,
               hint: "Use the mental anchor 1/e.",
@@ -16182,7 +16228,7 @@ we obtain
         for (const n of [3, 4, 5, 6, 7, 8, 9, 10, 12, 15]) {
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: coupons",
               prompt: `Each draw lands uniformly on one of ${n} coupon types. Estimate the expected number of draws needed to collect all ${n} types.`,
               hint: "Coupon collector gives nH_n.",
@@ -16202,7 +16248,7 @@ we obtain
           const mentalVariance = n <= 12 ? exactVariance : couponCollectorVarianceApproximation(n);
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: coupon variance",
               prompt: `Each draw lands uniformly on one of ${n} coupon types. Estimate the variance of the draw count needed to collect all ${n} types.`,
               hint: "Write T_n as a sum of geometric stage times with success probabilities i / n, then add the variances.",
@@ -16237,7 +16283,7 @@ we obtain
           const mentalAnswer = couponCollectorIntervalValue(spec.n, spec.z, spec.side, true);
           questions.push(
             createQuestion({
-              topicId: "greenBook",
+              topicId: "classicPuzzles",
               category: "Classic puzzle: coupon interval",
               prompt: `Each draw lands uniformly on one of ${spec.n} coupon types. Using the coupon-collector mean and variance, estimate the ${spec.side} end of a rough ${spec.label} interval for the draw count needed to collect all ${spec.n} types.`,
               hint: "Use mean nH_n and sd = sqrt(n^2 sum(1/i^2) - nH_n), then take mean ± z sd.",
@@ -20046,28 +20092,28 @@ we obtain
         questions.push(createQuestion({
           topicId: "fisherInfo",
           category: "MLE standard error",
-          prompt: "You observe 64 iid Poisson(4) variables. Using the large-sample MLE formula, estimate the standard error of lambda-hat.",
-          hint: "Use the large-sample MLE standard-error formula 1 / sqrt(I_n), or equivalently sqrt(lambda / n) here.",
+          prompt: "You observe 64 iid Poisson(4) variables. What is the standard deviation of lambda-hat, the sample mean?",
+          hint: "The sample mean of iid Poisson(lambda) observations has exact variance lambda / n.",
           inputMode: "number",
           formatHint: "standard error",
           answer: Math.sqrt(4 / 64),
           mentalAnswer: Math.sqrt(4 / 64),
           absTolerance: 0.01,
-          explanation: "For Poisson(lambda), the large-sample variance scale of lambda-hat is lambda/n. Here that is 4/64 = 1/16, so the large-sample standard error is sqrt(1/16) = 1/4 = 0.25.",
+          explanation: "For Poisson(lambda), lambda-hat is the sample mean, so Var(lambda-hat) = lambda/n exactly. Here that is 4/64 = 1/16, and SD(lambda-hat) = sqrt(1/16) = 1/4 = 0.25.",
           difficulty: "easy",
         }));
 
         questions.push(createQuestion({
           topicId: "fisherInfo",
           category: "MLE standard error",
-          prompt: "You observe 36 iid Normal(mu, 9) variables with variance known. Using the large-sample MLE formula, estimate the standard error of mu-hat.",
-          hint: "For the normal mean with known variance, the MLE standard error is sigma / sqrt(n).",
+          prompt: "You observe 36 iid Normal(mu, 9) variables with variance known. What is the standard deviation of mu-hat, the sample mean?",
+          hint: "The sample mean has exact variance sigma^2 / n.",
           inputMode: "number",
           formatHint: "standard error",
           answer: Math.sqrt(9 / 36),
           mentalAnswer: Math.sqrt(9 / 36),
           absTolerance: 0.01,
-          explanation: "Total information is 36/9 = 4, so the large-sample variance scale is 1/4 and the standard error is sqrt(1/4) = 1/2 = 0.5.",
+          explanation: "The sample mean has exact variance 9/36 = 1/4, so its standard deviation is sqrt(1/4) = 1/2 = 0.5. Equivalently, total information is 36/9 = 4 and the estimator attains the reciprocal-information bound.",
           difficulty: "easy",
         }));
 
@@ -20112,14 +20158,14 @@ we obtain
             questions.push(createQuestion({
               topicId: "fisherInfo",
               category: "MLE standard error",
-              prompt: `You observe ${n} iid Bernoulli(${pText}) variables. Using the large-sample MLE formula, estimate the standard error of p-hat.`,
-              hint: "Use the large-sample standard-error formula sqrt(p(1-p)/n), or equivalently take the reciprocal square root of total information.",
+              prompt: `You observe ${n} iid Bernoulli(${pText}) variables. What is the standard deviation of p-hat, the sample proportion?`,
+              hint: "The sample proportion has exact variance p(1-p)/n.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.01,
-              explanation: `The large-sample variance scale of p-hat is p(1-p)/n = ${formatNumber(crlb, 6)}, so the large-sample standard error is sqrt(${formatNumber(crlb, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The sample proportion has exact variance p(1-p)/n = ${formatNumber(crlb, 6)}, so its standard deviation is sqrt(${formatNumber(crlb, 6)}) = ${formatNumber(asymptoticSE, 6)}. A normal approximation to its distribution would be a separate large-sample step.`,
               difficulty: n >= 40 ? "medium" : "easy",
             }));
           }
@@ -20160,14 +20206,14 @@ we obtain
             questions.push(createQuestion({
               topicId: "fisherInfo",
               category: "MLE standard error",
-              prompt: `You observe ${n} iid Poisson(${lambda}) variables. Using the large-sample MLE formula, estimate the standard error of lambda-hat.`,
-              hint: "Use the large-sample standard-error formula sqrt(lambda / n), or take 1 / sqrt(total information).",
+              prompt: `You observe ${n} iid Poisson(${lambda}) variables. What is the standard deviation of lambda-hat, the sample mean?`,
+              hint: "The sample mean has exact variance lambda / n.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.01,
-              explanation: `Total information is ${formatNumber(totalInfo, 6)}, so the large-sample standard error is 1 / sqrt(${formatNumber(totalInfo, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `For Poisson(lambda), lambda-hat is the sample mean and has exact variance lambda/n = ${formatNumber(crlb, 6)}. Its standard deviation is sqrt(lambda/n) = ${formatNumber(asymptoticSE, 6)}. It also attains the reciprocal-information bound because total information is ${formatNumber(totalInfo, 6)}.`,
               difficulty: "easy",
             }));
           }
@@ -20257,14 +20303,14 @@ we obtain
             questions.push(createQuestion({
               topicId: "fisherInfo",
               category: "MLE standard error",
-              prompt: `You observe ${n} iid Normal(mu, ${variance}) variables with variance known. Using the large-sample MLE formula, estimate the standard error of mu-hat.`,
-              hint: "Use sigma / sqrt(n).",
+              prompt: `You observe ${n} iid Normal(mu, ${variance}) variables with variance known. What is the standard deviation of mu-hat, the sample mean?`,
+              hint: "The sample mean has exact variance sigma^2 / n.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.02,
-              explanation: `The large-sample standard error is sigma / sqrt(n) = ${formatNumber(sigma, 6)} / sqrt(${n}) = ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `The sample mean has exact variance ${variance}/${n} = ${formatNumber(crlb, 6)}, so its standard deviation is sigma / sqrt(n) = ${formatNumber(sigma, 6)} / sqrt(${n}) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "easy",
             }));
           }
@@ -20305,14 +20351,14 @@ we obtain
             questions.push(createQuestion({
               topicId: "fisherInfo",
               category: "MLE standard error",
-              prompt: `You observe ${n} iid Normal(0, v) variables with mean known, where v = sigma^2 is the parameter and v = ${variance}. Using the large-sample MLE formula, estimate the standard error of v-hat.`,
-              hint: "Use the large-sample standard-error formula v sqrt(2/n), or take the reciprocal square root of total information.",
+              prompt: `You observe ${n} iid Normal(0, v) variables with known mean and v = ${variance}. For v-hat = (1/n) sum X_i^2, what is its standard deviation?`,
+              hint: "Because Var(X_i^2) = 2v^2 for a centered normal variable, Var(v-hat) = 2v^2/n exactly.",
               inputMode: "number",
               formatHint: "standard error",
               answer: asymptoticSE,
               mentalAnswer: asymptoticSE,
               absTolerance: 0.05,
-              explanation: `The large-sample variance scale of v-hat is 2v^2 / n = ${formatNumber(crlb, 6)}, so the standard error is ${formatNumber(asymptoticSE, 6)}.`,
+              explanation: `With the mean known, v-hat = (1/n) sum X_i^2. Since each X_i^2 has variance 2v^2, independence gives Var(v-hat) = 2v^2/n = ${formatNumber(crlb, 6)} exactly. Therefore SD(v-hat) = ${formatNumber(asymptoticSE, 6)}.`,
               difficulty: "hard",
             }));
           }
@@ -20352,14 +20398,14 @@ we obtain
           questions.push(createQuestion({
             topicId: "fisherInfo",
             category: "MLE standard error",
-            prompt: `Independent observations have laws ${variances.map((variance) => `N(mu, ${variance})`).join(", ")} with those variances known. Using the large-sample Fisher-information formula, estimate the standard error of an efficient estimator of mu.`,
-            hint: "Take the reciprocal square root of the total information.",
+            prompt: `Independent observations have laws ${variances.map((variance) => `N(mu, ${variance})`).join(", ")} with those variances known. What is the standard deviation of the inverse-variance weighted estimator of mu?`,
+            hint: "Its exact variance is the reciprocal of the total information.",
             inputMode: "number",
             formatHint: "standard error",
             answer: asymptoticSE,
             mentalAnswer: asymptoticSE,
             absTolerance: 0.03,
-            explanation: `The total information is ${formatNumber(totalInfo, 6)}, so the efficient standard-error scale is 1 / sqrt(${formatNumber(totalInfo, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
+            explanation: `The inverse-variance weighted estimator is normal with exact variance 1 / ${formatNumber(totalInfo, 6)} = ${formatNumber(crlb, 6)}. Therefore its standard deviation is 1 / sqrt(${formatNumber(totalInfo, 6)}) = ${formatNumber(asymptoticSE, 6)}.`,
             difficulty: "hard",
           }));
         }
@@ -20706,13 +20752,13 @@ we obtain
         return questions;
       }
 
-      function buildAdditionalGreenBookQuestions() {
+      function buildAdditionalClassicPuzzleQuestions() {
         const questions = [];
 
         for (const n of [3, 4, 6, 10]) {
           const answer = expectedDiskPiecesFromRandomCuts(n);
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: random cuts",
             prompt: `Draw ${n} random straight cuts across a disk, where each cut is the chord joining two independent uniform boundary points. Estimate the expected number of pieces.`,
             hint: "Each new cut adds 1 plus its number of intersections with earlier cuts. Two random chords intersect with probability 1/3.",
@@ -20734,7 +20780,7 @@ we obtain
         ]) {
           const answer = romeoJulietMeetProbability(spec.horizon, spec.romeo, spec.juliet);
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: Romeo and Juliet",
             prompt: `Romeo and Juliet each arrive independently and uniformly during a ${spec.horizon}-minute window. Romeo waits ${spec.romeo} minutes after arriving, Juliet waits ${spec.juliet} minutes after arriving, and ${spec.romeo + spec.juliet <= spec.horizon ? "the waits are short enough that the meeting region is the usual two-strip shape" : "the meeting region is truncated by the square boundary"}. Estimate the probability they meet.`,
             hint: "When the wait times are short relative to the window, the meeting probability is (T(r+s) - (r^2+s^2)/2) / T^2.",
@@ -20751,7 +20797,7 @@ we obtain
         for (const n of [5, 10, 20, 50, 100]) {
           const answer = expectedOmittedElements(n);
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: omitted elements",
             prompt: `Sample with replacement ${n} times from ${n} equally likely labels. Estimate the expected number of labels never seen.`,
             hint: "Use one indicator per label for being omitted.",
@@ -20768,7 +20814,7 @@ we obtain
         for (const n of [5, 10, 20, 50]) {
           const answer = expectedCarClusters(n);
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: car clusters",
             prompt: `${n} cars start in order from left to right with iid continuous random speeds. Whenever a faster car reaches a slower car ahead, they form a cluster and continue at the slower speed. Estimate the expected number of long-run clusters.`,
             hint: "Scanning from front to back, a new cluster starts exactly when a car is slower than every car ahead of it.",
@@ -20790,7 +20836,7 @@ we obtain
         ]) {
           const answer = expectedCycleClassCount(spec.n, spec.predicate);
           questions.push(createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: cycle classes",
             prompt: `In a uniformly random permutation of ${spec.n} elements, estimate the expected number of ${spec.label} cycles.`,
             hint: "The expected number of k-cycles is 1/k. Sum 1/k over the allowed lengths.",
@@ -20806,7 +20852,7 @@ we obtain
 
         questions.push(
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: exceed-one variance",
             prompt: "Keep drawing iid Uniform(0,1) values until the running sum first exceeds 1. Estimate the variance of the number of draws required.",
             hint: "If N is the stopping count, P(N > n) = 1/n!, so E[N] = e and E[N^2] = 3e.",
@@ -20822,7 +20868,7 @@ we obtain
 
         questions.push(
           createQuestion({
-            topicId: "greenBook",
+            topicId: "classicPuzzles",
             category: "Classic puzzle: exceed-one variance",
             prompt: "Keep drawing iid Uniform(0,1) values until the running sum first exceeds 1. Let S be the resulting final sum. Estimate Var(S).",
             hint: "Blackwell-Girshick style recursion gives E[S] = e/2 and E[S^2] = 1 + e/3.",
@@ -22254,7 +22300,7 @@ we obtain
           return category === "Transition spectral gap" ? "hard" : "medium";
         }
 
-        if (topicId === "greenBook") {
+        if (topicId === "classicPuzzles") {
           if (category === "Classic puzzle: runs" || category === "Classic puzzle: fixed points") {
             return "easy";
           }
